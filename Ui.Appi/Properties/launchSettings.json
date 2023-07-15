@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Ui.Appi": {
+      "commandName": "Project",
+      "commandLineArgs": "technology"
+    }
+  }
+}
