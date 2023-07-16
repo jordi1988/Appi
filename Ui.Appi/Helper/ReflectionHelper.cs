@@ -36,6 +36,8 @@ namespace Ui.Appi.Helper
 
         public static Type GetClassByNameImplementingInterface<T>(string className)
         {
+            LoadExternalAssemblies();
+
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             foreach (var assembly in allAssemblies)
@@ -48,6 +50,21 @@ namespace Ui.Appi.Helper
             }
 
             throw new SourceNotFoundException(className);
+        }
+
+        private static void LoadExternalAssemblies()
+        {
+            ConfigurationHelper.EnsureSettingsExist();
+            if (!RegistryHelper.IsExternalLibrariesAllowed())
+            {
+                return;
+            }
+
+            var externalAssemblyFiles = Directory.GetFiles(ConfigurationHelper.ApplicationDirectory, "*.dll");
+            foreach (var filename in externalAssemblyFiles)
+            {
+                Assembly.UnsafeLoadFrom(filename);
+            }
         }
 
         public static T CreateInstance<T>(Type classType, Settings? settings = null)

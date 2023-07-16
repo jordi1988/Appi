@@ -1,7 +1,5 @@
 ﻿using Spectre.Console.Cli;
-using System.Diagnostics;
 using Ui.Appi.Commands;
-using Ui.Appi.Helper;
 
 namespace Ui.Appi
 {
@@ -9,16 +7,14 @@ namespace Ui.Appi
     {
         private static async Task Main(string[] args)
         {
-            // TODO: sort order for items based on ...
-
             var app = new CommandApp<FindItemsCommand>();
             app.Configure(config =>
             {
                 config.AddCommand<FindItemsCommand>("find");
                 config.AddBranch("config", source =>
                 {
-                    source.AddCommand<ConfigOpenDirectoryCommand>("open");
-                    // source.AddCommand<ConfigAddSourceCommand>("add-source");
+                    source.AddCommand<ConfigOpenDirectoryCommand>("open").WithDescription("Opens the app's configuration directory.");
+                    source.AddCommand<ConfigAllowLibrariesCommand>("allow-libs").WithDescription("Allow or disallow external libraries to be loaded.");
                 });
             });
 

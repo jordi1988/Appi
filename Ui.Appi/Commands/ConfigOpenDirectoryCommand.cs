@@ -5,16 +5,12 @@ using Ui.Appi.Helper;
 
 namespace Ui.Appi.Commands
 {
-    internal sealed class ConfigOpenDirectoryCommand : Command<ConfigOpenDirectoryCommand.Settings>
+    internal sealed class ConfigOpenDirectoryCommand : Command
     {
-        public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
+        public override int Execute([NotNull] CommandContext context)
         {
             Process.Start("explorer.exe", ConfigurationHelper.ApplicationDirectory);
             return 0;
-        }
-
-        public sealed class Settings : CommandSettings
-        {
         }
     }
 }

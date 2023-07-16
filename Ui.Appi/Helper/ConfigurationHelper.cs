@@ -7,11 +7,10 @@ namespace Ui.Appi.Helper
 {
     internal static partial class ConfigurationHelper
     {
-        private static string _appDataDirectory => GetFolderPath(SpecialFolder.ApplicationData);
-
         public const string QueryParam = "##QUERY##";
         public static string ApplicationDirectory => Path.Combine(_appDataDirectory, "Appi");
         public static string ApplicationFilename => Path.Combine(ApplicationDirectory, "sources.json");
+        private static string _appDataDirectory => GetFolderPath(SpecialFolder.ApplicationData);
 
         static ConfigurationHelper()
         {
@@ -22,6 +21,23 @@ namespace Ui.Appi.Helper
         {
             EnsureDirectoryExists();
             EnsureFileExists();
+        }
+
+        public static IEnumerable<ISource> GetActiveSources(Settings? settings)
+        {
+            var output = new List<ISource>();
+
+            var settingsFileActiveSources = ReadSettingsFileSources().Where(x => x.IsActive);
+            foreach (var source in settingsFileActiveSources)
+            {
+                var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName);
+                var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass, settings);
+                source.CopyTo(instance);
+
+                output.Add(instance);
+            }
+
+            return output;
         }
 
         private static void EnsureDirectoryExists()
@@ -45,23 +61,6 @@ namespace Ui.Appi.Helper
 
                 File.WriteAllText(ApplicationFilename, stringifiedSources);
             }
-        }
-
-        public static IEnumerable<ISource> GetActiveSources(Settings? settings)
-        {
-            var output = new List<ISource>();
-
-            var settingsFileActiveSources = ReadSettingsFileSources().Where(x => x.IsActive);
-            foreach (var source in settingsFileActiveSources)
-            {
-                var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName);
-                var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass, settings);
-                source.CopyTo(instance);
-
-                output.Add(instance);
-            }
-
-            return output;
         }
 
         private static IEnumerable<ISource> ReadSettingsFileSources()

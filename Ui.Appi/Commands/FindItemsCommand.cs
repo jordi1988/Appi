@@ -1,14 +1,14 @@
 ﻿using Domain.Entities;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Ui.Appi.Handler;
 using Ui.Appi.Helper;
 
 namespace Ui.Appi.Commands
 {
-    internal sealed class FindItemsCommand : Command<FindItemsCommand.Settings>
+    // TODO: sort order for items based on ...
+    public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
     {
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
         {
@@ -51,23 +51,13 @@ namespace Ui.Appi.Commands
                     collectingDataTask.StopTask();
                 });
 
+            // TODO: combine result and handler to display specific result based on IHandler
             var handler = new SpectreConsoleHandler();
             var selectedItem = handler.PromtForItemSelection(allResults);
             handler.DisplayItem(selectedItem);
             handler.PromtForActionInvokation(selectedItem);
 
             return 0;
-        }
-
-        public sealed class Settings : CommandSettings
-        {
-            [Description("Search for the given query in all active sources.")]
-            [CommandArgument(0, "<query>")]
-            public string Query { get; init; } = string.Empty;
-
-            [CommandOption("-c|--case-sensitive")]
-            [DefaultValue(false)]
-            public bool CaseSensitive { get; init; }
         }
     }
 }
