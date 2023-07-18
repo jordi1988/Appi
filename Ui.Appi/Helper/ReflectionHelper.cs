@@ -1,4 +1,5 @@
 ﻿using Domain.Exceptions;
+using Domain.Interfaces;
 using System.Reflection;
 using static Ui.Appi.Commands.FindItemsCommand;
 
@@ -34,9 +35,9 @@ namespace Ui.Appi.Helper
             return classes;
         }
 
-        public static Type GetClassByNameImplementingInterface<T>(string className)
+        public static Type GetClassByNameImplementingInterface<T>(string className, IExternalLibraryService externalLibraryService)
         {
-            LoadExternalAssemblies();
+            LoadExternalAssemblies(externalLibraryService);
 
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -52,10 +53,10 @@ namespace Ui.Appi.Helper
             throw new SourceNotFoundException(className);
         }
 
-        private static void LoadExternalAssemblies()
+        private static void LoadExternalAssemblies(IExternalLibraryService externalLibraryService)
         {
             ConfigurationHelper.EnsureSettingsExist();
-            if (!RegistryHelper.IsExternalLibrariesAllowed())
+            if (!externalLibraryService.IsAllowed())
             {
                 return;
             }

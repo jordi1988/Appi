@@ -1,21 +1,28 @@
-﻿using Spectre.Console.Cli;
+﻿using Domain.Interfaces;
+using Spectre.Console.Cli;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using Ui.Appi.Helper;
 
 namespace Ui.Appi.Commands
 {
     internal sealed class ConfigAllowLibrariesCommand : Command<ConfigAllowLibrariesCommand.Settings>
     {
+        private readonly IExternalLibraryService _externalLibraryService;
+
+        public ConfigAllowLibrariesCommand(IExternalLibraryService externalLibraryService)
+        {
+            _externalLibraryService = externalLibraryService ?? throw new ArgumentNullException(nameof(externalLibraryService));
+        }
+
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             if (settings.IsAllowed)
             {
-                RegistryHelper.AllowExternalLibraries();
+                _externalLibraryService.Allow();
             }
             else
             {
-                RegistryHelper.DisallowExternalLibraries();
+                _externalLibraryService.Prohibit();
             }
 
             return 0;

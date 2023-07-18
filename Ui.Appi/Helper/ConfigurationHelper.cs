@@ -23,15 +23,16 @@ namespace Ui.Appi.Helper
             EnsureFileExists();
         }
 
-        public static IEnumerable<ISource> GetActiveSources(Settings? settings)
+        public static IEnumerable<ISource> GetActiveSources(Settings? settings, IExternalLibraryService externalLibraryService)
         {
             var output = new List<ISource>();
 
             var settingsFileActiveSources = ReadSettingsFileSources().Where(x => x.IsActive);
             foreach (var source in settingsFileActiveSources)
             {
-                var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName);
+                var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, externalLibraryService);
                 var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass, settings);
+
                 source.CopyTo(instance);
 
                 output.Add(instance);

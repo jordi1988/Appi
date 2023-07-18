@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Interfaces;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.Diagnostics.CodeAnalysis;
@@ -10,6 +11,13 @@ namespace Ui.Appi.Commands
     // TODO: sort order for items based on ...
     public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
     {
+        private readonly IExternalLibraryService _externalLibraryService;
+
+        public FindItemsCommand(IExternalLibraryService externalLibraryService)
+        {
+            _externalLibraryService = externalLibraryService ?? throw new ArgumentNullException(nameof(externalLibraryService));
+        }
+
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             var allResults = new List<PromptGroup>();
@@ -25,7 +33,7 @@ namespace Ui.Appi.Commands
                 .Start(ctx =>
                 {
                     var sources = ConfigurationHelper
-                        .GetActiveSources(settings)
+                        .GetActiveSources(settings, _externalLibraryService)
                         .OrderBy(x => x.SortOrder);
 
                     var collectingDataTask = ctx.AddTask("Collecting data",
