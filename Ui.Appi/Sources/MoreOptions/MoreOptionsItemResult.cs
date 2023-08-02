@@ -17,7 +17,7 @@ namespace Ui.Appi.Sources.MoreOptions
 
         public override string ToString()
         {
-            return $"{Name,-30}{Description,35}";
+            return $"{Name,-30}{Description,-35}";
         }
     }
 }

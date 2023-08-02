@@ -2,7 +2,7 @@
   "profiles": {
     "Ui.Appi": {
       "commandName": "Project",
-      "commandLineArgs": "config allow-libs true"
+      "commandLineArgs": "test"
     }
   }
 }

@@ -2,14 +2,15 @@
 
 namespace Infrastructure.Sources.HttpRequest
 {
-    internal class QuotesHttpRequestResult : Result
+    internal class PoetryHttpRequestResult : Result
     {
         public override string Name { get => Author; set => Author = value; }
-        public override string Description { get => Content; set => Content = value; }
+        public override string Description { get => Title; set => Title = value; }
+
         public string Author { get; set; } = string.Empty;
-        public string Content { get; set; } = string.Empty;
-        public DateOnly DateAdded { get; set; }
-        public DateOnly DateModified { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public List<string> Lines { get; set; } = new();
+        public string LineCount { get; set; } = string.Empty;
 
         public override IEnumerable<ActionItem> GetActions()
         {
@@ -23,7 +24,7 @@ namespace Infrastructure.Sources.HttpRequest
 
         public override string ToString()
         {
-            return $"{Name,-30}{Description,35}";
+            return $"{Name,-30}{Description,-35}";
         }
     }
 }

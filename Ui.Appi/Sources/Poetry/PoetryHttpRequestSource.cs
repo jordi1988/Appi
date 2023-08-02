@@ -3,23 +3,24 @@ using Domain.Interfaces;
 using Infrastructure.Sources.HttpRequest;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Ui.Appi.Helper;
 using static Ui.Appi.Commands.FindItemsCommand;
 
-namespace Ui.Appi.Sources.Quotes
+namespace Ui.Appi.Sources.Poetry
 {
-    internal partial class QuotesHttpRequestSource : ISource
+    internal partial class PoetryHttpRequestSource : ISource
     {
         private readonly Settings? _settings;
 
-        public string TypeName { get; set; } = typeof(QuotesHttpRequestSource).Name;
-        public string Name { get; set; } = "Quotes";
-        public string Description { get; set; } = "Quotes by quatable.io";
+        public string TypeName { get; set; } = typeof(PoetryHttpRequestSource).Name;
+        public string Name { get; set; } = "Poetry";
+        public string Description { get; set; } = "by poetrydb.org";
         public bool IsActive { get; set; } = true;
         public int SortOrder { get; set; } = 20;
-        public string? Path { get; set; } = $"https://api.quotable.io/search/quotes?query={ConfigurationHelper.QueryParam}&limit=150&fuzzyMaxEdits=1";
+        public string? Path { get; set; } = $"https://poetrydb.org/title/{ConfigurationHelper.QueryParam}";
 
-        public QuotesHttpRequestSource(Settings? settings) : base()
+        public PoetryHttpRequestSource(Settings? settings) : base()
         {
             _settings = settings;
         }
@@ -33,22 +34,20 @@ namespace Ui.Appi.Sources.Quotes
             using var client = new HttpClient();
 
             var serializerOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-            var response = await client.GetFromJsonAsync<QuotesResponse>(Path, serializerOptions);
+            var response = await client.GetFromJsonAsync<Titles[]>(Path, serializerOptions);
 
-            var output = new List<QuotesHttpRequestResult>();
-            if (response?.Results is null)
+            var output = new List<PoetryHttpRequestResult>();
+            if (response is null)
             {
                 return Enumerable.Empty<Result>();
             }
 
-            foreach (var item in response.Results)
+            foreach (var item in response)
             {
                 output.Add(new()
                 {
                     Author = item.Author,
-                    Content = item.Content.Length <= 100 ? item.Content : item.Content[..100] + "...",
-                    DateAdded = item.DateAdded,
-                    DateModified = item.DateModified
+                    Title = item.Title.Length <= 100 ? item.Title : item.Title[..100] + "...",
                 });
             }
 
@@ -63,4 +62,6 @@ namespace Ui.Appi.Sources.Quotes
             }
         }
     }
+
+    internal sealed record Titles(string Author, string Title, string[] Lines, string LineCount);
 }

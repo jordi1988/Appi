@@ -6,7 +6,7 @@ namespace Infrastructure.Sources.File
     {
         public override string ToString()
         {
-            return $"{Name,-30}{Description,35}";
+            return $"{Name,-30}{Description,-35}";
         }
     }
 }
