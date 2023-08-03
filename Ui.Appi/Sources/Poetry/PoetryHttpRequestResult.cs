@@ -14,8 +14,9 @@ namespace Infrastructure.Sources.HttpRequest
         [Result]
         public string Title { get; set; } = string.Empty;
 
-        public List<string> Lines { get; set; } = new();
-        
+        [Result]
+        public string Lines { get; set; } = string.Empty;
+
         public string LineCount { get; set; } = string.Empty;
 
         public override IEnumerable<ActionItem> GetActions()
