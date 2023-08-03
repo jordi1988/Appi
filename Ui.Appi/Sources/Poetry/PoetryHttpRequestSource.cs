@@ -48,6 +48,7 @@ namespace Ui.Appi.Sources.Poetry
                 {
                     Author = item.Author,
                     Title = item.Title.Length <= 100 ? item.Title : item.Title[..100] + "...",
+                    Sort = item.Title.Length,
                 });
             }
 

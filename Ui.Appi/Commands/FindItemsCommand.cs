@@ -8,7 +8,6 @@ using Ui.Appi.Helper;
 
 namespace Ui.Appi.Commands
 {
-    // TODO: sort order for items based on ...
     public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
     {
         private readonly IExternalLibraryService _externalLibraryService;
@@ -42,15 +41,16 @@ namespace Ui.Appi.Commands
 
                     foreach (var source in sources)
                     {
-                        var results = source.ReadAsync()
+                        var sourceResults = source.ReadAsync()
                             .GetAwaiter()
-                            .GetResult();
+                            .GetResult()
+                            .SortResults();
 
                         allResults.Add(new PromptGroup()
                         {
                             Name = source.Name,
                             Description = source.Description,
-                            Items = results
+                            Items = sourceResults
                         });
 
                         collectingDataTask.Increment(1);
