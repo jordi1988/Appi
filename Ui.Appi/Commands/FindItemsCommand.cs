@@ -35,6 +35,9 @@ namespace Ui.Appi.Commands
                         .GetActiveSources(settings, _externalLibraryService)
                         .OrderBy(x => x.SortOrder);
 
+                    // TODO: Fetch and append sources separately from the service
+                    // sources = sources.Union(_externalLibraryService.GetActiveSources());
+
                     var collectingDataTask = ctx.AddTask("Collecting data",
                         true,
                         sources.Count());
@@ -59,7 +62,6 @@ namespace Ui.Appi.Commands
                     collectingDataTask.StopTask();
                 });
 
-            // TODO: combine result and handler to display specific result based on IHandler
             var handler = new SpectreConsoleHandler();
             var selectedItem = handler.PromtForItemSelection(allResults);
             handler.DisplayItem(selectedItem);

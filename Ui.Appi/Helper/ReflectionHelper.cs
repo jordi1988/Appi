@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using System.Reflection;
 using static Ui.Appi.Commands.FindItemsCommand;
@@ -84,6 +85,38 @@ namespace Ui.Appi.Helper
             {
                 return (T)Activator.CreateInstance(classType);
             }
+        }
+
+        public static IEnumerable<KeyValuePair<string, object?>> GetProperties(object obj)
+        {
+            if (obj is null)
+            {
+                return Enumerable.Empty<KeyValuePair<string, object?>>();
+            }
+                
+            var output = new List<KeyValuePair<string, object>>();
+            
+            PropertyInfo[] properties = obj.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var property in properties)
+            {
+                if (property.GetCustomAttribute(typeof(ResultAttribute)) is ResultAttribute resultAttribute)
+                {
+                    object? propertyValue = property.GetValue(obj);
+                    if (propertyValue is null)
+                    {
+                        output.Add(new(property.Name, null!));
+                    }
+                    else
+                    {
+                        object castedValue = Convert.ChangeType(propertyValue, resultAttribute.TargetType);
+                        output.Add(new(property.Name, castedValue));
+                    }
+                }
+            }
+
+            return output!;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Spectre.Console;
+using Ui.Appi.Helper;
 
 namespace Ui.Appi.Handler
 {
@@ -43,19 +44,22 @@ namespace Ui.Appi.Handler
             selectedAction.Action?.Invoke();
         }
 
-        // TODO: this is not ideal: displayed output may differ among selected results
         public void DisplayItem(Result item)
         {
-            var grid = new Grid();
+            var table = new Table();
+            table.Border(TableBorder.DoubleEdge);
+            table.HideHeaders();
 
-            grid.AddColumn();
-            grid.AddColumn();
+            table.AddColumn(string.Empty);
+            table.AddColumn(string.Empty);
 
-            grid.AddRow("[bold]ID[/]", item.Id.ToString());
-            grid.AddRow("[bold]Name[/]", item.Name);
-            grid.AddRow("[bold]Description[/]", item.Description);
+            var properties = ReflectionHelper.GetProperties(item);
+            foreach (var property in properties)
+            {
+                table.AddRow($"[bold]{property.Key}[/]", $"{property.Value}");
+            }
 
-            AnsiConsole.Write(grid);
+            AnsiConsole.Write(table);
         }
     }
 }

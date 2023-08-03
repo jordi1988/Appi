@@ -5,11 +5,17 @@ namespace Infrastructure.Sources.HttpRequest
     internal class PoetryHttpRequestResult : Result
     {
         public override string Name { get => Author; set => Author = value; }
+        
         public override string Description { get => Title; set => Title = value; }
 
+        [Result]
         public string Author { get; set; } = string.Empty;
+        
+        [Result]
         public string Title { get; set; } = string.Empty;
+
         public List<string> Lines { get; set; } = new();
+        
         public string LineCount { get; set; } = string.Empty;
 
         public override IEnumerable<ActionItem> GetActions()
