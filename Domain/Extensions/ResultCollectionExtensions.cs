@@ -1,14 +1,14 @@
-﻿using Domain.Entities;
+﻿using Core.Abstractions;
 
-namespace Ui.Appi.Helper
+namespace Core.Extensions
 {
-    internal static class ResultCollectionHelper
+    public static class ResultCollectionExtensions
     {
-        public static IEnumerable<Result> SortResults(this IEnumerable<Result>? sourceResults)
+        public static IEnumerable<ResultItemBase> SortResults(this IEnumerable<ResultItemBase>? sourceResults)
         {
             if (sourceResults is null)
             {
-                return Enumerable.Empty<Result>();
+                return Enumerable.Empty<ResultItemBase>();
             }
 
             if (sourceResults.Any(x => x.Sort > 0))

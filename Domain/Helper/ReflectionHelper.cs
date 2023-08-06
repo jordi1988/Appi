@@ -1,14 +1,13 @@
-﻿using Domain.Entities;
-using Domain.Exceptions;
-using Domain.Interfaces;
+﻿using Core.Abstractions;
+using Core.Attributes;
+using Core.Exceptions;
 using System.Reflection;
-using static Ui.Appi.Commands.FindItemsCommand;
 
-namespace Ui.Appi.Helper
+namespace Core.Helper
 {
-    internal static class ReflectionHelper
+    public static class ReflectionHelper
     {
-        public static List<T> InitializeClassesImplementingInterface<T>(Settings? settings = null)
+        public static List<T> InitializeClassesImplementingInterface<T>(object? settings = null)
         {
             var output = new List<T>();
 
@@ -36,9 +35,9 @@ namespace Ui.Appi.Helper
             return classes;
         }
 
-        public static Type GetClassByNameImplementingInterface<T>(string className, IExternalLibraryService externalLibraryService)
+        public static Type GetClassByNameImplementingInterface<T>(string className, IPluginService pluginService)
         {
-            LoadExternalAssemblies(externalLibraryService);
+            LoadExternalAssemblies(pluginService);
 
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -54,32 +53,17 @@ namespace Ui.Appi.Helper
             throw new SourceNotFoundException(className);
         }
 
-        private static void LoadExternalAssemblies(IExternalLibraryService externalLibraryService)
-        {
-            ConfigurationHelper.EnsureSettingsExist();
-            if (!externalLibraryService.IsAllowed())
-            {
-                return;
-            }
-
-            var externalAssemblyFiles = Directory.GetFiles(ConfigurationHelper.ApplicationDirectory, "*.dll");
-            foreach (var filename in externalAssemblyFiles)
-            {
-                Assembly.UnsafeLoadFrom(filename);
-            }
-        }
-
-        public static T CreateInstance<T>(Type classType, Settings? settings = null)
+        public static T CreateInstance<T>(Type classType, object? settings = null)
         {
             if (settings is null)
             {
                 return (T)Activator.CreateInstance(classType);
             }
 
-            var constructorContainsSettingsParameter = classType.GetConstructor(new[] { typeof(Settings) });
+            var constructorContainsSettingsParameter = classType.GetConstructor(new[] { settings.GetType() });
             if (constructorContainsSettingsParameter is not null)
             {
-                return (T)Activator.CreateInstance(classType, settings!);
+                return (T)Activator.CreateInstance(classType, settings);
             }
             else
             {
@@ -93,9 +77,9 @@ namespace Ui.Appi.Helper
             {
                 return Enumerable.Empty<KeyValuePair<string, object?>>();
             }
-                
+
             var output = new List<KeyValuePair<string, object>>();
-            
+
             PropertyInfo[] properties = obj.GetType()
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
@@ -117,6 +101,21 @@ namespace Ui.Appi.Helper
             }
 
             return output!;
+        }
+
+        private static void LoadExternalAssemblies(IPluginService pluginService)
+        {
+            ConfigurationHelper.EnsureSettingsExist();
+            if (!pluginService.IsAllowed())
+            {
+                return;
+            }
+
+            var externalAssemblyFiles = Directory.GetFiles(ConfigurationHelper.ApplicationDirectory, "*.dll");
+            foreach (var filename in externalAssemblyFiles)
+            {
+                Assembly.UnsafeLoadFrom(filename);
+            }
         }
     }
 }

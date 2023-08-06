@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities
+﻿namespace Core.Entities
 {
     public class ActionItem
     {

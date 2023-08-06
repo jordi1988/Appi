@@ -1,11 +1,11 @@
-﻿using Domain.Entities;
+﻿using Core.Abstractions;
 
-namespace Domain.Entities
+namespace Core.Entities
 {
     public class PromptGroup
     {
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public IEnumerable<Result> Items { get; set; } = Enumerable.Empty<Result>();
+        public IEnumerable<ResultItemBase> Items { get; set; } = Enumerable.Empty<ResultItemBase>();
     }
 }

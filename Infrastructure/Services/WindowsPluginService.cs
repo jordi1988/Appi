@@ -1,17 +1,17 @@
-﻿using Domain.Interfaces;
+﻿using Core.Abstractions;
 using Microsoft.Win32;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Infrastructure.Services
 {
-    public class WindowsExternalLibraryService : IExternalLibraryService
+    public class WindowsPluginService : IPluginService
     {
-        private const string _externalLibsKeyName = "AllowExternalLibraries";
-        private const string _externalLibsKeyValueAllowed = "1";
-        private const string _externalLibsKeyValueProhibited = "0";
+        private const string _pluginKeyName = "AllowExternalLibraries";
+        private const string _pluginKeyValueAllowed = "1";
+        private const string _pluginKeyValueProhibited = "0";
 
-        public WindowsExternalLibraryService()
+        public WindowsPluginService()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -26,25 +26,25 @@ namespace Infrastructure.Services
         public void Allow()
         {
             var registry = GetSubKeyRegistry(true);
-            registry.Key?.SetValue(_externalLibsKeyName, _externalLibsKeyValueAllowed);
+            registry.Key?.SetValue(_pluginKeyName, _pluginKeyValueAllowed);
             registry.Key?.Close();
         }
 
         public void Prohibit()
         {
             var registry = GetSubKeyRegistry(true);
-            registry.Key?.SetValue(_externalLibsKeyName, _externalLibsKeyValueProhibited);
+            registry.Key?.SetValue(_pluginKeyName, _pluginKeyValueProhibited);
             registry.Key?.Close();
         }
 
         public bool IsAllowed()
         {
             var registry = GetSubKeyRegistry();
-            var allowed = registry.Key!.GetValue(_externalLibsKeyName, _externalLibsKeyValueProhibited) as string;
+            var allowed = registry.Key!.GetValue(_pluginKeyName, _pluginKeyValueProhibited) as string;
 
             registry.Key.Close();
 
-            return allowed == _externalLibsKeyValueAllowed;
+            return allowed == _pluginKeyValueAllowed;
         }
 
         private void EnsureRegistryKeyExsists()
@@ -54,7 +54,7 @@ namespace Infrastructure.Services
             if (registry.Key is null)
             {
                 registry.Key = Registry.CurrentUser.CreateSubKey(registry.Path);
-                registry.Key.SetValue(_externalLibsKeyName, _externalLibsKeyValueProhibited);
+                registry.Key.SetValue(_pluginKeyName, _pluginKeyValueProhibited);
             }
 
             registry.Key.Close();

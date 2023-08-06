@@ -1,8 +1,9 @@
-﻿using Domain.Entities;
+﻿using Core.Entities;
+using Core.Abstractions;
 
 namespace ExternalSourceDemo
 {
-    public class ExternalDemoResult : Result
+    public class ExternalDemoResult : ResultItemBase
     {
         public override IEnumerable<ActionItem> GetActions()
         {

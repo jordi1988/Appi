@@ -1,11 +1,11 @@
-﻿using Domain.Interfaces;
+﻿using Core.Abstractions;
 
-namespace Domain.Entities
+namespace Core.Entities
 {
     /// <summary>
     /// Null object pattern
     /// </summary>
-    public class NoItemResult : Result
+    public class NoItemResult : ResultItemBase
     {
         public override IEnumerable<ActionItem> GetActions()
         {

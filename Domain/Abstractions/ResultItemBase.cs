@@ -1,6 +1,8 @@
-﻿namespace Domain.Entities
+﻿using Core.Entities;
+
+namespace Core.Abstractions
 {
-    public abstract class Result
+    public abstract class ResultItemBase
     {
         public virtual int Id { get; set; }
         public virtual string Name { get; set; } = string.Empty;

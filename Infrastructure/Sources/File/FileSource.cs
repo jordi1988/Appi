@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Core.Abstractions;
 using IoFile = System.IO.File;
 
 namespace Infrastructure.Sources.File
@@ -17,7 +16,7 @@ namespace Infrastructure.Sources.File
         {
         }
 
-        public virtual async Task<IEnumerable<Result>> ReadAsync()
+        public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync()
         {
             ValidateFile();
 
@@ -28,7 +27,7 @@ namespace Infrastructure.Sources.File
             return output;
         }
 
-        protected abstract Result Parse(string row, int rowNumber);
+        protected abstract ResultItemBase Parse(string row, int rowNumber);
 
         private void ValidateFile()
         {

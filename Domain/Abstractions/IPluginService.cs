@@ -1,6 +1,6 @@
-﻿namespace Domain.Interfaces
+﻿namespace Core.Abstractions
 {
-    public interface IExternalLibraryService
+    public interface IPluginService
     {
         bool IsAllowed();
 

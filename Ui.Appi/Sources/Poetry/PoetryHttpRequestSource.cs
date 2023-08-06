@@ -1,10 +1,8 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Core.Abstractions;
+using Core.Helper;
 using Infrastructure.Sources.HttpRequest;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using Ui.Appi.Helper;
 using static Ui.Appi.Commands.FindItemsCommand;
 
 namespace Ui.Appi.Sources.Poetry
@@ -25,31 +23,39 @@ namespace Ui.Appi.Sources.Poetry
             _settings = settings;
         }
 
-        public async Task<IEnumerable<Result>> ReadAsync()
+        public async Task<IEnumerable<ResultItemBase>> ReadAsync()
         {
             ValidateConfig();
 
             Path = Path!.Replace(ConfigurationHelper.QueryParam, _settings?.Query);
 
             using var client = new HttpClient();
+            var output = new List<PoetryHttpRequestResult>();
 
             var serializerOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-            var response = await client.GetFromJsonAsync<Titles[]>(Path, serializerOptions);
 
-            var output = new List<PoetryHttpRequestResult>();
-            if (response is null)
+            var response = await client.GetAsync(Path);
+
+            var content = response?.Content.ReadAsStringAsync().Result;
+            if (response is null || content!.Contains("404"))
             {
-                return Enumerable.Empty<Result>();
+                return Enumerable.Empty<ResultItemBase>();
             }
 
-            foreach (var item in response)
+            var titles = await response.Content.ReadFromJsonAsync<Titles[]>(serializerOptions);
+            if (titles is null)
+            {
+                return Enumerable.Empty<ResultItemBase>();
+            }
+
+            foreach (var title in titles)
             {
                 output.Add(new()
                 {
-                    Author = item.Author,
-                    Title = item.Title.Length <= 100 ? item.Title : item.Title[..100] + "...",
-                    Lines = string.Join(" ", item.Lines),
-                    Sort = item.Title.Length,
+                    Author = title.Author,
+                    Title = title.Title.Length <= 100 ? title.Title : title.Title[..100] + "...",
+                    Lines = string.Join(" ", title.Lines),
+                    Sort = title.Title.Length,
                 });
             }
 

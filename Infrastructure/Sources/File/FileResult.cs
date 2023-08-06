@@ -1,8 +1,8 @@
-﻿using Domain.Entities;
+﻿using Core.Abstractions;
 
 namespace Infrastructure.Sources.File
 {
-    public abstract class FileResult : Result
+    public abstract class FileResult : ResultItemBase
     {
         public override string ToString()
         {

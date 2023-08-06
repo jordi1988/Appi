@@ -1,7 +1,7 @@
-﻿using Spectre.Console.Cli;
-using System.Diagnostics;
+﻿using Core.Helper;
+using Infrastructure.Services;
+using Spectre.Console.Cli;
 using System.Diagnostics.CodeAnalysis;
-using Ui.Appi.Helper;
 
 namespace Ui.Appi.Commands
 {
@@ -9,7 +9,8 @@ namespace Ui.Appi.Commands
     {
         public override int Execute([NotNull] CommandContext context)
         {
-            Process.Start("explorer.exe", ConfigurationHelper.ApplicationDirectory);
+            ProcessService.Start("explorer.exe", ConfigurationHelper.ApplicationDirectory);
+
             return 0;
         }
     }

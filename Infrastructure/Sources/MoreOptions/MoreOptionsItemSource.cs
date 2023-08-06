@@ -1,7 +1,6 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Core.Abstractions;
 
-namespace Ui.Appi.Sources.MoreOptions
+namespace Infrastructure.Sources.MoreOptions
 {
     internal class MoreOptionsItemSource : ISource
     {
@@ -12,9 +11,9 @@ namespace Ui.Appi.Sources.MoreOptions
         public int SortOrder { get; set; } = 99;
         public string? Path { get; set; }
 
-        public virtual async Task<IEnumerable<Result>> ReadAsync()
+        public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync()
         {
-            var output = new List<Result>
+            var output = new List<ResultItemBase>
             {
                 new MoreOptionsItemResult()
                 {

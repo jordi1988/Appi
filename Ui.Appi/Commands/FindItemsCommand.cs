@@ -1,20 +1,23 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Core.Abstractions;
+using Core.Entities;
+using Core.Extensions;
+using Core.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using Ui.Appi.Handler;
-using Ui.Appi.Helper;
 
 namespace Ui.Appi.Commands
 {
     public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
     {
-        private readonly IExternalLibraryService _externalLibraryService;
+        private readonly IPluginService _pluginService;
+        private readonly SourceService _sourceService;
 
-        public FindItemsCommand(IExternalLibraryService externalLibraryService)
+        public FindItemsCommand(IPluginService pluginService, SourceService sourceService)
         {
-            _externalLibraryService = externalLibraryService ?? throw new ArgumentNullException(nameof(externalLibraryService));
+            _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
+            _sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
         }
 
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
@@ -31,8 +34,8 @@ namespace Ui.Appi.Commands
                 )
                 .Start(ctx =>
                 {
-                    var sources = ConfigurationHelper
-                        .GetActiveSources(settings, _externalLibraryService)
+                    var sources = _sourceService
+                        .GetActiveSources(settings, _pluginService)
                         .OrderBy(x => x.SortOrder);
 
                     // TODO: Fetch and append sources separately from the service
@@ -62,12 +65,26 @@ namespace Ui.Appi.Commands
                     collectingDataTask.StopTask();
                 });
 
+            // TODO: display legend for result per source
+
             var handler = new SpectreConsoleHandler();
             var selectedItem = handler.PromtForItemSelection(allResults);
             handler.DisplayItem(selectedItem);
             handler.PromtForActionInvokation(selectedItem);
 
             return 0;
+        }
+
+        public sealed class Settings : CommandSettings
+        {
+            [Description("Search for the given query in all active sources.")]
+            [CommandArgument(0, "<query>")]
+            public string Query { get; init; } = string.Empty;
+
+            [Description("The query parameter will be case-sensitive.")]
+            [CommandOption("-c|--case-sensitive")]
+            [DefaultValue(false)]
+            public bool CaseSensitive { get; init; }
         }
     }
 }

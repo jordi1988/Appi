@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Core.Abstractions;
 using static Ui.Appi.Commands.FindItemsCommand;
 
 namespace ExternalSourceDemo
@@ -14,12 +13,13 @@ namespace ExternalSourceDemo
         public int SortOrder { get; set; } = 50;
         public string? Path { get; set; } = null;
 
+        // TODO: only one parameter FindItemsCommand.Settings allowed in ctor
         public ExternalDemoSource(Settings? settings) : base()
         {
             _settings = settings;
         }
 
-        public async Task<IEnumerable<Result>> ReadAsync()
+        public async Task<IEnumerable<ResultItemBase>> ReadAsync()
         {
             var output = new List<ExternalDemoResult>()
             {

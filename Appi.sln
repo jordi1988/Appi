@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{661C82C9-4F85-42DF-8D18-DD26A44E8C05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Domain\Core.csproj", "{661C82C9-4F85-42DF-8D18-DD26A44E8C05}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{C7BC9B29-F076-4A56-A538-D6FC4E9EF2DE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{FF834702-FBBA-49EC-A4E6-FB3954B9E2B3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ui.Appi", "Ui.Appi\Ui.Appi.csproj", "{27C7D4CC-12D5-4975-9D72-696DF966FFF8}"
 EndProject
@@ -16,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Ui.Appi\.editorconfig = Ui.Appi\.editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.ExternalDemoSource", "Infrastructure.ExternalDemoSource\Infrastructure.ExternalDemoSource.csproj", "{EDEF9501-74FE-4E03-B925-746C6B842BC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.ExternalDemoSource", "Infrastructure.ExternalDemoSource\Infrastructure.ExternalDemoSource.csproj", "{EDEF9501-74FE-4E03-B925-746C6B842BC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,10 +30,6 @@ Global
 		{C7BC9B29-F076-4A56-A538-D6FC4E9EF2DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7BC9B29-F076-4A56-A538-D6FC4E9EF2DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7BC9B29-F076-4A56-A538-D6FC4E9EF2DE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF834702-FBBA-49EC-A4E6-FB3954B9E2B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF834702-FBBA-49EC-A4E6-FB3954B9E2B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF834702-FBBA-49EC-A4E6-FB3954B9E2B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF834702-FBBA-49EC-A4E6-FB3954B9E2B3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{27C7D4CC-12D5-4975-9D72-696DF966FFF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{27C7D4CC-12D5-4975-9D72-696DF966FFF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27C7D4CC-12D5-4975-9D72-696DF966FFF8}.Release|Any CPU.ActiveCfg = Release|Any CPU

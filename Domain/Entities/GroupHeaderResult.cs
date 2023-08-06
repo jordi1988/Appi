@@ -1,6 +1,8 @@
-﻿namespace Domain.Entities
+﻿using Core.Abstractions;
+
+namespace Core.Entities
 {
-    public class GroupHeaderResult : Result
+    public class GroupHeaderResult : ResultItemBase
     {
         public GroupHeaderResult(string name, string description)
         {

@@ -12,7 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Domain\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Sources\MsSql\" />
+    <Folder Include="Sources\MySql\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Core.Abstractions;
 using Infrastructure.Sources.File;
 using static Ui.Appi.Commands.FindItemsCommand;
 
@@ -19,11 +19,11 @@ namespace Ui.Appi.Sources.DemoFile
             _settings = settings;
         }
 
-        public override async Task<IEnumerable<Result>> ReadAsync()
+        public override async Task<IEnumerable<ResultItemBase>> ReadAsync()
         {
             if (_settings is null)
             {
-                return Enumerable.Empty<Result>();
+                return Enumerable.Empty<ResultItemBase>();
             }
 
             var stringComparison = _settings.CaseSensitive ?

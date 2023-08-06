@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Domain.Interfaces
+﻿namespace Core.Abstractions
 {
     public interface ISource
     {
@@ -11,6 +9,6 @@ namespace Domain.Interfaces
         int SortOrder { get; set; }
         string? Path { get; set; }
 
-        Task<IEnumerable<Result>> ReadAsync();
+        Task<IEnumerable<ResultItemBase>> ReadAsync();
     }
 }

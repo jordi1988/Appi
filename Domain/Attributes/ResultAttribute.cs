@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities
+﻿namespace Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ResultAttribute : Attribute

@@ -1,17 +1,17 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Core.Abstractions;
+using Core.Entities;
+using Core.Helper;
 using Spectre.Console;
-using Ui.Appi.Helper;
 
-namespace Ui.Appi.Handler
+namespace Ui.Appi
 {
     internal class SpectreConsoleHandler : IHandler
     {
-        public Result PromtForItemSelection(IEnumerable<PromptGroup> items)
+        public ResultItemBase PromtForItemSelection(IEnumerable<PromptGroup> items)
         {
-            var prompt = new SelectionPrompt<Result>()
+            var prompt = new SelectionPrompt<ResultItemBase>()
                 .Title("[b]Please [red]select item[/][/]:")
-                .PageSize(20)
+                .PageSize(30)
                 .HighlightStyle(new Style(Color.White, Color.DarkRed))
                 .MoreChoicesText("[grey](Move up and down to reveal more items)[/]");
 
@@ -24,19 +24,19 @@ namespace Ui.Appi.Handler
             return AnsiConsole.Prompt(prompt);
         }
 
-        public void PromtForActionInvokation(Result item)
+        public void PromtForActionInvokation(ResultItemBase item)
         {
             var actions = item.GetActions();
             if (!actions.Any())
             {
-                AnsiConsole.Write(new Markup("Sorry, there is [bold]no action[/] you can choose from. [red]Goodbye![/]"));
+                AnsiConsole.Write(new Markup("Sorry, there is [bold]no action[/] you can choose from. [red]Goodbye.[/]"));
                 return;
             }
 
             var selectedAction = AnsiConsole.Prompt(
                 new SelectionPrompt<ActionItem>()
                     .Title("[b]Which [red]action[/] should be invoked?[/]:")
-                    .PageSize(50)
+                    .PageSize(30)
                     .HighlightStyle(new Style(Color.White, Color.DarkRed))
                     .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
                     .AddChoices(actions));
@@ -44,7 +44,7 @@ namespace Ui.Appi.Handler
             selectedAction.Action?.Invoke();
         }
 
-        public void DisplayItem(Result item)
+        public void DisplayItem(ResultItemBase item)
         {
             var table = new Table();
             table.Border(TableBorder.DoubleEdge);
