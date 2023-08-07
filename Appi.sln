@@ -17,6 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.ExternalDemoSource", "Infrastructure.ExternalDemoSource\Infrastructure.ExternalDemoSource.csproj", "{EDEF9501-74FE-4E03-B925-746C6B842BC7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9CE1E074-70DF-4A86-8528-0EFFD466A5E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugin-example", "plugin-example", "{6189930F-2D64-45FA-9C7B-7B46E4106A6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0E9DE4D8-0799-4EFF-BC0B-B1529CF92146}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +48,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{661C82C9-4F85-42DF-8D18-DD26A44E8C05} = {9CE1E074-70DF-4A86-8528-0EFFD466A5E0}
+		{C7BC9B29-F076-4A56-A538-D6FC4E9EF2DE} = {9CE1E074-70DF-4A86-8528-0EFFD466A5E0}
+		{27C7D4CC-12D5-4975-9D72-696DF966FFF8} = {9CE1E074-70DF-4A86-8528-0EFFD466A5E0}
+		{EDEF9501-74FE-4E03-B925-746C6B842BC7} = {6189930F-2D64-45FA-9C7B-7B46E4106A6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {582939FE-3D4B-4D3A-B69D-AC28A8E4AC27}
