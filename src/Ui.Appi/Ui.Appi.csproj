@@ -6,6 +6,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>Appi</AssemblyName>
+    <IsPublishable>True</IsPublishable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Sascha Jordan</Authors>
+    <Title>Appi</Title>
+    <Description>Query multiple sources for information at once. Reachable by using your favorite shell from within your keyboard, without even touching your mouse.</Description>
+    <PackageProjectUrl>https://github.com/jordi1988/Appi/</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/jordi1988/Appi/</RepositoryUrl>
+    <PackageTags>query; console; information; gathering; plugin; extensible; powertoys</PackageTags>
+    <PackAsTool>True</PackAsTool>
+    <PackageReleaseNotes>inital release</PackageReleaseNotes>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +38,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="C:\Users\jorda\source\repos\Appi\Ui.Appi\.editorconfig" />
   </ItemGroup>
 

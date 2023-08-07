@@ -9,7 +9,7 @@ namespace Infrastructure.Sources.DemoFile
         public override string TypeName { get; set; } = typeof(DemoFileSource).Name;
         public override string Name { get; set; } = "scraped.txt File";
         public override string Description { get; set; } = "Contents of the file.";
-        public override bool IsActive { get; set; } = true;
+        public override bool IsActive { get; set; } = false;
         public override int SortOrder { get; set; } = 10;
         public override string? Path { get; set; } = @"E:\scraped.txt";
 

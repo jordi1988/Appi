@@ -5,7 +5,8 @@ The goal is to query multiple sources for information at once. Reachable by usin
 Because your information sources will be different from mine, go start building your first plugin and get started using your command line or try combining it with `PowerToys Run`.
 
 ## Installation
-- Install via NuGet: `dotnet install -g tool Appi`
+- Install via [NuGet](https://www.nuget.org/packages/Appi): `dotnet tool install --global Appi`
+- Build from your own
 
 ## Infrastructure
 Some infrastructure classes are already provided. You can build up from given classes like:
