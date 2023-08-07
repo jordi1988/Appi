@@ -18,7 +18,8 @@ This app is highly extensable by adding own plugins. You can fetch data from any
 
 Just follow these simple steps:
 1. Create a .NET 7 class library
-2. Add a projekt reference to the `Appi.dll` assembly
+2. Add the `Appi` NuGet package as a dependency  
+   (e. g. `PM> Install-Package Appi`)
 3. Create a class that implements `ISource` (and `ResultItemBase`)
 4. Register the new assembly by calling `Appi.exe config register-lib "pathToAssembly.dll"`
  
