@@ -8,6 +8,32 @@ Because your information sources will be different from mine, go start building 
 - Install via [NuGet](https://www.nuget.org/packages/Appi): `dotnet tool install --global Appi`
 - Build from your own
 
+## Usage
+### Help information
+```
+USAGE:
+    Appi <query> [OPTIONS]
+
+ARGUMENTS:
+    <query>                 Search for the given query in all active sources
+
+OPTIONS:
+    -h, --help              Prints help information
+    -c, --case-sensitive    The query parameter will be case-sensitive
+
+COMMANDS:
+    find <query>
+    config                  Configure Appi
+```
+
+### Examples
+- `appi thank`
+- `appi find thank`
+- `appi find -c thank`
+- `appi config open`
+- `appi config allow-libs true`
+- `appi config register-lib "my-own-plugin.dll"`
+
 ## Infrastructure
 Some infrastructure classes are already provided. You can build up from given classes like:
 - **File** (see `sources.json` after running `appi config open` and change the path of your text file)
