@@ -1,9 +1,9 @@
 ﻿using Core.Abstractions;
 using Core.Attributes;
-using Core.Entities;
+using Core.Models;
 using TextCopy;
 
-namespace Infrastructure.Sources.HttpRequest
+namespace Infrastructure.Sources.Poetry
 {
     internal class PoetryHttpRequestResult : ResultItemBase
     {
@@ -26,7 +26,7 @@ namespace Infrastructure.Sources.HttpRequest
         {
             var actions = new List<ActionItem>
             {
-                new() { Name = $"Copy lines to clipboard", Action = () => { ClipboardService.SetText(string.Join("\r\n", Lines)); } },
+                new() { Name = $"Copy lines to clipboard", Action = () => { ClipboardService.SetText(string.Join(Environment.NewLine, Lines)); } },
                 new() { Name = $"Quit", Action = () => { Console.WriteLine($"Goodbye."); } },
             };
 

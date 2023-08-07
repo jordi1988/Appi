@@ -1,16 +1,13 @@
 ﻿using Core.Abstractions;
 using Core.Helper;
-using Infrastructure.Sources.HttpRequest;
+using Core.Models;
 using System.Net.Http.Json;
 using System.Text.Json;
-using static Ui.Appi.Commands.FindItemsCommand;
 
-namespace Ui.Appi.Sources.Poetry
+namespace Infrastructure.Sources.Poetry
 {
     internal partial class PoetryHttpRequestSource : ISource
     {
-        private readonly Settings? _settings;
-
         public string TypeName { get; set; } = typeof(PoetryHttpRequestSource).Name;
         public string Name { get; set; } = "Poetry";
         public string Description { get; set; } = "by poetrydb.org";
@@ -18,16 +15,11 @@ namespace Ui.Appi.Sources.Poetry
         public int SortOrder { get; set; } = 20;
         public string? Path { get; set; } = $"https://poetrydb.org/title/{ConfigurationHelper.QueryParam}";
 
-        public PoetryHttpRequestSource(Settings? settings) : base()
-        {
-            _settings = settings;
-        }
-
-        public async Task<IEnumerable<ResultItemBase>> ReadAsync()
+        public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
             ValidateConfig();
 
-            Path = Path!.Replace(ConfigurationHelper.QueryParam, _settings?.Query);
+            Path = Path!.Replace(ConfigurationHelper.QueryParam, options?.Query);
 
             using var client = new HttpClient();
             var output = new List<PoetryHttpRequestResult>();

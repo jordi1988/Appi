@@ -1,4 +1,4 @@
-﻿namespace Core.Entities
+﻿namespace Core.Models
 {
     public class ActionItem
     {

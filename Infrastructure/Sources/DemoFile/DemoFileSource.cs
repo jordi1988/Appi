@@ -1,12 +1,11 @@
 ﻿using Core.Abstractions;
+using Core.Models;
 using Infrastructure.Sources.File;
-using static Ui.Appi.Commands.FindItemsCommand;
 
-namespace Ui.Appi.Sources.DemoFile
+namespace Infrastructure.Sources.DemoFile
 {
     internal class DemoFileSource : FileSource
     {
-        private readonly Settings? _settings;
         public override string TypeName { get; set; } = typeof(DemoFileSource).Name;
         public override string Name { get; set; } = "scraped.txt File";
         public override string Description { get; set; } = "Contents of the file.";
@@ -14,25 +13,20 @@ namespace Ui.Appi.Sources.DemoFile
         public override int SortOrder { get; set; } = 10;
         public override string? Path { get; set; } = @"E:\scraped.txt";
 
-        public DemoFileSource(Settings? settings) : base()
+        public override async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
-            _settings = settings;
-        }
-
-        public override async Task<IEnumerable<ResultItemBase>> ReadAsync()
-        {
-            if (_settings is null)
+            if (options is null)
             {
                 return Enumerable.Empty<ResultItemBase>();
             }
 
-            var stringComparison = _settings.CaseSensitive ?
+            var stringComparison = options.CaseSensitive ?
                 StringComparison.CurrentCulture :
                 StringComparison.CurrentCultureIgnoreCase;
 
-            var allItems = await base.ReadAsync();
+            var allItems = await base.ReadAsync(options);
             var queriedItems = allItems
-                .Where(x => x.Description.Contains(_settings.Query, stringComparison));
+                .Where(x => x.Description.Contains(options.Query, stringComparison));
 
             return queriedItems;
         }

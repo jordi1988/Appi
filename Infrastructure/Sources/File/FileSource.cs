@@ -1,4 +1,5 @@
 ﻿using Core.Abstractions;
+using Core.Models;
 using IoFile = System.IO.File;
 
 namespace Infrastructure.Sources.File
@@ -16,7 +17,7 @@ namespace Infrastructure.Sources.File
         {
         }
 
-        public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync()
+        public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
             ValidateFile();
 

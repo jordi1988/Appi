@@ -1,6 +1,6 @@
 ﻿using Core.Abstractions;
 
-namespace Core.Entities
+namespace Core.Models
 {
     public class GroupHeaderResult : ResultItemBase
     {

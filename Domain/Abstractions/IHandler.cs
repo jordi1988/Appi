@@ -1,4 +1,4 @@
-﻿using Core.Entities;
+﻿using Core.Models;
 
 namespace Core.Abstractions
 {
@@ -9,5 +9,7 @@ namespace Core.Abstractions
         void PromtForActionInvokation(ResultItemBase item);
 
         void DisplayItem(ResultItemBase item);
+
+        void CreateBreakdownChart(List<PromptGroup> allResults);
     }
 }

@@ -1,14 +1,14 @@
 ﻿using Core.Abstractions;
-using Core.Entities;
 using Core.Extensions;
 using Core.Helper;
+using Core.Models;
 using System.Text.Json;
 
 namespace Core.Services
 {
     public class SourceService
     {
-        public IEnumerable<ISource> GetActiveSources(object? settings, IPluginService pluginService)
+        public IEnumerable<ISource> GetActiveSources(IPluginService pluginService)
         {
             var output = new List<ISource>();
 
@@ -16,7 +16,7 @@ namespace Core.Services
             foreach (var source in settingsFileActiveSources)
             {
                 var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, pluginService);
-                var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass, settings);
+                var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass);
 
                 source.CopyTo(instance);
 
@@ -31,7 +31,7 @@ namespace Core.Services
             ConfigurationHelper.EnsureSettingsExist();
 
             var fileContents = File.ReadAllText(ConfigurationHelper.ApplicationFilename);
-            var fileSources = JsonSerializer.Deserialize<IEnumerable<DeserializationSource>>(fileContents);
+            var fileSources = JsonSerializer.Deserialize<IEnumerable<EmptySource>>(fileContents);
 
             return fileSources ?? Enumerable.Empty<ISource>();
         }

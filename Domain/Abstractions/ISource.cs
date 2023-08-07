@@ -1,4 +1,6 @@
-﻿namespace Core.Abstractions
+﻿using Core.Models;
+
+namespace Core.Abstractions
 {
     public interface ISource
     {
@@ -9,6 +11,6 @@
         int SortOrder { get; set; }
         string? Path { get; set; }
 
-        Task<IEnumerable<ResultItemBase>> ReadAsync();
+        Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options);
     }
 }

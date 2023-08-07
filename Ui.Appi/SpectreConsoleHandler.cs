@@ -1,16 +1,36 @@
 ﻿using Core.Abstractions;
-using Core.Entities;
 using Core.Helper;
+using Core.Models;
 using Spectre.Console;
+using System.Data;
+using Rule = Spectre.Console.Rule;
 
 namespace Ui.Appi
 {
     internal class SpectreConsoleHandler : IHandler
     {
+        private readonly Color[] _chartColors = {
+            Color.SkyBlue2,
+            Color.Magenta2_1,
+            Color.DarkRed_1,
+            Color.IndianRed,
+            Color.LightGoldenrod2,
+            Color.LightGreen,
+            Color.Blue3,
+            Color.LightPink1,
+            Color.LightSeaGreen,
+            Color.NavajoWhite3,
+            Color.Olive,
+            Color.GreenYellow,
+            Color.Orange4_1,
+            Color.PaleGreen3,
+            Color.SandyBrown
+        };
+
         public ResultItemBase PromtForItemSelection(IEnumerable<PromptGroup> items)
         {
             var prompt = new SelectionPrompt<ResultItemBase>()
-                .Title("[b]Please [red]select item[/][/]:")
+                //.Title("[b]Please [red]select item[/][/]:")
                 .PageSize(30)
                 .HighlightStyle(new Style(Color.White, Color.DarkRed))
                 .MoreChoicesText("[grey](Move up and down to reveal more items)[/]");
@@ -18,7 +38,8 @@ namespace Ui.Appi
             var itemsWithContent = items.Where(x => x.Items.Any());
             foreach (var group in itemsWithContent)
             {
-                prompt.AddChoiceGroup(new GroupHeaderResult(group.Name, group.Description), group.Items);
+                var groupHeader = new GroupHeaderResult(group.Name, group.Description);
+                prompt.AddChoiceGroup(groupHeader, group.Items);
             }
 
             return AnsiConsole.Prompt(prompt);
@@ -60,6 +81,49 @@ namespace Ui.Appi
             }
 
             AnsiConsole.Write(table);
+        }
+
+        public void CreateBreakdownChart(List<PromptGroup> allResults)
+        {
+            // TODO: colors should be definable and chart should be customizable in some way 
+            var chartDisplayedResults = allResults.Where(x => x.Items.Any()).ToList();
+
+            var chart = new BreakdownChart();
+            var totalCount = chartDisplayedResults.Count;
+            for (int i = 0; i < totalCount; i++)
+            {
+                var group = chartDisplayedResults[i];
+                var currentColor = CalculateColor(totalCount, i);
+
+                chart.AddItem(group.Name, group.Items.Count(), currentColor);
+            }
+
+            var ruleStyle = "red dim";
+            var upperRule = new Rule();
+            upperRule.RuleStyle(ruleStyle);
+            AnsiConsole.Write(upperRule);
+
+            AnsiConsole.Write(chart);
+            AnsiConsole.WriteLine();
+
+            var lowerRule = new Rule("[white]Please select item[/]");
+            lowerRule.RuleStyle(ruleStyle);
+            AnsiConsole.Write(lowerRule);
+        }
+
+        private Color CalculateColor(int totalCount, int i)
+        {
+            Color output;
+            if (i < totalCount)
+            {
+                output = _chartColors[i];
+            }
+            else
+            {
+                output = _chartColors[i - totalCount];
+            }
+
+            return output;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Core.Abstractions;
+using Core.Models;
 
 namespace Infrastructure.Sources.MoreOptions
 {
@@ -11,7 +12,7 @@ namespace Infrastructure.Sources.MoreOptions
         public int SortOrder { get; set; } = 99;
         public string? Path { get; set; }
 
-        public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync()
+        public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
             var output = new List<ResultItemBase>
             {

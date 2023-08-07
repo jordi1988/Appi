@@ -1,4 +1,4 @@
-﻿using Core.Entities;
+﻿using Core.Models;
 
 namespace Core.Abstractions
 {

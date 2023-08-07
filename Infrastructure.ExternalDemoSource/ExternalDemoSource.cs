@@ -1,11 +1,10 @@
 ﻿using Core.Abstractions;
-using static Ui.Appi.Commands.FindItemsCommand;
+using Core.Models;
 
 namespace ExternalSourceDemo
 {
     public class ExternalDemoSource : ISource
     {
-        private readonly Settings? _settings;
         public string TypeName { get; set; } = typeof(ExternalDemoSource).Name;
         public string Name { get; set; } = "Demo Assembly";
         public string Description { get; set; } = "Returns hard-coded hello world.";
@@ -13,17 +12,11 @@ namespace ExternalSourceDemo
         public int SortOrder { get; set; } = 50;
         public string? Path { get; set; } = null;
 
-        // TODO: only one parameter FindItemsCommand.Settings allowed in ctor
-        public ExternalDemoSource(Settings? settings) : base()
-        {
-            _settings = settings;
-        }
-
-        public async Task<IEnumerable<ResultItemBase>> ReadAsync()
+        public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
             var output = new List<ExternalDemoResult>()
             {
-                new() { Name = "Hello", Description = _settings?.Query ?? "World" }
+                new() { Name = "Hello", Description = options?.Query ?? "World" }
             };
 
             return await Task.FromResult(output);

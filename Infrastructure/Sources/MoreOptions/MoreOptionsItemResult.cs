@@ -1,5 +1,5 @@
-﻿using Core.Entities;
-using Core.Abstractions;
+﻿using Core.Abstractions;
+using Core.Models;
 
 namespace Infrastructure.Sources.MoreOptions
 {

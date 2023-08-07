@@ -1,6 +1,6 @@
 ﻿using Core.Abstractions;
-using Core.Entities;
 using Core.Extensions;
+using Core.Models;
 using Core.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -35,7 +35,7 @@ namespace Ui.Appi.Commands
                 .Start(ctx =>
                 {
                     var sources = _sourceService
-                        .GetActiveSources(settings, _pluginService)
+                        .GetActiveSources(_pluginService)
                         .OrderBy(x => x.SortOrder);
 
                     // TODO: Fetch and append sources separately from the service
@@ -47,7 +47,8 @@ namespace Ui.Appi.Commands
 
                     foreach (var source in sources)
                     {
-                        var sourceResults = source.ReadAsync()
+                        var options = Settings.ToOptions(settings);
+                        var sourceResults = source.ReadAsync(options)
                             .GetAwaiter()
                             .GetResult()
                             .SortResults();
@@ -65,9 +66,9 @@ namespace Ui.Appi.Commands
                     collectingDataTask.StopTask();
                 });
 
-            // TODO: display legend for result per source
-
             var handler = new SpectreConsoleHandler();
+
+            handler.CreateBreakdownChart(allResults);
             var selectedItem = handler.PromtForItemSelection(allResults);
             handler.DisplayItem(selectedItem);
             handler.PromtForActionInvokation(selectedItem);
@@ -85,6 +86,12 @@ namespace Ui.Appi.Commands
             [CommandOption("-c|--case-sensitive")]
             [DefaultValue(false)]
             public bool CaseSensitive { get; init; }
+
+            internal static FindItemsOptions ToOptions(Settings settings) => new()
+            {
+                Query = settings.Query,
+                CaseSensitive = settings.CaseSensitive,
+            };
         }
     }
 }
