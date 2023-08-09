@@ -38,6 +38,8 @@ namespace Ui.Appi.Commands
                         .GetActiveSources(_pluginService)
                         .OrderBy(x => x.SortOrder);
 
+                    // TODO: add option parameter to query exactly one source including disabled (--source|-s File DemoFileSource or alias)
+
                     // TODO: Fetch and append sources separately from the service
                     // sources = sources.Union(_externalLibraryService.GetActiveSources());
 

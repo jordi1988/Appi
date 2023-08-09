@@ -8,7 +8,7 @@ namespace Core.Extensions
         {
             instance.Name = source.Name;
             instance.Description = source.Description;
-            instance.IsActive = true;
+            instance.IsActive = source.IsActive;
             instance.SortOrder = source.SortOrder;
             instance.Path = source.Path;
         }

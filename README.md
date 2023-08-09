@@ -40,14 +40,14 @@ Some infrastructure classes are already provided. You can build up from given cl
 - **More to come** out of the box (want to collaborate?)
 
 ## Plugins
-This app is highly extensable by adding own plugins. You can fetch data from any source you can imagine, e. g. from your SharePoint Server or any database.
+This app is highly extensible by adding own plugins. You can fetch data from any source you can imagine, e. g. from your SharePoint Server or any database.
 
 Just follow these simple steps:
 1. Create a .NET 7 class library
-2. Add the `Appi` NuGet package as a dependency  
-   (e. g. `PM> Install-Package Appi`)
-3. Create a class that implements `ISource` (and `ResultItemBase`)
-4. Register the new assembly by calling `Appi.exe config register-lib "pathToAssembly.dll"`
+2. Add the `Appi.Core` NuGet package as a dependency  
+   (e. g. `PM> Install-Package Appi.Core`)
+3. Create classes that implement `ISource` and `ResultItemBase`
+4. Register the new assembly by calling `appi config register-lib "pathToAssembly.dll"`
  
 ### Example for implementing `ISource`
 The class implementing `ISource` must have a parameterless constructor.  

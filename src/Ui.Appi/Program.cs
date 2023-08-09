@@ -13,7 +13,7 @@ namespace Ui.Appi
         private static async Task Main(string[] args)
         {
             var app = new CommandApp(RegisterServices());
-            app.Configure(config => ConfigureCommands(config));
+            app.Configure(ConfigureCommands);
             app.SetDefaultCommand<FindItemsCommand>();
 
             await app.RunAsync(args);
