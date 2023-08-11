@@ -1,6 +1,5 @@
 ﻿using Core.Services;
 using Infrastructure.Extensions;
-using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 using Ui.Appi.Commands;
@@ -22,10 +21,10 @@ namespace Ui.Appi
         private static ITypeRegistrar RegisterServices()
         {
             var services = new ServiceCollection();
-            
+
             // Core components
             services.AddScoped<SourceService>();
-            
+
             // Infrastructure
             services.AddPluginService();
 
