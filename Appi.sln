@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{46729D70-08AB-4A84-80C5-E0BFBAB2C278}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		find-command-demo.gif = find-command-demo.gif
 		README.md = README.md
 	EndProjectSection
 EndProject

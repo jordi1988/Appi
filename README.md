@@ -9,6 +9,10 @@ Because your information sources will be different from mine, go start building 
 - Build from your own
 
 ## Usage
+### Demo
+This demo shows the `find` command searching for `god` with two active sources (`poetry.db` and `MoreOptions`), selecting and displaying one result (Author, Title, Lines - properties based on `ResultAttribute`), and finally taking some action on it (`Quit`).
+![Demo](find-command-demo.gif)
+
 ### Help information
 ```
 USAGE:
@@ -27,9 +31,9 @@ COMMANDS:
 ```
 
 ### Examples
-- `appi thank`
-- `appi find thank`
-- `appi find -c thank`
+- `appi god`
+- `appi find god`
+- `appi find -c god`
 - `appi config open`
 - `appi config allow-libs true`
 - `appi config register-lib "my-own-plugin.dll"`
