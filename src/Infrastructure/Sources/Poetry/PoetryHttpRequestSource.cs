@@ -1,4 +1,5 @@
-﻿using Core.Abstractions;
+﻿using ArgumentStringNS;
+using Core.Abstractions;
 using Core.Helper;
 using Core.Models;
 using System.Net.Http.Json;
@@ -10,11 +11,19 @@ namespace Infrastructure.Sources.Poetry
     {
         public string TypeName { get; set; } = typeof(PoetryHttpRequestSource).Name;
         public string Name { get; set; } = "Poetry";
+        public string Alias { get; set; } = "poetry";
         public string Description { get; set; } = "by poetrydb.org";
         public bool IsActive { get; set; } = true;
         public int SortOrder { get; set; } = 20;
         public string? Path { get; set; } = $"https://poetrydb.org/title/{ConfigurationHelper.QueryParam}";
+        public string? Arguments { get; set; } = "max_title_length=50";
 
+        /// <summary>
+        /// Reads the asynchronous.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <returns></returns>
+        /// <remarks>This code should be optimized, but it is for demo purposes only...</remarks>
         public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
             ValidateConfig();
@@ -40,18 +49,33 @@ namespace Infrastructure.Sources.Poetry
                 return Enumerable.Empty<ResultItemBase>();
             }
 
+            int maxTitleLength = ReadMaxTitleLength();
+
             foreach (var title in titles)
             {
                 output.Add(new()
                 {
                     Author = title.Author,
-                    Title = title.Title.Length <= 100 ? title.Title : title.Title[..100] + "...",
+                    Title = title.Title.Length <= maxTitleLength ? title.Title : title.Title[..maxTitleLength] + "...",
                     Lines = string.Join(" ", title.Lines),
                     Sort = title.Title.Length,
                 });
             }
 
             return output;
+        }
+
+        private int ReadMaxTitleLength()
+        {
+            var arguments = new ArgumentString(Arguments ?? string.Empty);
+            _ = int.TryParse(arguments["max_title_length"], out int maxTitleLength);
+            
+            if (maxTitleLength == 0)
+            {
+                return 100;
+            }
+
+            return maxTitleLength;
         }
 
         private void ValidateConfig()

@@ -7,10 +7,12 @@ namespace ExternalSourceDemo
     {
         public string TypeName { get; set; } = typeof(ExternalDemoSource).Name;
         public string Name { get; set; } = "Demo Assembly";
+        public string Alias { get; set; } = "external";
         public string Description { get; set; } = "Returns hard-coded hello world.";
         public bool IsActive { get; set; } = true;
         public int SortOrder { get; set; } = 50;
-        public string? Path { get; set; } = null;
+        public string? Path { get; set; }
+        public string? Arguments { get; set; }
 
         public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {

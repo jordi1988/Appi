@@ -6,10 +6,12 @@ namespace Core.Abstractions
     {
         string TypeName { get; set; }
         string Name { get; set; }
+        string Alias { get; set; }
         string Description { get; set; }
         bool IsActive { get; set; }
         int SortOrder { get; set; }
         string? Path { get; set; }
+        string? Arguments { get; set; }
 
         Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options);
     }
