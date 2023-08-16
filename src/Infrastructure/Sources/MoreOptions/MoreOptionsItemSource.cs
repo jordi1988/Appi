@@ -13,6 +13,7 @@ namespace Infrastructure.Sources.MoreOptions
         public int SortOrder { get; set; } = 99;
         public string? Path { get; set; }
         public string? Arguments { get; set; }
+        public bool? IsQueryCommand { get; set; } = false;
 
         public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {

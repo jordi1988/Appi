@@ -11,12 +11,12 @@ namespace Ui.Appi.Commands
 {
     public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
     {
-        private readonly IPluginService _pluginService;
+        public const string QueryAllCommandName = "all";
+
         private readonly SourceService _sourceService;
 
         public FindItemsCommand(IPluginService pluginService, SourceService sourceService)
         {
-            _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
             _sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
         }
 
@@ -34,16 +34,28 @@ namespace Ui.Appi.Commands
                 )
                 .Start(ctx =>
                 {
-                    var sources = _sourceService
-                        .GetActiveSources(_pluginService)
-                        .OrderBy(x => x.SortOrder);
+                    IEnumerable<ISource> sources;
+                    
+                    // TODO: make use of strategy pattern
+                    if (IsSingleSourceQueryCommand(context.Data))
+                    {
+                        sources = new[] {
+                            _sourceService.GetSourceByAlias(context.Name)
+                        };
+                    }
+                    else
+                    {
+                        sources = _sourceService
+                            .GetActiveSources()
+                            .OrderBy(x => x.SortOrder);
+                    }
 
                     // TODO: add option parameter to query exactly one source including disabled (--source|-s File DemoFileSource or alias)
 
                     // TODO: Fetch and append sources separately from the service
                     // sources = sources.Union(_externalLibraryService.GetActiveSources());
 
-                    var collectingDataTask = ctx.AddTask("Collecting data",
+                    var collectingDataTask = ctx.AddTask($"Collecting data",
                         true,
                         sources.Count());
 
@@ -78,9 +90,11 @@ namespace Ui.Appi.Commands
             return 0;
         }
 
+        public bool IsSingleSourceQueryCommand(object? commandName) => commandName is not null;
+
         public sealed class Settings : CommandSettings
         {
-            [Description("Search for the given query in all active sources.")]
+            [Description("Search for the given query.")]
             [CommandArgument(0, "<query>")]
             public string Query { get; init; } = string.Empty;
 

@@ -14,6 +14,7 @@ namespace Infrastructure.Sources.File
         public abstract int SortOrder { get; set; }
         public abstract string? Path { get; set; }
         public abstract string? Arguments { get; set; }
+        public abstract bool? IsQueryCommand { get; set; }
 
         protected FileSource()
         {

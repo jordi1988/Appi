@@ -13,6 +13,7 @@ namespace ExternalSourceDemo
         public int SortOrder { get; set; } = 50;
         public string? Path { get; set; }
         public string? Arguments { get; set; }
+        public bool? IsQueryCommand { get; set; } = true;
 
         public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {

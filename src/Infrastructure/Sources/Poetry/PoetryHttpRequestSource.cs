@@ -17,6 +17,7 @@ namespace Infrastructure.Sources.Poetry
         public int SortOrder { get; set; } = 20;
         public string? Path { get; set; } = $"https://poetrydb.org/title/{ConfigurationHelper.QueryParam}";
         public string? Arguments { get; set; } = "max_title_length=50";
+        public bool? IsQueryCommand { get; set; } = true;
 
         /// <summary>
         /// Reads the asynchronous.
@@ -50,7 +51,6 @@ namespace Infrastructure.Sources.Poetry
             }
 
             int maxTitleLength = ReadMaxTitleLength();
-
             foreach (var title in titles)
             {
                 output.Add(new()
@@ -65,6 +65,14 @@ namespace Infrastructure.Sources.Poetry
             return output;
         }
 
+        private void ValidateConfig()
+        {
+            if (string.IsNullOrWhiteSpace(Path))
+            {
+                throw new ArgumentException(nameof(Path));
+            }
+        }
+
         private int ReadMaxTitleLength()
         {
             var arguments = new ArgumentString(Arguments ?? string.Empty);
@@ -76,14 +84,6 @@ namespace Infrastructure.Sources.Poetry
             }
 
             return maxTitleLength;
-        }
-
-        private void ValidateConfig()
-        {
-            if (string.IsNullOrWhiteSpace(Path))
-            {
-                throw new ArgumentException(nameof(Path));
-            }
         }
     }
 

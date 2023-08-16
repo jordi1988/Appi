@@ -12,6 +12,7 @@ namespace Core.Models
         public int SortOrder { get; set; }
         public string? Path { get; set; }
         public string? Arguments { get; set; }
+        public bool? IsQueryCommand { get; set; } 
 
         public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {

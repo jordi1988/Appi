@@ -14,6 +14,7 @@ namespace Infrastructure.Sources.DemoFile
         public override int SortOrder { get; set; } = 10;
         public override string? Path { get; set; } = @"E:\scraped.txt";
         public override string? Arguments { get; set; }
+        public override bool? IsQueryCommand { get; set; } = true;
 
         public override async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {

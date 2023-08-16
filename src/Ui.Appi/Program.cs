@@ -9,6 +9,8 @@ namespace Ui.Appi
 {
     internal static class Program
     {
+        private static ServiceProvider? _serviceProvider;
+
         private static async Task Main(string[] args)
         {
             var app = new CommandApp(RegisterServices());
@@ -19,7 +21,7 @@ namespace Ui.Appi
         }
 
         private static ITypeRegistrar RegisterServices()
-        {
+        {   
             var services = new ServiceCollection();
 
             // Core components
@@ -34,6 +36,8 @@ namespace Ui.Appi
             services.AddScoped<ConfigAllowLibrariesCommand.Settings>();
             services.AddScoped<ConfigRegisterLibraryCommand.Settings>();
 
+            _serviceProvider = services.BuildServiceProvider();
+
             return new TypeRegistrar(services);
         }
 
@@ -43,7 +47,12 @@ namespace Ui.Appi
             config.SetApplicationName("Appi");
             config.ValidateExamples();
 
-            config.AddCommand<FindItemsCommand>("find");
+            config.AddCommand<FindItemsCommand>(FindItemsCommand.QueryAllCommandName)
+                .WithDescription("Query all active sources")
+                .WithExample(FindItemsCommand.QueryAllCommandName, "god");
+
+            config.AddCustomFindItemsCommandsFromAliases();
+
             config.AddBranch("config", source =>
             {
                 source.SetDescription("Configure Appi.");
@@ -60,6 +69,24 @@ namespace Ui.Appi
                     .WithDescription("Register a new library which is copied to application directory and registred in sources.json.")
                     .WithExample("config", "register-lib", @"E:\appi-plugin2.dll");
             });
+        }
+
+        private static void AddCustomFindItemsCommandsFromAliases(this IConfigurator config)
+        {
+            var sourceService = _serviceProvider?.GetService(typeof(SourceService)) as SourceService;
+            var sources = sourceService!
+                .ReadSettingsFileSources()
+                .Where(x =>
+                    !string.IsNullOrWhiteSpace(x.Alias) &&
+                    x.IsQueryCommand == true);
+
+            foreach (var source in sources)
+            {
+                config.AddCommand<FindItemsCommand>(source.Alias)
+                    .WithData(source.Alias)
+                    .WithDescription($"Query the source `[i]{source.Name}[/]` directly")
+                    .WithExample(source.Alias, "god");
+            }
         }
     }
 }
