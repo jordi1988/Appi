@@ -2,7 +2,7 @@
   "profiles": {
     "Ui.Appi": {
       "commandName": "Project",
-      "commandLineArgs": "test -s poetry"
+      "commandLineArgs": "demo -s scrapedtxtfile"
     }
   }
 }

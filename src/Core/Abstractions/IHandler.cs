@@ -4,11 +4,11 @@ namespace Core.Abstractions
 {
     public interface IHandler
     {
-        ResultItemBase PromtForItemSelection(IEnumerable<PromptGroup> items);
+        ResultItemBase? PromtForItemSelection(IEnumerable<PromptGroup> items);
 
-        void PromtForActionInvokation(ResultItemBase item);
+        void PromtForActionInvokation(ResultItemBase? item);
 
-        void DisplayItem(ResultItemBase item);
+        void DisplayItem(ResultItemBase? item);
 
         void DisplaySources(IEnumerable<ISource> sources);
 

@@ -1,4 +1,5 @@
 ﻿using Core.Abstractions;
+using Core.Helper;
 
 namespace Core.Extensions
 {
@@ -13,6 +14,30 @@ namespace Core.Extensions
             instance.SortOrder = source.SortOrder;
             instance.Path = source.Path;
             instance.Arguments = source.Arguments;
+        }
+
+        public static ISource CreateInstance(this ISource source, IPluginService pluginService)
+        {
+            var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, pluginService);
+            var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass);
+
+            source.CopyTo(instance);
+
+            return instance;
+        }
+
+        public static IEnumerable<ISource> Instantiate(this IEnumerable<ISource> sources, IPluginService pluginService)
+        {
+            var output = new List<ISource>();
+
+            foreach (var source in sources)
+            {
+                var instance = CreateInstance(source, pluginService);
+
+                output.Add(instance);
+            }
+
+            return output;
         }
     }
 }

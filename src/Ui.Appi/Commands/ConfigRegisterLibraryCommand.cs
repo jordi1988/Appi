@@ -1,6 +1,5 @@
 ﻿using Core.Abstractions;
 using Core.Helper;
-using Infrastructure.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -12,12 +11,12 @@ namespace Ui.Appi.Commands
     internal sealed class ConfigRegisterLibraryCommand : Command<ConfigRegisterLibraryCommand.Settings>
     {
         private readonly IPluginService _pluginService;
-        private readonly FileSettingsService _sourceService;
+        private readonly ISettingsService _settingsService;
 
-        public ConfigRegisterLibraryCommand(IPluginService pluginService, FileSettingsService sourceService)
+        public ConfigRegisterLibraryCommand(IPluginService pluginService, ISettingsService sourceService)
         {
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
-            _sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
+            _settingsService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
         }
 
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
@@ -71,13 +70,13 @@ namespace Ui.Appi.Commands
             foreach (var classType in classTypes)
             {
                 var sourceInstance = ReflectionHelper.CreateInstance<ISource>(classType, commandSettings);
-                var currentSettings = _sourceService
+                var currentSettings = _settingsService
                     .ReadSettingsFileSources()
                     .ToList();
 
                 currentSettings.Add(sourceInstance);
 
-                _sourceService.SaveSettingsFileSources(currentSettings);
+                _settingsService.SaveSettingsFileSources(currentSettings);
             }
         }
 

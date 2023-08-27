@@ -1,8 +1,6 @@
 ﻿using Core.Abstractions;
-using Core.Extensions;
 using Core.Helper;
 using Core.Models;
-using Infrastructure.Strategies;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -10,23 +8,6 @@ namespace Infrastructure.Services
 {
     public partial class FileSettingsService : ISettingsService
     {
-        private readonly IPluginService _pluginService;
-
-        public FileSettingsService(IPluginService pluginService)
-        {
-            _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
-        }
-
-        public ISource CreateInstance(ISource source)
-        {
-            var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, _pluginService);
-            var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass);
-
-            source.CopyTo(instance);
-
-            return instance;
-        }
-
         public IEnumerable<ISource> ReadSettingsFileSources()
         {
             ConfigurationHelper.EnsureSettingsExist();
@@ -84,23 +65,6 @@ namespace Infrastructure.Services
             }
 
             SaveSettingsFileSources(fileSources);
-        }
-
-        public ISourceServiceSelector CalculateStrategy(FindItemsOptions options, string queryAllDefaultValue)
-        {
-            bool isSourceProvided = !string.IsNullOrWhiteSpace(options.SourceAlias);
-            bool isGroupProvided = !queryAllDefaultValue.Equals(options.GroupAlias);
-
-            if (isSourceProvided)
-            {
-                return new QuerySingleSourceStrategy(this, options.SourceAlias!);
-            }
-            else if (isGroupProvided)
-            {
-                return new QueryGroupStrategy(this, options.GroupAlias!);
-            }
-
-            return new QueryAllActiveSourcesStrategy(this);
         }
     }
 }

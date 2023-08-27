@@ -1,7 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Extensions;
 using Core.Models;
-using Infrastructure.Services;
+using Core.Strategies;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -12,12 +12,12 @@ namespace Ui.Appi.Commands
     public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
     {
         private readonly IHandler _handler;
-        private readonly FileSettingsService _sourceService;
+        private readonly QueryStrategyCalculator _strategyCalculator;
 
-        public FindItemsCommand(IHandler handler, FileSettingsService sourceService)
+        public FindItemsCommand(IHandler handler, QueryStrategyCalculator strategyCalculator)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
-            _sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
+            _strategyCalculator = strategyCalculator ?? throw new ArgumentNullException(nameof(strategyCalculator));
         }
 
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
@@ -35,7 +35,7 @@ namespace Ui.Appi.Commands
                 .Start(ctx =>
                 {
                     var options = Settings.ToOptions(settings);
-                    var strategy = _sourceService.CalculateStrategy(options, Settings.QueryAllDefaultValue);
+                    var strategy = _strategyCalculator.Create(options, Settings.QueryAllDefaultValue);
                     var sources = strategy
                         .GetSources()
                         .OrderBy(x => x.SortOrder);
@@ -53,12 +53,8 @@ namespace Ui.Appi.Commands
                             .GetResult()
                             .SortResults();
 
-                        allResults.Add(new PromptGroup()
-                        {
-                            Name = source.Name,
-                            Description = source.Description,
-                            Items = sourceResults
-                        });
+                        allResults.Add(new PromptGroup(
+                            source.Name, source.Description, sourceResults));
 
                         collectingDataTask.Increment(1);
                     }
@@ -70,7 +66,7 @@ namespace Ui.Appi.Commands
             var selectedItem = _handler.PromtForItemSelection(allResults);
             _handler.DisplayItem(selectedItem);
             _handler.PromtForActionInvokation(selectedItem);
-
+            
             return 0;
         }
 

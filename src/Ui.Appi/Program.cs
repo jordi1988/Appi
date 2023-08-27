@@ -1,4 +1,5 @@
 ﻿using Core.Abstractions;
+using Core.Strategies;
 using Infrastructure.Extensions;
 using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,8 @@ namespace Ui.Appi
 
             // Core components
             services.AddScoped<IHandler, SpectreConsoleHandler>();
-            services.AddScoped<FileSettingsService>();
+            services.AddScoped<ISettingsService, FileSettingsService>();
+            services.AddScoped<QueryStrategyCalculator>();
 
             // Infrastructure components
             services.AddPluginService();

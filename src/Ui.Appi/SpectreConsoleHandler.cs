@@ -9,6 +9,8 @@ namespace Ui.Appi
 {
     internal class SpectreConsoleHandler : IHandler
     {
+        private const string _ruleStyle = "red dim";
+
         private readonly Color[] _chartColors = {
             Color.SkyBlue2,
             Color.Magenta2_1,
@@ -27,14 +29,24 @@ namespace Ui.Appi
             Color.SandyBrown
         };
 
-        public ResultItemBase PromtForItemSelection(IEnumerable<PromptGroup> items)
+        public ResultItemBase? PromtForItemSelection(IEnumerable<PromptGroup> items)
         {
+            var itemsWithContent = items.Where(x => x.Items.Any());
+            if (!itemsWithContent.Any())
+            {
+                AnsiConsole.Write(new Markup("Sorry, [bold]no items[/] were found."));
+                return null;
+            }
+
+            var rule = new Rule("[white]Please select item[/]");
+            rule.RuleStyle(_ruleStyle);
+            AnsiConsole.Write(rule);
+
             var prompt = new SelectionPrompt<ResultItemBase>()
                 .PageSize(30)
                 .HighlightStyle(new Style(Color.White, Color.DarkRed))
                 .MoreChoicesText("[grey](Move up and down to reveal more items)[/]");
 
-            var itemsWithContent = items.Where(x => x.Items.Any());
             foreach (var group in itemsWithContent)
             {
                 var groupHeader = new GroupHeaderResult(group.Name, group.Description);
@@ -44,8 +56,13 @@ namespace Ui.Appi
             return AnsiConsole.Prompt(prompt);
         }
 
-        public void PromtForActionInvokation(ResultItemBase item)
+        public void PromtForActionInvokation(ResultItemBase? item)
         {
+            if (item is null)
+            {
+                return;
+            }
+
             var actions = item.GetActions();
             if (!actions.Any())
             {
@@ -64,8 +81,13 @@ namespace Ui.Appi
             selectedAction.Action?.Invoke();
         }
 
-        public void DisplayItem(ResultItemBase item)
+        public void DisplayItem(ResultItemBase? item)
         {
+            if (item is null)
+            {
+                return;
+            }
+
             var table = new Table();
             table.Border(TableBorder.DoubleEdge);
             table.HideHeaders();
@@ -114,6 +136,10 @@ namespace Ui.Appi
         {
             // TODO: colors should be definable and chart should be customizable in some way
             var chartDisplayedResults = allResults.Where(x => x.Items.Any()).ToList();
+            if (!chartDisplayedResults.Any())
+            {
+                return;
+            }
 
             var chart = new BreakdownChart();
             var totalCount = chartDisplayedResults.Count;
@@ -125,17 +151,12 @@ namespace Ui.Appi
                 chart.AddItem(group.Name, group.Items.Count(), currentColor);
             }
 
-            var ruleStyle = "red dim";
             var upperRule = new Rule();
-            upperRule.RuleStyle(ruleStyle);
+            upperRule.RuleStyle(_ruleStyle);
             AnsiConsole.Write(upperRule);
 
             AnsiConsole.Write(chart);
             AnsiConsole.WriteLine();
-
-            var lowerRule = new Rule("[white]Please select item[/]");
-            lowerRule.RuleStyle(ruleStyle);
-            AnsiConsole.Write(lowerRule);
         }
 
         private Color CalculateColor(int totalCount, int i)
