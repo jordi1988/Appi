@@ -30,7 +30,6 @@ namespace Ui.Appi
         public ResultItemBase PromtForItemSelection(IEnumerable<PromptGroup> items)
         {
             var prompt = new SelectionPrompt<ResultItemBase>()
-                //.Title("[b]Please [red]select item[/][/]:")
                 .PageSize(30)
                 .HighlightStyle(new Style(Color.White, Color.DarkRed))
                 .MoreChoicesText("[grey](Move up and down to reveal more items)[/]");
@@ -78,6 +77,34 @@ namespace Ui.Appi
             foreach (var property in properties)
             {
                 table.AddRow($"[bold]{property.Key}[/]", $"{property.Value}");
+            }
+
+            AnsiConsole.Write(table);
+        }
+
+        public void DisplaySources(IEnumerable<ISource> sources)
+        {
+            var table = new Table();
+            table.Border(TableBorder.DoubleEdge);
+
+            table.AddColumn("Name");
+            table.AddColumn("Description");
+            table.AddColumn("Active", config => config.Centered());
+            table.AddColumn("Source alias [i](-s / --source)[/]");
+            table.AddColumn("Group aliases [i](-g / --group)[/]");
+
+            foreach (var source in sources)
+            {
+                string styleBegin = source.IsActive ? string.Empty : "[strikethrough]";
+                string styleEnd = source.IsActive ? string.Empty : "[/]";
+
+                table.AddRow(
+                    $"{styleBegin}[bold]{source.Name}[/]{styleEnd}",
+                    $"{styleBegin}{source.Description}{styleEnd}",
+                    source.IsActive ? "X" : string.Empty,
+                    $"{source.Alias}",
+                    $"{string.Join(", ", source?.Groups ?? Array.Empty<string>())}"
+                );
             }
 
             AnsiConsole.Write(table);

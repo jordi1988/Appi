@@ -1,4 +1,5 @@
-﻿using Core.Services;
+﻿using Core.Abstractions;
+using Core.Services;
 using Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
@@ -25,6 +26,7 @@ namespace Ui.Appi
             var services = new ServiceCollection();
 
             // Core components
+            services.AddScoped<IHandler, SpectreConsoleHandler>();
             services.AddScoped<SourceService>();
 
             // Infrastructure
@@ -48,7 +50,7 @@ namespace Ui.Appi
             config.ValidateExamples();
 
             config.AddCommand<FindItemsCommand>("find")
-                .WithDescription("Query all [i](default)[/] or only the specified sources")
+                .WithDescription("Query all [i](default)[/] or only the specified sources.")
                 .WithExample("god")
                 .WithExample("find", "god")
                 .WithExample("find", "god", "--source", "poetry")
@@ -56,7 +58,9 @@ namespace Ui.Appi
 
             // config.AddCustomFindItemsCommandsFromAliases();
 
-            // TODO: command for listing groups and sources
+            config.AddCommand<ListSourcesCommand>("list")
+                .WithDescription("List all sources usable for the [i]find[/] command.")
+                .WithExample("list");
 
             config.AddBranch("config", source =>
             {

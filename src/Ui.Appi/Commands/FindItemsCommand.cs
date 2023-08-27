@@ -11,10 +11,12 @@ namespace Ui.Appi.Commands
 {
     public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
     {
+        private readonly IHandler _handler;
         private readonly SourceService _sourceService;
 
-        public FindItemsCommand(SourceService sourceService)
+        public FindItemsCommand(IHandler handler, SourceService sourceService)
         {
+            _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
         }
 
@@ -81,13 +83,11 @@ namespace Ui.Appi.Commands
 
                     collectingDataTask.StopTask();
                 });
-
-            var handler = new SpectreConsoleHandler();
-
-            handler.CreateBreakdownChart(allResults);
-            var selectedItem = handler.PromtForItemSelection(allResults);
-            handler.DisplayItem(selectedItem);
-            handler.PromtForActionInvokation(selectedItem);
+                      
+            _handler.CreateBreakdownChart(allResults);
+            var selectedItem = _handler.PromtForItemSelection(allResults);
+            _handler.DisplayItem(selectedItem);
+            _handler.PromtForActionInvokation(selectedItem);
 
             return 0;
         }

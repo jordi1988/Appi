@@ -10,6 +10,8 @@ namespace Core.Abstractions
 
         void DisplayItem(ResultItemBase item);
 
+        void DisplaySources(IEnumerable<ISource> sources);
+
         void CreateBreakdownChart(List<PromptGroup> allResults);
     }
 }
