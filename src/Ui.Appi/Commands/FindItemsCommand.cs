@@ -1,7 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Extensions;
 using Core.Models;
-using Core.Services;
+using Infrastructure.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -12,9 +12,9 @@ namespace Ui.Appi.Commands
     public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
     {
         private readonly IHandler _handler;
-        private readonly SourceService _sourceService;
+        private readonly FileSettingsService _sourceService;
 
-        public FindItemsCommand(IHandler handler, SourceService sourceService)
+        public FindItemsCommand(IHandler handler, FileSettingsService sourceService)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
@@ -34,39 +34,21 @@ namespace Ui.Appi.Commands
                 )
                 .Start(ctx =>
                 {
-                    IEnumerable<ISource> sources;
+                    var options = Settings.ToOptions(settings);
+                    var strategy = _sourceService.CalculateStrategy(options, Settings.QueryAllDefaultValue);
+                    var sources = strategy
+                        .GetSources()
+                        .OrderBy(x => x.SortOrder);
 
-                    // TODO: make use of strategy pattern
-                    
-
-                    if (!string.IsNullOrWhiteSpace(settings.SourceAlias))
-                    {
-                        sources = new[] {
-                            _sourceService.GetSourceInstance(settings.SourceAlias)
-                        };
-                    }
-                    else
-                    {
-                        bool isGroupProvided = !Settings.QueryAllDefaultValue.Equals(settings.GroupAlias);
-                        string? groupName = isGroupProvided ? settings.GroupAlias : null;
-
-                        sources = _sourceService
-                            .GetSourceInstances(groupName)
-                            .OrderBy(x => x.SortOrder);
-                    }
-
-                    var withinSourceOrGroupDescription = string.IsNullOrWhiteSpace(settings.SourceAlias) 
-                        ? $"group `{settings.GroupAlias}`" 
-                        : $"source `{settings.SourceAlias}`";
                     var collectingDataTask = ctx.AddTask(
-                        $"Collecting data with query `{settings.Query}` within {withinSourceOrGroupDescription}",
+                        $"Collecting data with query `{settings.Query}` within {strategy.QueryWithinDescription}",
                         true,
                         sources.Count());
 
                     foreach (var source in sources)
                     {
-                        var options = Settings.ToOptions(settings);
-                        var sourceResults = source.ReadAsync(options)
+                        var sourceResults = source
+                            .ReadAsync(options)
                             .GetAwaiter()
                             .GetResult()
                             .SortResults();
@@ -83,7 +65,7 @@ namespace Ui.Appi.Commands
 
                     collectingDataTask.StopTask();
                 });
-                      
+
             _handler.CreateBreakdownChart(allResults);
             var selectedItem = _handler.PromtForItemSelection(allResults);
             _handler.DisplayItem(selectedItem);
@@ -116,11 +98,11 @@ namespace Ui.Appi.Commands
 
             public override ValidationResult Validate()
             {
-                bool groupAliasEmptyOrDefault = 
-                    string.IsNullOrWhiteSpace(GroupAlias) ^ 
+                bool groupAliasEmptyOrDefault =
+                    string.IsNullOrWhiteSpace(GroupAlias) ^
                     QueryAllDefaultValue.Equals(GroupAlias);
-                
-                bool sourceAndGroupBothProvided = 
+
+                bool sourceAndGroupBothProvided =
                     !string.IsNullOrWhiteSpace(SourceAlias) &&
                     !groupAliasEmptyOrDefault;
 
@@ -135,6 +117,8 @@ namespace Ui.Appi.Commands
             internal static FindItemsOptions ToOptions(Settings settings) => new()
             {
                 Query = settings.Query,
+                GroupAlias = settings.GroupAlias,
+                SourceAlias = settings.SourceAlias,
                 CaseSensitive = settings.CaseSensitive,
             };
         }

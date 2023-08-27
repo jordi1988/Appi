@@ -1,62 +1,24 @@
 ﻿using Core.Abstractions;
-using Core.Exceptions;
 using Core.Extensions;
 using Core.Helper;
 using Core.Models;
+using Infrastructure.Strategies;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace Core.Services
+namespace Infrastructure.Services
 {
-    public partial class SourceService
+    public partial class FileSettingsService : ISettingsService
     {
         private readonly IPluginService _pluginService;
 
-        public SourceService(IPluginService pluginService)
+        public FileSettingsService(IPluginService pluginService)
         {
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
         }
 
-        public IEnumerable<ISource> GetSourceInstances(string? groupName = null)
+        public ISource CreateInstance(ISource source)
         {
-            var output = new List<ISource>();
-            // TODO: strategy pattern
-            var settingsFileSources = ReadSettingsFileSources();
-            if (string.IsNullOrWhiteSpace(groupName))
-            {
-                settingsFileSources = settingsFileSources.Where(x => x.IsActive);
-            }
-            else
-            {
-                settingsFileSources = settingsFileSources.Where(x => x.Groups?.Contains(groupName) ?? false);
-            }
-
-            if (!settingsFileSources.Any())
-            {
-                throw new ArgumentException($"The provided group `{groupName}` does not contain any sources.");
-            }
-
-            foreach (var source in settingsFileSources)
-            {
-                var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, _pluginService);
-                var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass);
-
-                source.CopyTo(instance);
-
-                output.Add(instance);
-            }
-
-            return output;
-        }
-
-        public ISource GetSourceInstance(string? alias)
-        {
-            // TODO: Check for duplicate aliases
-            ArgumentException.ThrowIfNullOrEmpty(nameof(alias));
-
-            var source = ReadSettingsFileSources().FirstOrDefault(x => alias!.Equals(x.Alias)) 
-                ?? throw new SourceNotFoundException($"{alias} (Alias)");
-
             var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, _pluginService);
             var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass);
 
@@ -106,7 +68,7 @@ namespace Core.Services
                           source.IsQueryCommand is null ||
                           source.Groups is null);
 
-            if (!sourcesToRepair.Any() )
+            if (!sourcesToRepair.Any())
             {
                 return;
             }
@@ -122,6 +84,23 @@ namespace Core.Services
             }
 
             SaveSettingsFileSources(fileSources);
+        }
+
+        public ISourceServiceSelector CalculateStrategy(FindItemsOptions options, string queryAllDefaultValue)
+        {
+            bool isSourceProvided = !string.IsNullOrWhiteSpace(options.SourceAlias);
+            bool isGroupProvided = !queryAllDefaultValue.Equals(options.GroupAlias);
+
+            if (isSourceProvided)
+            {
+                return new QuerySingleSourceStrategy(this, options.SourceAlias!);
+            }
+            else if (isGroupProvided)
+            {
+                return new QueryGroupStrategy(this, options.GroupAlias!);
+            }
+
+            return new QueryAllActiveSourcesStrategy(this);
         }
     }
 }

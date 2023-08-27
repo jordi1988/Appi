@@ -1,6 +1,6 @@
 ﻿using Core.Abstractions;
 using Core.Helper;
-using Core.Services;
+using Infrastructure.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -12,9 +12,9 @@ namespace Ui.Appi.Commands
     internal sealed class ConfigRegisterLibraryCommand : Command<ConfigRegisterLibraryCommand.Settings>
     {
         private readonly IPluginService _pluginService;
-        private readonly SourceService _sourceService;
+        private readonly FileSettingsService _sourceService;
 
-        public ConfigRegisterLibraryCommand(IPluginService pluginService, SourceService sourceService)
+        public ConfigRegisterLibraryCommand(IPluginService pluginService, FileSettingsService sourceService)
         {
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
             _sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));

@@ -112,7 +112,7 @@ namespace Ui.Appi
 
         public void CreateBreakdownChart(List<PromptGroup> allResults)
         {
-            // TODO: colors should be definable and chart should be customizable in some way 
+            // TODO: colors should be definable and chart should be customizable in some way
             var chartDisplayedResults = allResults.Where(x => x.Items.Any()).ToList();
 
             var chart = new BreakdownChart();

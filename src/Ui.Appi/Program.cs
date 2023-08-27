@@ -1,6 +1,6 @@
 ﻿using Core.Abstractions;
-using Core.Services;
 using Infrastructure.Extensions;
+using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 using Ui.Appi.Commands;
@@ -10,8 +10,6 @@ namespace Ui.Appi
 {
     internal static class Program
     {
-        private static ServiceProvider? _serviceProvider;
-
         private static async Task Main(string[] args)
         {
             var app = new CommandApp(RegisterServices());
@@ -27,9 +25,9 @@ namespace Ui.Appi
 
             // Core components
             services.AddScoped<IHandler, SpectreConsoleHandler>();
-            services.AddScoped<SourceService>();
+            services.AddScoped<FileSettingsService>();
 
-            // Infrastructure
+            // Infrastructure components
             services.AddPluginService();
 
             // Ui components
@@ -37,8 +35,6 @@ namespace Ui.Appi
             services.AddScoped<FindItemsCommand.Settings>();
             services.AddScoped<ConfigAllowLibrariesCommand.Settings>();
             services.AddScoped<ConfigRegisterLibraryCommand.Settings>();
-
-            _serviceProvider = services.BuildServiceProvider();
 
             return new TypeRegistrar(services);
         }
@@ -55,8 +51,6 @@ namespace Ui.Appi
                 .WithExample("find", "god")
                 .WithExample("find", "god", "--source", "poetry")
                 .WithExample("find", "god", "--group", "demo");
-
-            // config.AddCustomFindItemsCommandsFromAliases();
 
             config.AddCommand<ListSourcesCommand>("list")
                 .WithDescription("List all sources usable for the [i]find[/] command.")
@@ -79,25 +73,5 @@ namespace Ui.Appi
                     .WithExample("config", "register-lib", @"E:\appi-plugin2.dll");
             });
         }
-
-        /*
-        private static void AddCustomFindItemsCommandsFromAliases(this IConfigurator config)
-        {
-            var sourceService = _serviceProvider?.GetService(typeof(SourceService)) as SourceService;
-            var sources = sourceService!
-                .ReadSettingsFileSources()
-                .Where(x =>
-                    !string.IsNullOrWhiteSpace(x.Alias) &&
-                    x.IsQueryCommand == true);
-
-            foreach (var source in sources)
-            {
-                config.AddCommand<FindItemsCommand>(source.Alias)
-                    .WithData(new FindItemsCommandData(source.Alias))
-                    .WithDescription($"Query the source `[i]{source.Name}[/]` directly")
-                    .WithExample(source.Alias, "god");
-            }
-        }
-        */
     }
 }
