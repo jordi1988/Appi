@@ -11,11 +11,9 @@ namespace Ui.Appi.Commands
 {
     public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
     {
-        public const string QueryAllCommandName = "all";
-
         private readonly SourceService _sourceService;
 
-        public FindItemsCommand(IPluginService pluginService, SourceService sourceService)
+        public FindItemsCommand(SourceService sourceService)
         {
             _sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
         }
@@ -35,27 +33,31 @@ namespace Ui.Appi.Commands
                 .Start(ctx =>
                 {
                     IEnumerable<ISource> sources;
-                    
+
                     // TODO: make use of strategy pattern
-                    if (IsSingleSourceQueryCommand(context.Data))
+                    
+
+                    if (!string.IsNullOrWhiteSpace(settings.SourceAlias))
                     {
                         sources = new[] {
-                            _sourceService.GetSourceByAlias(context.Name)
+                            _sourceService.GetSourceInstance(settings.SourceAlias)
                         };
                     }
                     else
                     {
+                        bool isGroupProvided = !Settings.QueryAllDefaultValue.Equals(settings.GroupAlias);
+                        string? groupName = isGroupProvided ? settings.GroupAlias : null;
+
                         sources = _sourceService
-                            .GetActiveSources()
+                            .GetSourceInstances(groupName)
                             .OrderBy(x => x.SortOrder);
                     }
 
-                    // TODO: add option parameter to query exactly one source including disabled (--source|-s File DemoFileSource or alias)
-
-                    // TODO: Fetch and append sources separately from the service
-                    // sources = sources.Union(_externalLibraryService.GetActiveSources());
-
-                    var collectingDataTask = ctx.AddTask($"Collecting data",
+                    var withinSourceOrGroupDescription = string.IsNullOrWhiteSpace(settings.SourceAlias) 
+                        ? $"group `{settings.GroupAlias}`" 
+                        : $"source `{settings.SourceAlias}`";
+                    var collectingDataTask = ctx.AddTask(
+                        $"Collecting data with query `{settings.Query}` within {withinSourceOrGroupDescription}",
                         true,
                         sources.Count());
 
@@ -90,18 +92,45 @@ namespace Ui.Appi.Commands
             return 0;
         }
 
-        public bool IsSingleSourceQueryCommand(object? commandName) => commandName is not null;
-
         public sealed class Settings : CommandSettings
         {
+            public const string QueryAllDefaultValue = "all";
+
             [Description("Search for the given query.")]
             [CommandArgument(0, "<query>")]
             public string Query { get; init; } = string.Empty;
+
+            [Description("Search within a group.")]
+            [CommandOption("-g|--group")]
+            [DefaultValue(QueryAllDefaultValue)]
+            public string? GroupAlias { get; init; }
+
+            [Description("Search within a single source.")]
+            [CommandOption("-s|--source")]
+            public string? SourceAlias { get; init; }
 
             [Description("The query parameter will be case-sensitive.")]
             [CommandOption("-c|--case-sensitive")]
             [DefaultValue(false)]
             public bool CaseSensitive { get; init; }
+
+            public override ValidationResult Validate()
+            {
+                bool groupAliasEmptyOrDefault = 
+                    string.IsNullOrWhiteSpace(GroupAlias) ^ 
+                    QueryAllDefaultValue.Equals(GroupAlias);
+                
+                bool sourceAndGroupBothProvided = 
+                    !string.IsNullOrWhiteSpace(SourceAlias) &&
+                    !groupAliasEmptyOrDefault;
+
+                if (sourceAndGroupBothProvided)
+                {
+                    return ValidationResult.Error("You can only pass one option, either `source` or `group`.");
+                }
+
+                return base.Validate();
+            }
 
             internal static FindItemsOptions ToOptions(Settings settings) => new()
             {

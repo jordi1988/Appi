@@ -17,12 +17,26 @@ namespace Core.Services
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
         }
 
-        public IEnumerable<ISource> GetActiveSources()
+        public IEnumerable<ISource> GetSourceInstances(string? groupName = null)
         {
             var output = new List<ISource>();
+            // TODO: strategy pattern
+            var settingsFileSources = ReadSettingsFileSources();
+            if (string.IsNullOrWhiteSpace(groupName))
+            {
+                settingsFileSources = settingsFileSources.Where(x => x.IsActive);
+            }
+            else
+            {
+                settingsFileSources = settingsFileSources.Where(x => x.Groups?.Contains(groupName) ?? false);
+            }
 
-            var settingsFileActiveSources = ReadSettingsFileSources().Where(x => x.IsActive);
-            foreach (var source in settingsFileActiveSources)
+            if (!settingsFileSources.Any())
+            {
+                throw new ArgumentException($"The provided group `{groupName}` does not contain any sources.");
+            }
+
+            foreach (var source in settingsFileSources)
             {
                 var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, _pluginService);
                 var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass);
@@ -35,16 +49,13 @@ namespace Core.Services
             return output;
         }
 
-        public ISource GetSourceByAlias(string alias)
+        public ISource GetSourceInstance(string? alias)
         {
             // TODO: Check for duplicate aliases
             ArgumentException.ThrowIfNullOrEmpty(nameof(alias));
 
-            var source = ReadSettingsFileSources().FirstOrDefault(x => alias.Equals(x.Alias));
-            if (source is null)
-            {
-                throw new SourceNotFoundException($"{alias} (Alias)");
-            }
+            var source = ReadSettingsFileSources().FirstOrDefault(x => alias!.Equals(x.Alias)) 
+                ?? throw new SourceNotFoundException($"{alias} (Alias)");
 
             var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, _pluginService);
             var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass);
@@ -79,7 +90,6 @@ namespace Core.Services
             File.WriteAllText(ConfigurationHelper.ApplicationFilename, content);
         }
 
-        // [GeneratedRegex("[^\u0000-\u007F]")]
         [GeneratedRegex("[^a-zA-Z0-9]")]
         private static partial Regex AsciiCharactersOnlyRegex();
 
@@ -93,10 +103,8 @@ namespace Core.Services
             var sourcesToRepair = fileSources.Where(
                 source => string.IsNullOrWhiteSpace(source.Alias) ||
                           source.Alias.Contains(' ') ||
-                          source.Alias.Equals("all") ||
-                          source.IsQueryCommand is null);
-
-            // TODO: duplicate aliases are illegal
+                          source.IsQueryCommand is null ||
+                          source.Groups is null);
 
             if (!sourcesToRepair.Any() )
             {
@@ -110,6 +118,7 @@ namespace Core.Services
                     .ToLowerInvariant();
 
                 source.IsQueryCommand ??= true;
+                source.Groups ??= Array.Empty<string>();
             }
 
             SaveSettingsFileSources(fileSources);

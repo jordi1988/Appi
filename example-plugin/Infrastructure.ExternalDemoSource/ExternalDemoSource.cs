@@ -14,6 +14,7 @@ namespace ExternalSourceDemo
         public string? Path { get; set; }
         public string? Arguments { get; set; }
         public bool? IsQueryCommand { get; set; } = true;
+        public string[]? Groups { get; set; } = new[] { "demo" };
 
         public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {

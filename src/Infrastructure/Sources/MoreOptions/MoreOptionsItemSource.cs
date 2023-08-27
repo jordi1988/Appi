@@ -14,6 +14,7 @@ namespace Infrastructure.Sources.MoreOptions
         public string? Path { get; set; }
         public string? Arguments { get; set; }
         public bool? IsQueryCommand { get; set; } = false;
+        public string[]? Groups { get; set; } = Array.Empty<string>();
 
         public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {

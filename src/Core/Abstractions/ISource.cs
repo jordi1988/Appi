@@ -7,6 +7,7 @@ namespace Core.Abstractions
         string TypeName { get; set; }
         string Name { get; set; }
         string Alias { get; set; }
+        string[]? Groups { get; set; }
         string Description { get; set; }
         // should better be called IsIncludedInQueryAll
         bool IsActive { get; set; }

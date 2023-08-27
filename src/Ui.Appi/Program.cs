@@ -21,7 +21,7 @@ namespace Ui.Appi
         }
 
         private static ITypeRegistrar RegisterServices()
-        {   
+        {
             var services = new ServiceCollection();
 
             // Core components
@@ -47,11 +47,16 @@ namespace Ui.Appi
             config.SetApplicationName("Appi");
             config.ValidateExamples();
 
-            config.AddCommand<FindItemsCommand>(FindItemsCommand.QueryAllCommandName)
-                .WithDescription("Query all active sources")
-                .WithExample(FindItemsCommand.QueryAllCommandName, "god");
+            config.AddCommand<FindItemsCommand>("find")
+                .WithDescription("Query all [i](default)[/] or only the specified sources")
+                .WithExample("god")
+                .WithExample("find", "god")
+                .WithExample("find", "god", "--source", "poetry")
+                .WithExample("find", "god", "--group", "demo");
 
-            config.AddCustomFindItemsCommandsFromAliases();
+            // config.AddCustomFindItemsCommandsFromAliases();
+
+            // TODO: command for listing groups and sources
 
             config.AddBranch("config", source =>
             {
@@ -71,6 +76,7 @@ namespace Ui.Appi
             });
         }
 
+        /*
         private static void AddCustomFindItemsCommandsFromAliases(this IConfigurator config)
         {
             var sourceService = _serviceProvider?.GetService(typeof(SourceService)) as SourceService;
@@ -83,10 +89,11 @@ namespace Ui.Appi
             foreach (var source in sources)
             {
                 config.AddCommand<FindItemsCommand>(source.Alias)
-                    .WithData(source.Alias)
+                    .WithData(new FindItemsCommandData(source.Alias))
                     .WithDescription($"Query the source `[i]{source.Name}[/]` directly")
                     .WithExample(source.Alias, "god");
             }
         }
+        */
     }
 }

@@ -15,6 +15,7 @@ namespace Infrastructure.Sources.File
         public abstract string? Path { get; set; }
         public abstract string? Arguments { get; set; }
         public abstract bool? IsQueryCommand { get; set; }
+        public string[]? Groups { get; set; }
 
         protected FileSource()
         {

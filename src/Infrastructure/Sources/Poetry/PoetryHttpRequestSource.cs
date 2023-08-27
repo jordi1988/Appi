@@ -18,6 +18,7 @@ namespace Infrastructure.Sources.Poetry
         public string? Path { get; set; } = $"https://poetrydb.org/title/{ConfigurationHelper.QueryParam}";
         public string? Arguments { get; set; } = "max_title_length=50";
         public bool? IsQueryCommand { get; set; } = true;
+        public string[]? Groups { get; set; } = new[] { "demo" };
 
         /// <summary>
         /// Reads the asynchronous.
