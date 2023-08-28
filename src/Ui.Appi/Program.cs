@@ -50,6 +50,8 @@ namespace Ui.Appi
             config.AddCommand<FindItemsCommand>("find")
                 .WithDescription("Query all [i](default)[/] or only the specified sources.")
                 .WithExample("god")
+                .WithExample("god", "-s", "poetry")
+                .WithExample("god", "-g", "demo")
                 .WithExample("find", "god")
                 .WithExample("find", "god", "--source", "poetry")
                 .WithExample("find", "god", "--group", "demo");
@@ -72,7 +74,7 @@ namespace Ui.Appi
 
                 source.AddCommand<ConfigRegisterLibraryCommand>("register-lib")
                     .WithDescription("Register a new library which is copied to application directory and registred in sources.json.")
-                    .WithExample("config", "register-lib", @"E:\appi-plugin2.dll");
+                    .WithExample("config", "register-lib", @"E:\my-own-appi-plugin.dll");
             });
         }
     }

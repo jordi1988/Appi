@@ -10,7 +10,7 @@
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<Authors>Sascha Jordan</Authors>
 	<Title>Appi.Core</Title>
-	<Description>Query multiple sources for information at once. Use this package to create your own Appi plugins.</Description>
+	<Description>The goal is to query your sources for information through one tool; all at once, in groups or individually, highly extensible. Use this package to create your own Appi plugins.</Description>
 	<PackageProjectUrl>https://github.com/jordi1988/Appi/</PackageProjectUrl>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<RepositoryUrl>https://github.com/jordi1988/Appi/</RepositoryUrl>
@@ -18,9 +18,9 @@
 	<PackageReleaseNotes>inital release</PackageReleaseNotes>
 	<RepositoryType>git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<AssemblyVersion>1.0.3</AssemblyVersion>
-	<FileVersion>1.0.3</FileVersion>
-	<Version>1.0.3</Version>
+	<AssemblyVersion>1.0.4</AssemblyVersion>
+	<FileVersion>1.0.4</FileVersion>
+	<Version>1.0.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
