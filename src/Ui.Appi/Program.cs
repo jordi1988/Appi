@@ -73,7 +73,7 @@ namespace Ui.Appi
                     .WithExample("config", "allow-libs", "true");
 
                 source.AddCommand<ConfigRegisterLibraryCommand>("register-lib")
-                    .WithDescription("Register a new library which is copied to application directory and registred in sources.json.")
+                    .WithDescription("Register a new library which is copied to application directory and registered in `sources.json`.")
                     .WithExample("config", "register-lib", @"E:\my-own-appi-plugin.dll");
             });
         }

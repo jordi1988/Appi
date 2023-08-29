@@ -41,10 +41,10 @@ namespace Ui.Appi.Commands
 
             var newFilePath = Path.Combine(ConfigurationHelper.ApplicationDirectory, filename);
             CopyToConfigDirectory(settings, newFilePath);
-            AppendToConfigFile(newFilePath);
+            AppendToConfigFile(settings, newFilePath);
 
             AnsiConsole.Write(
-                new Markup($"The file [gray]{filename}[/] was registered."));
+                new Markup($"The file [gray]{filename}[/] was installed."));
 
             if (!_pluginService.IsAllowed())
             {
@@ -61,8 +61,13 @@ namespace Ui.Appi.Commands
             File.Copy(settings.Path, newFilePath, true);
         }
 
-        private void AppendToConfigFile(string newFilePath)
+        private void AppendToConfigFile(Settings settings, string newFilePath)
         {
+            if (settings.CopyOnly)
+            {
+                return;
+            }
+
             var newAssembly = Assembly.UnsafeLoadFrom(newFilePath);
             var classTypes = ReflectionHelper.GetClassesImplementingInterface<ISource>(newAssembly);
             var commandSettings = new FindItemsCommand.Settings();
@@ -85,6 +90,11 @@ namespace Ui.Appi.Commands
             [Description("Path to the DLL file.")]
             [CommandArgument(0, "<path>")]
             public string Path { get; init; } = string.Empty;
+
+            [Description("Just copy the assembly into the application's directory (e. g. for plugin updates). This won't register the assembly in `sources.json`.")]
+            [CommandOption("--copy-only")]
+            [DefaultValue(false)]
+            public bool CopyOnly { get; init; }
         }
     }
 }
