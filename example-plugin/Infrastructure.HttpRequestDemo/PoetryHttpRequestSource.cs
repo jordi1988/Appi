@@ -5,7 +5,7 @@ using Core.Models;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace Infrastructure.Sources.Poetry
+namespace Infrastructure.HttpRequestDemo
 {
     internal partial class PoetryHttpRequestSource : ISource
     {

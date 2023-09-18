@@ -28,7 +28,7 @@ namespace Core.Strategies
 
             var output = new[] { source };
 
-            return output.Instantiate(_pluginService);
+            return output.ToRealInstance(_pluginService);
         }
     }
 }

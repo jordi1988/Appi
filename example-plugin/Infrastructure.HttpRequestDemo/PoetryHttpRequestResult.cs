@@ -3,7 +3,7 @@ using Core.Attributes;
 using Core.Models;
 using TextCopy;
 
-namespace Infrastructure.Sources.Poetry
+namespace Infrastructure.HttpRequestDemo
 {
     internal class PoetryHttpRequestResult : ResultItemBase
     {

@@ -3,6 +3,7 @@ using Core.Models;
 
 namespace ExternalSourceDemo
 {
+    // TODO: should be named SimplePluginDemo
     public class ExternalDemoSource : ISource
     {
         public string TypeName { get; set; } = typeof(ExternalDemoSource).Name;

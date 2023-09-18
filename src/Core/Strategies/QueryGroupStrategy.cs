@@ -32,7 +32,7 @@ namespace Core.Strategies
                 throw new GroupNotFoundException(_groupAlias);
             }
 
-            return output.Instantiate(_pluginService);
+            return output.ToRealInstance(_pluginService);
         }
     }
 }

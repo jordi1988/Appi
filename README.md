@@ -82,6 +82,7 @@ COMMANDS:
 ## Infrastructure
 Some infrastructure classes are already provided. You can build up from given classes like:
 - **File** (see `sources.json` after running `appi config open` and change the path of your text file)
+- **MySQL/MariaDB**
 - **More to come** out of the box (want to collaborate?)
 
 ## Plugins
@@ -89,8 +90,9 @@ This app is highly extensible by adding own plugins. You can fetch data from any
 
 Just follow these simple steps:
 1. Create a .NET 7 class library
-2. Add the `Appi.Core` NuGet package as a dependency  
-   (e. g. `PM> Install-Package Appi.Core`)
+2. Add the `Appi.Core` NuGet package as a dependency
+    - `PM> Install-Package Appi.Core` for plugin development from scratch or
+    - `PM> Install-Package Appi.Infrastructure` for plugin development with pre-built infrastructure like [MySQL](https://github.com/jordi1988/Appi/blob/master/example-plugin/Infrastructure.MySqlDemo/AddressMySqlSource.cs)
 3. Create classes that implement `ISource` and `ResultItemBase` ([see GitHub examples](https://github.com/jordi1988/Appi/tree/master/example-plugin/Infrastructure.ExternalDemoSource))
 4. Register the new assembly by calling `appi config register-lib "pathToAssembly.dll"`
  
@@ -189,6 +191,5 @@ namespace ExternalSourceDemo
 ## Up next
 Build more infrastructure classes like 
 - Microsoft SQL
-- MySQL / MariaDB
 - SQlite
 - Unit tests

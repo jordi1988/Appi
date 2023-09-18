@@ -72,7 +72,7 @@ namespace Ui.Appi
 
             var selectedAction = AnsiConsole.Prompt(
                 new SelectionPrompt<ActionItem>()
-                    .Title("[b]Which [red]action[/] should be invoked?[/]:")
+                    .Title("[b]Which [red]action[/] should be invoked? [/]")
                     .PageSize(30)
                     .HighlightStyle(new Style(Color.White, Color.DarkRed))
                     .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")

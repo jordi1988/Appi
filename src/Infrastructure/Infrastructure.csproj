@@ -5,17 +5,38 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>Appi.$(MSBuildProjectName)</AssemblyName>
-    <Version>1.0.4</Version>
+	<IsPublishable>True</IsPublishable>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<Authors>Sascha Jordan</Authors>
+	<Title>Appi.Infrastructure</Title>
+	<Description>The goal is to query your sources for information through one tool; all at once, in groups or individually, highly extensible. Use this package to create your own Appi plugins with pre-built infrastructure like MySQL to speed up your development.</Description>
+	<PackageProjectUrl>https://github.com/jordi1988/Appi/</PackageProjectUrl>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/jordi1988/Appi/</RepositoryUrl>
+	<PackageTags>query; console; information; gathering; plugin; extensible; powertoys</PackageTags>
+	<PackageReleaseNotes>inital release</PackageReleaseNotes>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="ArgumentString" Version="1.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageReference Include="Dapper" Version="2.0.151" />
+    <PackageReference Include="MySqlConnector" Version="2.2.7" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<None Include="..\..\README.md">
+	  <Pack>True</Pack>
+	  <PackagePath>\</PackagePath>
+	</None>
   </ItemGroup>
 
 </Project>

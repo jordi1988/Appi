@@ -22,7 +22,7 @@ namespace Core.Strategies
                 .ReadSettingsFileSources()
                 .Where(x => x.IsActive);
 
-            return sources.Instantiate(_pluginService);
+            return sources.ToRealInstance(_pluginService);
         }
     }
 }

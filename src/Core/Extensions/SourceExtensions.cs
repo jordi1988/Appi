@@ -16,7 +16,7 @@ namespace Core.Extensions
             instance.Arguments = source.Arguments;
         }
 
-        public static ISource CreateInstance(this ISource source, IPluginService pluginService)
+        public static ISource ToRealInstance(this ISource source, IPluginService pluginService)
         {
             var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, pluginService);
             var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass);
@@ -26,13 +26,13 @@ namespace Core.Extensions
             return instance;
         }
 
-        public static IEnumerable<ISource> Instantiate(this IEnumerable<ISource> sources, IPluginService pluginService)
+        public static IEnumerable<ISource> ToRealInstance(this IEnumerable<ISource> sources, IPluginService pluginService)
         {
             var output = new List<ISource>();
 
             foreach (var source in sources)
             {
-                var instance = CreateInstance(source, pluginService);
+                var instance = ToRealInstance(source, pluginService);
 
                 output.Add(instance);
             }

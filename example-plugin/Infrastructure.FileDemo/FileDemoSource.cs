@@ -2,11 +2,11 @@
 using Core.Models;
 using Infrastructure.Sources.File;
 
-namespace Infrastructure.Sources.DemoFile
+namespace Infrastructure.FileDemo
 {
-    internal class DemoFileSource : FileSource
+    public class FileDemoSource : FileSource
     {
-        public override string TypeName { get; set; } = typeof(DemoFileSource).Name;
+        public override string TypeName { get; set; } = typeof(FileDemoSource).Name;
         public override string Name { get; set; } = "scraped.txt File";
         public override string Alias { get; set; } = "demofile";
         public override string Description { get; set; } = "Contents of the file.";
@@ -36,7 +36,7 @@ namespace Infrastructure.Sources.DemoFile
 
         protected override FileResult Parse(string row, int rowNumber)
         {
-            return new DemoFileResult(Path!, rowNumber)
+            return new FileDemoResult(Path!, rowNumber)
             {
                 Id = rowNumber,
                 Name = $"Line {rowNumber}",

@@ -3,14 +3,14 @@ using Infrastructure.Services;
 using Infrastructure.Sources.File;
 using TextCopy;
 
-namespace Infrastructure.Sources.DemoFile
+namespace Infrastructure.FileDemo
 {
-    internal class DemoFileResult : FileResult
+    public class FileDemoResult : FileResult
     {
         private readonly string _fileName;
         private readonly int _lineNumber;
 
-        public DemoFileResult(string fileName, int lineNumber)
+        public FileDemoResult(string fileName, int lineNumber)
         {
             _fileName = fileName;
             _lineNumber = lineNumber;
