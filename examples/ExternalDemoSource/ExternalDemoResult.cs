@@ -2,7 +2,7 @@
 using Core.Attributes;
 using Core.Models;
 
-namespace ExternalSourceDemo
+namespace Infrastructure.ExternalSourceDemo
 {
     public class ExternalDemoResult : ResultItemBase
     {

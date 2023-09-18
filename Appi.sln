@@ -16,19 +16,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.ExternalDemoSource", "example-plugin\Infrastructure.ExternalDemoSource\Infrastructure.ExternalDemoSource.csproj", "{EDEF9501-74FE-4E03-B925-746C6B842BC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalDemoSource", "examples\ExternalDemoSource\ExternalDemoSource.csproj", "{EDEF9501-74FE-4E03-B925-746C6B842BC7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9CE1E074-70DF-4A86-8528-0EFFD466A5E0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugin-example", "plugin-example", "{6189930F-2D64-45FA-9C7B-7B46E4106A6F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{6189930F-2D64-45FA-9C7B-7B46E4106A6F}"
+	ProjectSection(SolutionItems) = preProject
+		examples\sources.json = examples\sources.json
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0E9DE4D8-0799-4EFF-BC0B-B1529CF92146}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.MySqlDemo", "example-plugin\Infrastructure.MySqlDemo\Infrastructure.MySqlDemo.csproj", "{B0592A09-19D8-4C98-A6B6-3D7383FE7568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySqlDemo", "examples\MySqlDemo\MySqlDemo.csproj", "{B0592A09-19D8-4C98-A6B6-3D7383FE7568}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.HttpRequestDemo", "example-plugin\Infrastructure.HttpRequestDemo\Infrastructure.HttpRequestDemo.csproj", "{FAA4EADC-382B-45F8-85F7-4FCCD995B3CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpRequestDemo", "examples\HttpRequestDemo\HttpRequestDemo.csproj", "{FAA4EADC-382B-45F8-85F7-4FCCD995B3CB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.FileDemo", "example-plugin\Infrastructure.FileDemo\Infrastructure.FileDemo.csproj", "{66E344C8-0385-4210-8215-27807F49A6F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileDemo", "examples\FileDemo\FileDemo.csproj", "{66E344C8-0385-4210-8215-27807F49A6F8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsSqlDemo", "examples\MsSqlDemo\MsSqlDemo.csproj", "{6D2FD811-A557-4812-A35F-B7EEB53227B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +69,10 @@ Global
 		{66E344C8-0385-4210-8215-27807F49A6F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66E344C8-0385-4210-8215-27807F49A6F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66E344C8-0385-4210-8215-27807F49A6F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D2FD811-A557-4812-A35F-B7EEB53227B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D2FD811-A557-4812-A35F-B7EEB53227B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D2FD811-A557-4812-A35F-B7EEB53227B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D2FD811-A557-4812-A35F-B7EEB53227B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +85,7 @@ Global
 		{B0592A09-19D8-4C98-A6B6-3D7383FE7568} = {6189930F-2D64-45FA-9C7B-7B46E4106A6F}
 		{FAA4EADC-382B-45F8-85F7-4FCCD995B3CB} = {6189930F-2D64-45FA-9C7B-7B46E4106A6F}
 		{66E344C8-0385-4210-8215-27807F49A6F8} = {6189930F-2D64-45FA-9C7B-7B46E4106A6F}
+		{6D2FD811-A557-4812-A35F-B7EEB53227B4} = {6189930F-2D64-45FA-9C7B-7B46E4106A6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {582939FE-3D4B-4D3A-B69D-AC28A8E4AC27}

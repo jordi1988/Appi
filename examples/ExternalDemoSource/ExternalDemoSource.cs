@@ -1,7 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Models;
 
-namespace ExternalSourceDemo
+namespace Infrastructure.ExternalSourceDemo
 {
     // TODO: should be named SimplePluginDemo
     public class ExternalDemoSource : ISource

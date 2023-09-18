@@ -1,0 +1,80 @@
+[
+  {
+    "TypeName": "DemoFileSource",
+    "Name": "Some demo file",
+    "Alias": "demofile",
+    "Groups": [],
+    "Description": "Contents of the file.",
+    "IsActive": false,
+    "SortOrder": 10,
+    "Path": "E:\\demofile.txt",
+    "Arguments": null,
+    "IsQueryCommand": true
+  },
+  {
+    "TypeName": "PoetryHttpRequestSource",
+    "Name": "Poetry",
+    "Alias": "poetry",
+    "Groups": [
+      "demo"
+    ],
+    "Description": "by poetrydb.org",
+    "IsActive": false,
+    "SortOrder": 20,
+    "Path": "https://poetrydb.org/title/##QUERY##",
+    "Arguments": "max_title_length=50",
+    "IsQueryCommand": true
+  },
+  {
+    "TypeName": "MoreOptionsItemSource",
+    "Name": "More",
+    "Alias": "more",
+    "Groups": [],
+    "Description": "Non-contextual options",
+    "IsActive": true,
+    "SortOrder": 99,
+    "Path": null,
+    "Arguments": null,
+    "IsQueryCommand": false
+  },
+  {
+    "TypeName": "ExternalDemoSource",
+    "Name": "Demo Assembly",
+    "Alias": "external",
+    "Groups": [
+      "demo"
+    ],
+    "Description": "Returns hard-coded hello world.",
+    "IsActive": true,
+    "SortOrder": 50,
+    "Path": null,
+    "Arguments": null,
+    "IsQueryCommand": true
+  },
+  {
+    "TypeName": "AddressMySqlSource",
+    "Name": "Query address MySQL Database",
+    "Alias": "address",
+    "Groups": [
+      "demo"
+    ],
+    "Description": "Lookup complete address.",
+    "IsActive": true,
+    "SortOrder": 30,
+    "Path": null,
+    "Arguments": "Server=XXX;Port=3307;Database=XXX;Uid=root;Pwd=XXX",
+    "IsQueryCommand": true
+  },
+  {
+    "TypeName": "UserMsSqlSource",
+    "Name": "Query user SQL Server Database",
+    "Alias": "user",
+    "Groups": [],
+    "Description": "Lookup users.",
+    "IsActive": true,
+    "SortOrder": 30,
+    "Path": null,
+    "Arguments": "Server=XXX;Database=XXX;User Id=sa;Password=XXX;TrustServerCertificate=True",
+    "IsQueryCommand": true
+  }
+]

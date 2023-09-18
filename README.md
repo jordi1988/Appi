@@ -78,11 +78,13 @@ COMMANDS:
     allow-libs <allowed: true|false>    Allow or disallow external libraries to be loaded
     register-lib <path>                 Register a new library which is copied to application directory and registred in sources.json
 ```
+See an example of the configuration file [here](https://github.com/jordi1988/Appi/tree/master/examples/sources.json).
 
 ## Infrastructure
 Some infrastructure classes are already provided. You can build up from given classes like:
 - **File** (see `sources.json` after running `appi config open` and change the path of your text file)
-- **MySQL/MariaDB**
+- **[SQL Server / MSSQL](https://github.com/jordi1988/Appi/tree/master/examples/MsSqlDemo)**
+- **[MySQL / MariaDB](https://github.com/jordi1988/Appi/tree/master/examples/MySqlDemo)**
 - **More to come** out of the box (want to collaborate?)
 
 ## Plugins
@@ -92,9 +94,10 @@ Just follow these simple steps:
 1. Create a .NET 7 class library
 2. Add the `Appi.Core` NuGet package as a dependency
     - `PM> Install-Package Appi.Core` for plugin development from scratch or
-    - `PM> Install-Package Appi.Infrastructure` for plugin development with pre-built infrastructure like [MySQL](https://github.com/jordi1988/Appi/blob/master/example-plugin/Infrastructure.MySqlDemo/AddressMySqlSource.cs)
-3. Create classes that implement `ISource` and `ResultItemBase` ([see GitHub examples](https://github.com/jordi1988/Appi/tree/master/example-plugin/Infrastructure.ExternalDemoSource))
+    - `PM> Install-Package Appi.Infrastructure` for plugin development with pre-built infrastructure like File access, MySQL/MariaDB or Microsoft SQL Server
+3. Create classes that implement `ISource` and `ResultItemBase` ([see GitHub examples](https://github.com/jordi1988/Appi/tree/master/examples/ExternalDemoSource))
 4. Register the new assembly by calling `appi config register-lib "pathToAssembly.dll"`
+5. If applicable: change connection string(s) in sources.json (`appi config open`)
  
 ### Example for implementing `ISource`
 The class implementing `ISource` must have a parameterless constructor.  
@@ -190,6 +193,5 @@ namespace ExternalSourceDemo
 
 ## Up next
 Build more infrastructure classes like 
-- Microsoft SQL
 - SQlite
 - Unit tests
