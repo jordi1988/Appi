@@ -13,6 +13,10 @@ Because your information sources will be different from mine, go start building 
 This demo shows the `find` command searching for `god` with two active sources (`poetry.db` and `MoreOptions`), selecting and displaying one result (Author, Title, Lines - properties based on `ResultAttribute`), and finally taking some action on it (`Quit`).
 ![Demo](find-command-demo.gif)
 
+### Screenshot of multiple results
+This screenshot shows the `find` command searching for `e` within all active sources (4). This is for demonstration purposes only, do not try to find any logic in it :)
+![Screenshot](query-all-example.jpg)
+
 ### Help information
 #### `find` command (default, can be omitted)
 ```
