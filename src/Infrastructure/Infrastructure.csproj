@@ -10,7 +10,7 @@
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<Authors>Sascha Jordan</Authors>
 	<Title>Appi.Infrastructure</Title>
-	<Description>The goal is to query your sources for information through one tool; all at once, in groups or individually, highly extensible. Use this package to create your own Appi plugins with pre-built infrastructure like MySQL to speed up your development.</Description>
+	<Description>The goal is to query your sources for information through one tool; all at once, in groups or individually, highly extensible. Use this package to create your own Appi plugins with pre-built infrastructure like SQL Server or MySQL to speed up your development.</Description>
 	<PackageProjectUrl>https://github.com/jordi1988/Appi/</PackageProjectUrl>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<RepositoryUrl>https://github.com/jordi1988/Appi/</RepositoryUrl>
