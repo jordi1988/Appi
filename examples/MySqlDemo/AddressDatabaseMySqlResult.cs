@@ -1,10 +1,23 @@
-﻿using Core.Models;
+﻿using Core.Attributes;
+using Core.Models;
 using Infrastructure.Services;
 
 namespace Infrastructure.MySql
 {
     public class AddressDatabaseMySqlResult : MySqlResultBase<AddressDto>
     {
+        [Result]
+        public string? Street => Result.Street;
+
+        [Result]
+        public int? Number => Result.Number;
+
+        [Result]
+        public string? PostalCode => Result.PostalCode;
+
+        [Result]
+        public string? City => Result.City;
+
         public AddressDatabaseMySqlResult(AddressDto result)
             : base(result)
         {

@@ -1,10 +1,17 @@
-﻿using Core.Models;
+﻿using Core.Attributes;
+using Core.Models;
 using Infrastructure.Services;
 
 namespace Infrastructure.MsSql
 {
     public class UserDatabaseMsSqlResult : MsSqlResultBase<UserDto>
     {
+        [Result]
+        public Guid UserID => Result.UserID;
+
+        [Result]
+        public string UserName => Result.UserName;
+
         public UserDatabaseMsSqlResult(UserDto result)
             : base(result)
         {
