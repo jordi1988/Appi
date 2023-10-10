@@ -6,6 +6,8 @@ namespace Infrastructure.ExternalSourceDemo
     // TODO: should be named SimplePluginDemo
     public class ExternalDemoSource : ISource
     {
+        private readonly IHandlerHelper _handlerHelper;
+
         public string TypeName { get; set; } = typeof(ExternalDemoSource).Name;
         public string Name { get; set; } = "Demo Assembly";
         public string Alias { get; set; } = "external";
@@ -17,11 +19,25 @@ namespace Infrastructure.ExternalSourceDemo
         public bool? IsQueryCommand { get; set; } = true;
         public string[]? Groups { get; set; } = new[] { "demo" };
 
+        // Either this constructor ...
+        public ExternalDemoSource()
+        {
+        }
+
+        // ... or this constructor
+        public ExternalDemoSource(IHandlerHelper handlerHelper)
+        {
+            _handlerHelper = handlerHelper;
+        }
+
         public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
             var output = new List<ExternalDemoResult>()
             {
-                new() { Name = "Hello", Description = options?.Query ?? "World" }
+                new ExternalDemoResult(_handlerHelper) { 
+                    Name = "Hello", 
+                    Description = options?.Query ?? "World" 
+                }
             };
 
             return await Task.FromResult(output);

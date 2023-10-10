@@ -4,13 +4,18 @@ What is `Appi`? Appi is short for **App i**nformation.
 The goal is to query your sources for information through one tool; all at once, in groups or individually, highly extensible. Accessible from your favorite shell with easy-to-remeber commands from your keyboard without even touching your mouse.  
 Because your information sources will be different from mine, go start building your first plugin.
 
+## Features
+- Easily provide your [custom plugin](#Plugins)
+- Asynchronously fetch all your sources matching your query
+- Make use of the given toolset (e.g. for backward navigation)
+
 ## Installation
 - Install via [NuGet](https://www.nuget.org/packages/Appi): `dotnet tool install --global Appi`
 - Build from your own
 
 ## Usage
 ### Demo
-This demo shows the `find` command searching for `god` with two active sources (`poetry.db` and `MoreOptions`), selecting and displaying one result (Author, Title, Lines - properties based on `ResultAttribute`), and finally taking some action on it (`Quit`).
+This demo shows the `find` command searching for `god` with two active sources (`poetry.db` and `MoreOptions`), selecting and displaying one result (Author, Title, Lines - properties based on `DetailViewColumnAttribute`), and finally taking some action on it (`Quit`).
 ![Demo](find-command-demo.gif)
 
 ### Screenshot of multiple results
@@ -85,9 +90,9 @@ COMMANDS:
 See an example of the configuration file [here](https://github.com/jordi1988/Appi/tree/master/examples/sources.json).
 
 ## Infrastructure
-Some infrastructure classes are already provided. You can build up from given classes like:
+Some infrastructure classes are already provided. Fetching data from your database is as easy as writing the SQL query for it. You can build up from given classes like:
 - **File** (see `sources.json` after running `appi config open` and change the path of your text file)
-- **[SQL Server / MSSQL](https://github.com/jordi1988/Appi/tree/master/examples/MsSqlDemo)**
+- **[SQL Server (MSSQL)](https://github.com/jordi1988/Appi/tree/master/examples/MsSqlDemo)**
 - **[MySQL / MariaDB](https://github.com/jordi1988/Appi/tree/master/examples/MySqlDemo)**
 - **More to come** out of the box (want to collaborate?)
 
@@ -104,7 +109,7 @@ Just follow these simple steps:
 5. If applicable: change connection string(s) in sources.json (`appi config open`)
  
 ### Example for implementing `ISource`
-The class implementing `ISource` must have a parameterless constructor.  
+The class implementing `ISource` must either have a parameterless constructor or one that expects `IHandlerHelper`.  
 The `ReadAsync()` method must pass the `FindItemsOptions` object which contains the query and returns the found data.  
 The initial values of the properties are used to create the entry in the `sources.json` config file when installing your plugin.
 
@@ -112,10 +117,13 @@ The initial values of the properties are used to create the entry in the `source
 using Core.Abstractions;
 using Core.Models;
 
-namespace ExternalSourceDemo
+namespace Infrastructure.ExternalSourceDemo
 {
+    // TODO: should be named SimplePluginDemo
     public class ExternalDemoSource : ISource
     {
+        private readonly IHandlerHelper _handlerHelper;
+
         public string TypeName { get; set; } = typeof(ExternalDemoSource).Name;
         public string Name { get; set; } = "Demo Assembly";
         public string Alias { get; set; } = "external";
@@ -127,11 +135,25 @@ namespace ExternalSourceDemo
         public bool? IsQueryCommand { get; set; } = true;
         public string[]? Groups { get; set; } = new[] { "demo" };
 
+        // Either this constructor ...
+        public ExternalDemoSource()
+        {
+        }
+
+        // ... or this constructor
+        public ExternalDemoSource(IHandlerHelper handlerHelper)
+        {
+            _handlerHelper = handlerHelper;
+        }
+
         public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
             var output = new List<ExternalDemoResult>()
             {
-                new() { Name = "Hello", Description = options?.Query ?? "World" }
+                new ExternalDemoResult(_handlerHelper) { 
+                    Name = "Hello", 
+                    Description = options?.Query ?? "World" 
+                }
             };
 
             return await Task.FromResult(output);
@@ -164,7 +186,7 @@ Of course, the file can be edited to your needs afterwards, e. g. to change the 
  
 ### Example for implementing ResultItemBase
 This class controls the output of an item by overriding the `ToString()` method and displays the possible actions with the result of `GetActions()` method if an item of this source gets selected. You can easily interact with **predefined services** like using the `ClipboardService` or `ProcessService` for most frequent used actions.  
-By using the `Result` attribute you can define the displayed properties in the output table.
+By using the `DetailViewColumn` attribute (former `ResultAttribute`) you can define the displayed properties in the output table. Make use of `IHandlerHelper` if you'd like to `EscapeMarkup()` or use pre-defined actions like `Back()` or `Exit()`.
 
 ``` csharp
 using Core.Abstractions;
@@ -175,15 +197,28 @@ namespace ExternalSourceDemo
 {
     public class ExternalDemoResult : ResultItemBase
     {
-        [Result]
-        public override string Name { get => base.Name; set => base.Name = value; }
+        private readonly IHandlerHelper _handlerHelper;
 
-        [Result]
-        public override string Description { get => base.Description; set => base.Description = value; }
+        [DetailViewColumn]
+        public override string Name => base.Name;
+
+        [DetailViewColumn]
+        public override string Description => _handlerHelper.EscapeMarkup(base.Description);
+
+        public ExternalDemoResult(IHandlerHelper handlerHelper)
+        {
+            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+        }
 
         public override IEnumerable<ActionItem> GetActions()
         {
-            return Enumerable.Empty<ActionItem>();
+            var actions = new List<ActionItem>
+            {
+                _handlerHelper.Back(),
+                _handlerHelper.Exit()
+            };
+
+            return actions;
         }
 
         public override string ToString()
@@ -192,10 +227,8 @@ namespace ExternalSourceDemo
         }
     }
 }
-
 ```
 
 ## Up next
-Build more infrastructure classes like 
-- SQlite
+- XML docs
 - Unit tests

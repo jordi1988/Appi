@@ -16,6 +16,11 @@ namespace Infrastructure.MsSql
         public override string? Arguments { get; set; } = "INSERT_CONNECTIONSTRING_HERE";
         public override bool? IsQueryCommand { get; set; } = true;
 
+        public UserMsSqlSource(IHandlerHelper handlerHelper) 
+            : base(handlerHelper)
+        {
+        }
+
         protected override CommandDefinition GetSqlQuery(FindItemsOptions options)
         {
             var query = $"%{EncodeForLike(options.Query)}%";
@@ -27,7 +32,7 @@ namespace Infrastructure.MsSql
 
         protected override ResultItemBase Parse(UserDto row)
         {
-            return new UserDatabaseMsSqlResult(row);
+            return new UserDatabaseMsSqlResult(row, HandlerHelper);
         }
     }
 }

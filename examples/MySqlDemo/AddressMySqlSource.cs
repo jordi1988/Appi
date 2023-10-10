@@ -16,6 +16,11 @@ namespace Infrastructure.MySql
         public override string? Arguments { get; set; } = "INSERT_CONNECTIONSTRING_HERE";
         public override bool? IsQueryCommand { get; set; } = true;
 
+        public AddressMySqlSource(IHandlerHelper handlerHelper) 
+            : base(handlerHelper)
+        {
+        }
+
         protected override CommandDefinition GetSqlQuery(FindItemsOptions options)
         {
             var query = $"%{EncodeForLike(options.Query)}%";
@@ -27,7 +32,7 @@ namespace Infrastructure.MySql
 
         protected override ResultItemBase Parse(AddressDto row)
         {
-            return new AddressDatabaseMySqlResult(row);
+            return new AddressDatabaseMySqlResult(row, HandlerHelper);
         }
     }
 }

@@ -8,14 +8,16 @@ namespace Core.Strategies
     {
         private readonly ISettingsService _settingsService;
         private readonly IPluginService _pluginService;
+        private readonly IHandlerHelper _handlerHelper;
         private readonly string _groupAlias;
 
         public string QueryWithinDescription => $"group `{_groupAlias}`";
 
-        public QueryGroupStrategy(ISettingsService settingsService, IPluginService pluginService, string groupAlias)
+        public QueryGroupStrategy(ISettingsService settingsService, IPluginService pluginService, IHandlerHelper handlerHelper, string groupAlias)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
+            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
             _groupAlias = groupAlias;
         }
 
@@ -32,7 +34,7 @@ namespace Core.Strategies
                 throw new GroupNotFoundException(_groupAlias);
             }
 
-            return output.ToRealInstance(_pluginService);
+            return output.ToRealInstance(_pluginService, _handlerHelper);
         }
     }
 }

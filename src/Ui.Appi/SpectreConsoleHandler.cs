@@ -10,6 +10,7 @@ namespace Ui.Appi
     internal class SpectreConsoleHandler : IHandler
     {
         private const string _ruleStyle = "red dim";
+        private IEnumerable<PromptGroup>? _results;
 
         private readonly Color[] _chartColors = {
             Color.SkyBlue2,
@@ -43,7 +44,7 @@ namespace Ui.Appi
             AnsiConsole.Write(rule);
 
             var prompt = new SelectionPrompt<ResultItemBase>()
-                .PageSize(30)
+                .PageSize(35)
                 .HighlightStyle(new Style(Color.White, Color.DarkRed))
                 .MoreChoicesText("[grey](Move up and down to reveal more items)[/]");
 
@@ -132,7 +133,7 @@ namespace Ui.Appi
             AnsiConsole.Write(table);
         }
 
-        public void CreateBreakdownChart(List<PromptGroup> allResults)
+        public void CreateBreakdownChart(IEnumerable<PromptGroup> allResults)
         {
             // TODO: colors should be definable and chart should be customizable in some way
             var chartDisplayedResults = allResults.Where(x => x.Items.Any()).ToList();
@@ -172,6 +173,21 @@ namespace Ui.Appi
             }
 
             return output;
+        }
+
+        public void SaveResultsToMemory(IEnumerable<PromptGroup> allResults)
+        {
+            _results = allResults;
+        }
+
+        public IEnumerable<PromptGroup> ReadResultsFromMemory()
+        {
+            return _results ?? Enumerable.Empty<PromptGroup>();
+        }
+
+        public void ClearScreen()
+        {
+            AnsiConsole.Clear();
         }
     }
 }

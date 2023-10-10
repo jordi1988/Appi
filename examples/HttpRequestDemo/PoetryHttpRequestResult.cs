@@ -7,27 +7,35 @@ namespace Infrastructure.HttpRequestDemo
 {
     internal class PoetryHttpRequestResult : ResultItemBase
     {
+        private readonly IHandlerHelper _handlerHelper;
+
         public override string Name { get => Author; set => Author = value; }
 
         public override string Description { get => Title; set => Title = value; }
 
-        [Result]
+        [DetailViewColumn]
         public string Author { get; set; } = string.Empty;
 
-        [Result]
+        [DetailViewColumn]
         public string Title { get; set; } = string.Empty;
 
-        [Result]
+        [DetailViewColumn]
         public string Lines { get; set; } = string.Empty;
 
         public string LineCount { get; set; } = string.Empty;
+
+        public PoetryHttpRequestResult(IHandlerHelper handlerHelper)
+        {
+            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+        }
 
         public override IEnumerable<ActionItem> GetActions()
         {
             var actions = new List<ActionItem>
             {
                 new() { Name = $"Copy lines to clipboard", Action = () => { ClipboardService.SetText(string.Join(Environment.NewLine, Lines)); } },
-                new() { Name = $"Quit", Action = () => { Console.WriteLine($"Goodbye."); } },
+                _handlerHelper.Back(),
+                _handlerHelper.Exit()
             };
 
             return actions;

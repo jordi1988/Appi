@@ -18,12 +18,12 @@
 	<PackageReleaseNotes>inital release</PackageReleaseNotes>
 	<RepositoryType>git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>1.0.5</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="ArgumentString" Version="1.0.4" />
-    <PackageReference Include="Dapper" Version="2.0.151" />
+    <PackageReference Include="Dapper" Version="2.1.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="MySqlConnector" Version="2.2.7" />
     <PackageReference Include="TextCopy" Version="6.2.1" />

@@ -9,6 +9,8 @@ namespace Infrastructure.HttpRequestDemo
 {
     internal partial class PoetryHttpRequestSource : ISource
     {
+        private readonly IHandlerHelper _handlerHelper;
+
         public string TypeName { get; set; } = typeof(PoetryHttpRequestSource).Name;
         public string Name { get; set; } = "Poetry";
         public string Alias { get; set; } = "poetry";
@@ -19,6 +21,11 @@ namespace Infrastructure.HttpRequestDemo
         public string? Arguments { get; set; } = "max_title_length=50";
         public bool? IsQueryCommand { get; set; } = true;
         public string[]? Groups { get; set; } = new[] { "demo" };
+
+        public PoetryHttpRequestSource(IHandlerHelper handlerHelper)
+        {
+            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+        }
 
         /// <summary>
         /// Reads the asynchronous.
@@ -54,7 +61,7 @@ namespace Infrastructure.HttpRequestDemo
             int maxTitleLength = ReadMaxTitleLength();
             foreach (var title in titles)
             {
-                output.Add(new()
+                output.Add(new PoetryHttpRequestResult(_handlerHelper)
                 {
                     Author = title.Author,
                     Title = title.Title.Length <= maxTitleLength ? title.Title : title.Title[..maxTitleLength] + "...",

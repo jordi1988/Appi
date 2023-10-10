@@ -7,11 +7,13 @@ namespace Core.Strategies
     {
         private readonly ISettingsService _settingsService;
         private readonly IPluginService _pluginService;
+        private readonly IHandlerHelper _handlerHelper;
 
-        public QueryStrategyCalculator(ISettingsService settingsService, IPluginService pluginService)
+        public QueryStrategyCalculator(ISettingsService settingsService, IPluginService pluginService, IHandlerHelper handlerHelper)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
+            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
         }
 
         public ISourcesSelector Create(FindItemsOptions options, string queryAllDefaultValue)
@@ -21,14 +23,14 @@ namespace Core.Strategies
 
             if (isSourceProvided)
             {
-                return new QuerySingleSourceStrategy(_settingsService, _pluginService, options.SourceAlias!);
+                return new QuerySingleSourceStrategy(_settingsService, _pluginService, _handlerHelper, options.SourceAlias!);
             }
             else if (isGroupProvided)
             {
-                return new QueryGroupStrategy(_settingsService, _pluginService, options.GroupAlias!);
+                return new QueryGroupStrategy(_settingsService, _pluginService, _handlerHelper, options.GroupAlias!);
             }
 
-            return new QueryAllActiveSourcesStrategy(_settingsService, _pluginService);
+            return new QueryAllActiveSourcesStrategy(_settingsService, _pluginService, _handlerHelper);
         }
     }
 }

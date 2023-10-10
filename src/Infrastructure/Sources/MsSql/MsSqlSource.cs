@@ -18,6 +18,12 @@ namespace Infrastructure.MsSql
         public abstract string? Arguments { get; set; }
         public abstract bool? IsQueryCommand { get; set; }
         public string[]? Groups { get; set; }
+        public IHandlerHelper HandlerHelper { get; }
+
+        protected MsSqlSource(IHandlerHelper handlerHelper)
+        {
+            HandlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+        }
 
         public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {

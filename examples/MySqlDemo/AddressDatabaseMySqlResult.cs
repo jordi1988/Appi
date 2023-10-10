@@ -1,4 +1,5 @@
-﻿using Core.Attributes;
+﻿using Core.Abstractions;
+using Core.Attributes;
 using Core.Models;
 using Infrastructure.Services;
 
@@ -6,25 +7,29 @@ namespace Infrastructure.MySql
 {
     public class AddressDatabaseMySqlResult : MySqlResultBase<AddressDto>
     {
-        [Result]
+        private readonly IHandlerHelper _handlerHelper;
+
+        [DetailViewColumn]
         public string? Street => Result.Street;
 
-        [Result]
+        [DetailViewColumn]
         public int? Number => Result.Number;
 
-        [Result]
+        [DetailViewColumn]
         public string? PostalCode => Result.PostalCode;
 
-        [Result]
+        [DetailViewColumn]
         public string? City => Result.City;
 
-        public AddressDatabaseMySqlResult(AddressDto result)
+        public AddressDatabaseMySqlResult(AddressDto result, IHandlerHelper handlerHelper)
             : base(result)
         {
             base.Id = 0;
             base.Name = $"{result.Street} {result.Number}";
             base.Description = $"{result.PostalCode} {result.City}";
             base.Sort = 99;
+
+            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
         }
 
         public override IEnumerable<ActionItem> GetActions()
@@ -34,7 +39,9 @@ namespace Infrastructure.MySql
                 new() {
                     Name = "Open Google Maps",
                     Action = () => ProcessService.Start(url.Replace("&", "^&"))
-                }
+                },
+                _handlerHelper.Back(),
+                _handlerHelper.Exit()
             };
 
             return actions;

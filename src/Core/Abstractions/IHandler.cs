@@ -12,6 +12,12 @@ namespace Core.Abstractions
 
         void DisplaySources(IEnumerable<ISource> sources);
 
-        void CreateBreakdownChart(List<PromptGroup> allResults);
+        void CreateBreakdownChart(IEnumerable<PromptGroup> allResults);
+
+        void SaveResultsToMemory(IEnumerable<PromptGroup> allResults);
+
+        IEnumerable<PromptGroup> ReadResultsFromMemory();
+
+        void ClearScreen();
     }
 }

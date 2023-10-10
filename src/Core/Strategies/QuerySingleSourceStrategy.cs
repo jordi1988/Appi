@@ -8,14 +8,16 @@ namespace Core.Strategies
     {
         private readonly ISettingsService _settingsService;
         private readonly IPluginService _pluginService;
+        private readonly IHandlerHelper _handlerHelper;
         private readonly string _sourceAlias;
 
         public string QueryWithinDescription => $"source `{_sourceAlias}`";
 
-        public QuerySingleSourceStrategy(ISettingsService settingsService, IPluginService pluginService, string sourceAlias)
+        public QuerySingleSourceStrategy(ISettingsService settingsService, IPluginService pluginService, IHandlerHelper handlerHelper, string sourceAlias)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
+            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
             _sourceAlias = sourceAlias;
         }
 
@@ -28,7 +30,7 @@ namespace Core.Strategies
 
             var output = new[] { source };
 
-            return output.ToRealInstance(_pluginService);
+            return output.ToRealInstance(_pluginService, _handlerHelper);
         }
     }
 }

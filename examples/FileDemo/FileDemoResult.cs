@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.Abstractions;
+using Core.Models;
 using Infrastructure.Services;
 using Infrastructure.Sources.File;
 using TextCopy;
@@ -9,11 +10,13 @@ namespace Infrastructure.FileDemo
     {
         private readonly string _fileName;
         private readonly int _lineNumber;
+        private readonly IHandlerHelper _handlerHelper;
 
-        public FileDemoResult(string fileName, int lineNumber)
+        public FileDemoResult(string fileName, int lineNumber, IHandlerHelper handlerHelper)
         {
             _fileName = fileName;
             _lineNumber = lineNumber;
+            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
         }
 
         public override IEnumerable<ActionItem> GetActions()
@@ -22,7 +25,8 @@ namespace Infrastructure.FileDemo
             {
                 new() { Name = $"Copy {Name} to clipboard", Action = () => { ClipboardService.SetText(Description); } },
                 new() { Name = $"Open file at line {_lineNumber} in `notepad++`", Action = () => ProcessService.Start("notepad++.exe", @$"{_fileName} -n{_lineNumber}") },
-                new() { Name = $"Quit", Action = () => Console.WriteLine("Goodbye.") }
+                _handlerHelper.Back(),
+                _handlerHelper.Exit()
             };
 
             return actions;

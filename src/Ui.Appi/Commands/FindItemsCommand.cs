@@ -6,10 +6,11 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection.Metadata;
 
 namespace Ui.Appi.Commands
 {
-    public sealed partial class FindItemsCommand : Command<FindItemsCommand.Settings>
+    public sealed partial class FindItemsCommand : AsyncCommand<FindItemsCommand.Settings> // Command<FindItemsCommand.Settings>
     {
         private readonly IHandler _handler;
         private readonly QueryStrategyCalculator _strategyCalculator;
@@ -20,11 +21,11 @@ namespace Ui.Appi.Commands
             _strategyCalculator = strategyCalculator ?? throw new ArgumentNullException(nameof(strategyCalculator));
         }
 
-        public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
+        public override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] Settings settings)
         {
-            var allResults = new List<PromptGroup>();
+            PromptGroup[] allResults = Array.Empty<PromptGroup>();
 
-            AnsiConsole.Progress()
+            await AnsiConsole.Progress()
                 .AutoClear(true)
                 .Columns(
                     new TaskDescriptionColumn(),
@@ -32,7 +33,7 @@ namespace Ui.Appi.Commands
                     new PercentageColumn(),
                     new SpinnerColumn()
                 )
-                .Start(ctx =>
+                .StartAsync(async ctx =>
                 {
                     var options = Settings.ToOptions(settings);
                     var strategy = _strategyCalculator.Create(options, Settings.QueryAllDefaultValue);
@@ -45,23 +46,30 @@ namespace Ui.Appi.Commands
                         true,
                         sources.Count());
 
-                    foreach (var source in sources)
+                    while (!ctx.IsFinished)
                     {
-                        var sourceResults = source
-                            .ReadAsync(options)
-                            .GetAwaiter()
-                            .GetResult()
-                            .SortResults();
+                        var sourceTasks = sources.Select(async source =>
+                        {
+                            var sourceResults = await source.ReadAsync(options);
+                            sourceResults.SortResults();
 
-                        allResults.Add(new PromptGroup(
-                            source.Name, source.Description, sourceResults));
+                            collectingDataTask.Increment(1);
+                            
+                            return new PromptGroup(
+                                source.Name, 
+                                source.Description, 
+                                sourceResults);
+                        });
 
-                        collectingDataTask.Increment(1);
+                        allResults = await Task.WhenAll(sourceTasks);
+
+                        collectingDataTask.StopTask();
                     }
-
-                    collectingDataTask.StopTask();
                 });
 
+            _handler.SaveResultsToMemory(allResults);
+
+            _handler.ClearScreen();
             _handler.CreateBreakdownChart(allResults);
             var selectedItem = _handler.PromtForItemSelection(allResults);
             _handler.DisplayItem(selectedItem);
@@ -69,7 +77,7 @@ namespace Ui.Appi.Commands
             
             return 0;
         }
-
+       
         public sealed class Settings : CommandSettings
         {
             public const string QueryAllDefaultValue = "all";

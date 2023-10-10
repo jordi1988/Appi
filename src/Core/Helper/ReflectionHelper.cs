@@ -2,6 +2,7 @@
 using Core.Attributes;
 using Core.Exceptions;
 using System.Reflection;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Core.Helper
 {
@@ -53,22 +54,20 @@ namespace Core.Helper
             throw new SourceNotFoundException(className);
         }
 
-        public static T CreateInstance<T>(Type classType, object? settings = null)
+        public static T CreateInstance<T>(Type classType, object? firstParameter = null)
         {
-            if (settings is null)
+            if (firstParameter is null)
             {
                 return (T)Activator.CreateInstance(classType);
             }
 
-            var constructorContainsSettingsParameter = classType.GetConstructor(new[] { settings.GetType() });
-            if (constructorContainsSettingsParameter is not null)
+            var constructorWithOneParameterOfGivenType = classType.GetConstructor(new[] { firstParameter.GetType() });
+            if (constructorWithOneParameterOfGivenType is not null)
             {
-                return (T)Activator.CreateInstance(classType, settings);
+                return (T)Activator.CreateInstance(classType, firstParameter);
             }
-            else
-            {
-                return (T)Activator.CreateInstance(classType);
-            }
+
+            return (T)Activator.CreateInstance(classType);
         }
 
         public static IEnumerable<KeyValuePair<string, object?>> GetProperties(object obj)
@@ -85,7 +84,7 @@ namespace Core.Helper
 
             foreach (var property in properties)
             {
-                if (property.GetCustomAttribute(typeof(ResultAttribute)) is ResultAttribute resultAttribute)
+                if (property.GetCustomAttribute(typeof(DetailViewColumnAttribute)) is DetailViewColumnAttribute resultAttribute)
                 {
                     object? propertyValue = property.GetValue(obj);
                     if (propertyValue is null)
@@ -111,7 +110,15 @@ namespace Core.Helper
                 return;
             }
 
-            var externalAssemblyFiles = Directory.GetFiles(ConfigurationHelper.ApplicationDirectory, "*.dll");
+            UnsafeLoadAssemblies(ConfigurationHelper.ApplicationDirectory, "*.dll");
+
+            var executablePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            UnsafeLoadAssemblies(executablePath, "Appi.Plugin.*.dll");
+        }
+
+        private static void UnsafeLoadAssemblies(string path, string searchPattern)
+        {
+            var externalAssemblyFiles = Directory.GetFiles(path, searchPattern);
             foreach (var filename in externalAssemblyFiles)
             {
                 Assembly.UnsafeLoadFrom(filename);
