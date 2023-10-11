@@ -27,6 +27,7 @@ namespace Ui.Appi
             // Core components
             services.AddSingleton<IHandler, SpectreConsoleHandler>();
             services.AddSingleton<IHandlerHelper, SpectreConsoleHandlerHelper>();
+            services.AddSingleton<IResultStateService, MemoryResultStateService>();
             services.AddScoped<ISettingsService, FileSettingsService>();
             services.AddScoped<QueryStrategyCalculator>();
 

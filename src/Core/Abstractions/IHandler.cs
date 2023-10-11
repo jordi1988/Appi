@@ -2,22 +2,26 @@
 
 namespace Core.Abstractions
 {
+    /// <summary>
+    /// Represents an interface for handling the output.
+    /// </summary>
     public interface IHandler
     {
-        ResultItemBase? PromtForItemSelection(IEnumerable<PromptGroup> items);
+        /// <summary>
+        /// Prints all registered sources that can be used with <c>find</c> command.
+        /// </summary>
+        /// <param name="sources">The sources.</param>
+        void PrintSources(IEnumerable<ISource> sources);
 
-        void PromtForActionInvokation(ResultItemBase? item);
-
-        void DisplayItem(ResultItemBase? item);
-
-        void DisplaySources(IEnumerable<ISource> sources);
-
-        void CreateBreakdownChart(IEnumerable<PromptGroup> allResults);
-
-        void SaveResultsToMemory(IEnumerable<PromptGroup> allResults);
-
-        IEnumerable<PromptGroup> ReadResultsFromMemory();
-
+        /// <summary>
+        /// Prints the results that were found by the <c>find</c> command.
+        /// </summary>
+        /// <param name="results">The results.</param>
+        void PrintResults(IEnumerable<PromptGroup> results);
+        
+        /// <summary>
+        /// Clears the screen.
+        /// </summary>
         void ClearScreen();
     }
 }

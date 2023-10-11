@@ -10,7 +10,6 @@ namespace Ui.Appi
     internal class SpectreConsoleHandler : IHandler
     {
         private const string _ruleStyle = "red dim";
-        private IEnumerable<PromptGroup>? _results;
 
         private readonly Color[] _chartColors = {
             Color.SkyBlue2,
@@ -30,82 +29,7 @@ namespace Ui.Appi
             Color.SandyBrown
         };
 
-        public ResultItemBase? PromtForItemSelection(IEnumerable<PromptGroup> items)
-        {
-            var itemsWithContent = items.Where(x => x.Items.Any());
-            if (!itemsWithContent.Any())
-            {
-                AnsiConsole.Write(new Markup("Sorry, [bold]no items[/] were found."));
-                return null;
-            }
-
-            var rule = new Rule("[white]Please select item[/]");
-            rule.RuleStyle(_ruleStyle);
-            AnsiConsole.Write(rule);
-
-            var prompt = new SelectionPrompt<ResultItemBase>()
-                .PageSize(35)
-                .HighlightStyle(new Style(Color.White, Color.DarkRed))
-                .MoreChoicesText("[grey](Move up and down to reveal more items)[/]");
-
-            foreach (var group in itemsWithContent)
-            {
-                var groupHeader = new GroupHeaderResult(group.Name, group.Description);
-                prompt.AddChoiceGroup(groupHeader, group.Items);
-            }
-
-            return AnsiConsole.Prompt(prompt);
-        }
-
-        public void PromtForActionInvokation(ResultItemBase? item)
-        {
-            if (item is null)
-            {
-                return;
-            }
-
-            var actions = item.GetActions();
-            if (!actions.Any())
-            {
-                AnsiConsole.Write(new Markup("Sorry, there is [bold]no action[/] you can choose from. [red]Goodbye.[/]"));
-                return;
-            }
-
-            var selectedAction = AnsiConsole.Prompt(
-                new SelectionPrompt<ActionItem>()
-                    .Title("[b]Which [red]action[/] should be invoked? [/]")
-                    .PageSize(30)
-                    .HighlightStyle(new Style(Color.White, Color.DarkRed))
-                    .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
-                    .AddChoices(actions));
-
-            selectedAction.Action?.Invoke();
-        }
-
-        public void DisplayItem(ResultItemBase? item)
-        {
-            if (item is null)
-            {
-                return;
-            }
-
-            var table = new Table();
-            table.Border(TableBorder.DoubleEdge);
-            table.HideHeaders();
-
-            table.AddColumn(string.Empty);
-            table.AddColumn(string.Empty);
-
-            var properties = ReflectionHelper.GetProperties(item);
-            foreach (var property in properties)
-            {
-                table.AddRow($"[bold]{property.Key}[/]", $"{property.Value}");
-            }
-
-            AnsiConsole.Write(table);
-        }
-
-        public void DisplaySources(IEnumerable<ISource> sources)
+        public void PrintSources(IEnumerable<ISource> sources)
         {
             var table = new Table();
             table.Border(TableBorder.DoubleEdge);
@@ -133,7 +57,96 @@ namespace Ui.Appi
             AnsiConsole.Write(table);
         }
 
-        public void CreateBreakdownChart(IEnumerable<PromptGroup> allResults)
+        public void PrintResults(IEnumerable<PromptGroup> results)
+        {
+            ClearScreen();
+            DisplayBreakdownChart(results);
+            var selectedItem = PromtForItemSelection(results);
+            DisplayItem(selectedItem);
+            PromtForActionInvokation(selectedItem);
+        }
+
+        public void ClearScreen()
+        {
+            AnsiConsole.Clear();
+        }
+
+        private static ResultItemBase? PromtForItemSelection(IEnumerable<PromptGroup> items)
+        {
+            var itemsWithContent = items.Where(x => x.Items.Any());
+            if (!itemsWithContent.Any())
+            {
+                AnsiConsole.Write(new Markup("Sorry, [bold]no items[/] were found."));
+                return null;
+            }
+
+            var rule = new Rule("[white]Please select item[/]");
+            rule.RuleStyle(_ruleStyle);
+            AnsiConsole.Write(rule);
+
+            var prompt = new SelectionPrompt<ResultItemBase>()
+                .PageSize(35)
+                .HighlightStyle(new Style(Color.White, Color.DarkRed))
+                .MoreChoicesText("[grey](Move up and down to reveal more items)[/]");
+
+            foreach (var group in itemsWithContent)
+            {
+                var groupHeader = new GroupHeaderResult(group.Name, group.Description);
+                prompt.AddChoiceGroup(groupHeader, group.Items);
+            }
+
+            return AnsiConsole.Prompt(prompt);
+        }
+
+        private static void PromtForActionInvokation(ResultItemBase? item)
+        {
+            if (item is null)
+            {
+                return;
+            }
+
+            var actions = item.GetActions();
+            if (!actions.Any())
+            {
+                AnsiConsole.Write(new Markup("Sorry, there is [bold]no action[/] you can choose from. [red]Goodbye.[/]"));
+                return;
+            }
+
+            var selectedAction = AnsiConsole.Prompt(
+                new SelectionPrompt<ActionItem>()
+                    .Title("[b]Which [red]action[/] should be invoked? [/]")
+                    .PageSize(30)
+                    .HighlightStyle(new Style(Color.White, Color.DarkRed))
+                    .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
+                    .AddChoices(actions));
+
+            selectedAction.Action?.Invoke();
+        }
+
+        private static void DisplayItem(ResultItemBase? item)
+        {
+            if (item is null)
+            {
+                return;
+            }
+
+            var table = new Table();
+            table.Border(TableBorder.DoubleEdge);
+            table.HideHeaders();
+
+            table.AddColumn(string.Empty);
+            table.AddColumn(string.Empty);
+
+            var properties = ReflectionHelper.GetProperties(item);
+            foreach (var property in properties)
+            {
+                table.AddRow($"[bold]{property.Key}[/]", $"{property.Value}");
+            }
+
+            AnsiConsole.Write(table);
+        }
+
+        private void DisplayBreakdownChart(IEnumerable<PromptGroup> allResults)
         {
             // TODO: colors should be definable and chart should be customizable in some way
             var chartDisplayedResults = allResults.Where(x => x.Items.Any()).ToList();
@@ -173,21 +186,6 @@ namespace Ui.Appi
             }
 
             return output;
-        }
-
-        public void SaveResultsToMemory(IEnumerable<PromptGroup> allResults)
-        {
-            _results = allResults;
-        }
-
-        public IEnumerable<PromptGroup> ReadResultsFromMemory()
-        {
-            return _results ?? Enumerable.Empty<PromptGroup>();
-        }
-
-        public void ClearScreen()
-        {
-            AnsiConsole.Clear();
         }
     }
 }

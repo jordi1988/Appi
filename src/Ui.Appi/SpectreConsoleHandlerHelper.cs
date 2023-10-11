@@ -7,10 +7,12 @@ namespace Ui.Appi
     public class SpectreConsoleHandlerHelper : IHandlerHelper
     {
         private readonly IHandler _handler;
+        private readonly IResultStateService _resultState;
 
-        public SpectreConsoleHandlerHelper(IHandler handler)
+        public SpectreConsoleHandlerHelper(IHandler handler, IResultStateService resultState)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            _resultState = resultState ?? throw new ArgumentNullException(nameof(resultState));
         }
 
         public string EscapeMarkup(string? text)
@@ -30,14 +32,8 @@ namespace Ui.Appi
                 Name = "Back",
                 Action = () =>
                 {
-                    _handler.ClearScreen();
-
-                    var allResults = _handler.ReadResultsFromMemory();
-
-                    _handler.CreateBreakdownChart(allResults);
-                    var selectedItem = _handler.PromtForItemSelection(allResults);
-                    _handler.DisplayItem(selectedItem);
-                    _handler.PromtForActionInvokation(selectedItem);
+                    var results = _resultState.Load();
+                    _handler.PrintResults(results);
                 }
             };
         }

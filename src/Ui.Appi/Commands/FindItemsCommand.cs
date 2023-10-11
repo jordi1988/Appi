@@ -6,24 +6,25 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata;
 
 namespace Ui.Appi.Commands
 {
     public sealed partial class FindItemsCommand : AsyncCommand<FindItemsCommand.Settings> // Command<FindItemsCommand.Settings>
     {
         private readonly IHandler _handler;
+        private readonly IResultStateService _resultState;
         private readonly QueryStrategyCalculator _strategyCalculator;
 
-        public FindItemsCommand(IHandler handler, QueryStrategyCalculator strategyCalculator)
+        public FindItemsCommand(IHandler handler, IResultStateService resultState, QueryStrategyCalculator strategyCalculator)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            _resultState = resultState ?? throw new ArgumentNullException(nameof(resultState));
             _strategyCalculator = strategyCalculator ?? throw new ArgumentNullException(nameof(strategyCalculator));
         }
 
         public override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] Settings settings)
         {
-            PromptGroup[] allResults = Array.Empty<PromptGroup>();
+            PromptGroup[] results = Array.Empty<PromptGroup>();
 
             await AnsiConsole.Progress()
                 .AutoClear(true)
@@ -54,30 +55,25 @@ namespace Ui.Appi.Commands
                             sourceResults.SortResults();
 
                             collectingDataTask.Increment(1);
-                            
+
                             return new PromptGroup(
-                                source.Name, 
-                                source.Description, 
+                                source.Name,
+                                source.Description,
                                 sourceResults);
                         });
 
-                        allResults = await Task.WhenAll(sourceTasks);
+                        results = await Task.WhenAll(sourceTasks);
 
                         collectingDataTask.StopTask();
                     }
                 });
 
-            _handler.SaveResultsToMemory(allResults);
+            _resultState.Save(results);
+            _handler.PrintResults(results);
 
-            _handler.ClearScreen();
-            _handler.CreateBreakdownChart(allResults);
-            var selectedItem = _handler.PromtForItemSelection(allResults);
-            _handler.DisplayItem(selectedItem);
-            _handler.PromtForActionInvokation(selectedItem);
-            
             return 0;
         }
-       
+
         public sealed class Settings : CommandSettings
         {
             public const string QueryAllDefaultValue = "all";

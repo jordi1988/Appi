@@ -19,7 +19,7 @@ namespace Ui.Appi.Commands
         {
             var sources = _settingsService.ReadSettingsFileSources();
 
-            _handler.DisplaySources(sources);
+            _handler.PrintSources(sources);
 
             return 0;
         }
