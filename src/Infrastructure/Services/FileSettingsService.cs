@@ -8,7 +8,7 @@ namespace Infrastructure.Services
 {
     public partial class FileSettingsService : ISettingsService
     {
-        public IEnumerable<ISource> ReadSettingsFileSources()
+        public IEnumerable<ISource> ReadSources()
         {
             ConfigurationHelper.EnsureSettingsExist();
 
@@ -20,7 +20,7 @@ namespace Infrastructure.Services
             return fileSources ?? Enumerable.Empty<ISource>();
         }
 
-        public void SaveSettingsFileSources(IEnumerable<ISource> sources)
+        public void SaveSources(IEnumerable<ISource> sources)
         {
             ConfigurationHelper.EnsureSettingsExist();
 
@@ -64,7 +64,7 @@ namespace Infrastructure.Services
                 source.Groups ??= Array.Empty<string>();
             }
 
-            SaveSettingsFileSources(fileSources);
+            SaveSources(fileSources);
         }
     }
 }

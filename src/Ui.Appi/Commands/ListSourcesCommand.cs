@@ -17,7 +17,7 @@ namespace Ui.Appi.Commands
 
         public override int Execute([NotNull] CommandContext context)
         {
-            var sources = _settingsService.ReadSettingsFileSources();
+            var sources = _settingsService.ReadSources();
 
             _handler.PrintSources(sources);
 

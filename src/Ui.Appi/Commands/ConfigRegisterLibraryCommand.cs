@@ -76,12 +76,12 @@ namespace Ui.Appi.Commands
             {
                 var sourceInstance = ReflectionHelper.CreateInstance<ISource>(classType, commandSettings);
                 var currentSettings = _settingsService
-                    .ReadSettingsFileSources()
+                    .ReadSources()
                     .ToList();
 
                 currentSettings.Add(sourceInstance);
 
-                _settingsService.SaveSettingsFileSources(currentSettings);
+                _settingsService.SaveSources(currentSettings);
             }
         }
 

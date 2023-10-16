@@ -13,7 +13,7 @@ namespace Core.Abstractions
         ActionItem Back();
 
         /// <summary>
-        /// Privides exit navigation.
+        /// Provides exit navigation.
         /// </summary>
         ActionItem Exit();
 

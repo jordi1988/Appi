@@ -2,8 +2,16 @@
 
 namespace Core.Extensions
 {
-    public static class ResultCollectionExtensions
+    /// <summary>
+    /// Extends collections of type <see cref="ResultItemBase"/>.
+    /// </summary>
+    public static class ResultItemBaseCollectionExtensions
     {
+        /// <summary>
+        /// Sorts the results comparing the <see cref="ResultItemBase.Sort"/> property.
+        /// </summary>
+        /// <param name="sourceResults">The sorted results.</param>
+        /// <returns></returns>
         public static IEnumerable<ResultItemBase> SortResults(this IEnumerable<ResultItemBase>? sourceResults)
         {
             if (sourceResults is null)

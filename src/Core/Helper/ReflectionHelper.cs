@@ -2,23 +2,31 @@
 using Core.Attributes;
 using Core.Exceptions;
 using System.Reflection;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Core.Helper
 {
+    /// <summary>
+    /// Represents a helper class when dealing with reflection.
+    /// </summary>
     public static class ReflectionHelper
     {
-        public static List<T> InitializeClassesImplementingInterface<T>(object? settings = null)
+        /// <summary>
+        /// Creates instances of the classes implementing the interface given in <typeparamref name="TInterface"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">The interface type.</typeparam>
+        /// <param name="firstConstructorParameter">The first parameter of the constructor of any type.</param>
+        /// <returns>Instances of all classes implementing <typeparamref name="TInterface"/>.</returns>
+        public static IEnumerable<TInterface> InitializeClassesImplementingInterface<TInterface>(object? firstConstructorParameter = null)
         {
-            var output = new List<T>();
+            var output = new List<TInterface>();
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assembly in assemblies)
             {
-                var classes = GetClassesImplementingInterface<T>(assembly);
+                var classes = GetClassesImplementingInterface<TInterface>(assembly);
                 foreach (var classType in classes)
                 {
-                    T instance = CreateInstance<T>(classType, settings);
+                    TInterface instance = CreateInstance<TInterface>(classType, firstConstructorParameter);
                     output.Add(instance);
                 }
             }
@@ -26,9 +34,15 @@ namespace Core.Helper
             return output;
         }
 
-        public static List<Type> GetClassesImplementingInterface<T>(Assembly assembly)
+        /// <summary>
+        /// Gets all classes implementing the interface given in <typeparamref name="TInterface"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">The type of the interface.</typeparam>
+        /// <param name="assembly">The assembly.</param>
+        /// <returns>Collection of concrete types.</returns>
+        public static IEnumerable<Type> GetClassesImplementingInterface<TInterface>(Assembly assembly)
         {
-            var interfaceType = typeof(T);
+            var interfaceType = typeof(TInterface);
             var classes = assembly.GetTypes()
                 .Where(type => type.IsClass && !type.IsAbstract && interfaceType.IsAssignableFrom(type))
                 .ToList();
@@ -36,7 +50,15 @@ namespace Core.Helper
             return classes;
         }
 
-        public static Type GetClassByNameImplementingInterface<T>(string className, IPluginService pluginService)
+        /// <summary>
+        /// Gets a single class implementing the interface given in <typeparamref name="TInterface"/>.
+        /// </summary>
+        /// <typeparam name="TInterface"></typeparam>
+        /// <param name="className">Name of the class.</param>
+        /// <param name="pluginService">The plugin service.</param>
+        /// <returns>The type of the class.</returns>
+        /// <exception cref="SourceNotFoundException"></exception>
+        public static Type GetClassByNameImplementingInterface<TInterface>(string className, IPluginService pluginService)
         {
             LoadExternalAssemblies(pluginService);
 
@@ -44,7 +66,7 @@ namespace Core.Helper
 
             foreach (var assembly in allAssemblies)
             {
-                var foundClass = GetClassesImplementingInterface<T>(assembly).Find(x => x.Name == className);
+                var foundClass = GetClassesImplementingInterface<TInterface>(assembly).FirstOrDefault(x => x.Name == className);
                 if (foundClass is not null)
                 {
                     return foundClass;
@@ -54,22 +76,34 @@ namespace Core.Helper
             throw new SourceNotFoundException(className);
         }
 
-        public static T CreateInstance<T>(Type classType, object? firstParameter = null)
+        /// <summary>
+        /// Creates an instance of type <paramref name="classType"/> constructed with <paramref name="firstParameter"/> and casted to <typeparamref name="TInterface"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">The resulting interface type.</typeparam>
+        /// <param name="classType">Type of the class.</param>
+        /// <param name="firstParameter">The first constructor parameter.</param>
+        /// <returns>The concrete type of <paramref name="classType"/> casted to <typeparamref name="TInterface"/>.</returns>
+        public static TInterface CreateInstance<TInterface>(Type classType, object? firstParameter = null)
         {
             if (firstParameter is null)
             {
-                return (T)Activator.CreateInstance(classType);
+                return (TInterface)Activator.CreateInstance(classType);
             }
 
             var constructorWithOneParameterOfGivenType = classType.GetConstructor(new[] { firstParameter.GetType() });
             if (constructorWithOneParameterOfGivenType is not null)
             {
-                return (T)Activator.CreateInstance(classType, firstParameter);
+                return (TInterface)Activator.CreateInstance(classType, firstParameter);
             }
 
-            return (T)Activator.CreateInstance(classType);
+            return (TInterface)Activator.CreateInstance(classType);
         }
 
+        /// <summary>
+        /// Gets key-value pairs of all public instance properties decorated with <see cref="DetailViewColumnAttribute"/> of <paramref name="obj"/>.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>Zero or more key-value pairs.</returns>
         public static IEnumerable<KeyValuePair<string, object?>> GetProperties(object obj)
         {
             if (obj is null)
