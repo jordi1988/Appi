@@ -1,16 +1,16 @@
 ﻿using Core.Abstractions;
 using Core.Models;
 using Dapper;
-using MySqlConnector;
+using Microsoft.Data.SqlClient;
 
-namespace Infrastructure.MySql
+namespace Infrastructure.Sources
 {
     /// <summary>
-    /// Represents a base class for MySQL server sources.
+    /// Represents a base class for SQL sources.
     /// </summary>
     /// <typeparam name="TResult">The result type to be mapped.</typeparam>
     /// <seealso cref="ISource" />
-    public abstract class MySqlSource<TResult> : ISource
+    public abstract class DapperSqlSource<TResult> : ISource
         where TResult : class
     {
         /// <inheritdoc cref="ISource.TypeName"/>
@@ -50,25 +50,25 @@ namespace Infrastructure.MySql
         public IHandlerHelper HandlerHelper { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MySqlSource{TResult}"/> class.
+        /// Initializes a new instance of the <see cref="DapperSqlSource{TResult}"/> class.
         /// </summary>
         /// <param name="handlerHelper">The handler helper.</param>
-        /// <exception cref="System.ArgumentNullException">handlerHelper</exception>
-        protected MySqlSource(IHandlerHelper handlerHelper)
+        /// <exception cref="ArgumentNullException"></exception>
+        protected DapperSqlSource(IHandlerHelper handlerHelper)
         {
             HandlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
         }
 
         /// <summary>
-        /// Fetches the data from the MySQL server.
+        /// Fetches the data from the SQL server.
         /// </summary>
         /// <param name="options">Options related to the query.</param>
         /// <returns>The mapped results of the query.</returns>
         public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
-            var connectionString = Arguments ?? throw new MySqlConnectionStringMissingException();
+            var connectionString = Arguments ?? throw new SqlConnectionStringMissingException();
 
-            using var connection = new MySqlConnection(connectionString);
+            using var connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
 
             var sqlQuery = GetSqlQuery(options);

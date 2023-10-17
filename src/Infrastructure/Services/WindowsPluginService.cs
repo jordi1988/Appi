@@ -5,12 +5,20 @@ using System.Runtime.InteropServices;
 
 namespace Infrastructure.Services
 {
+    /// <summary>
+    /// Represents the <see cref="IPluginService"/> for the Windows OS.
+    /// </summary>
+    /// <seealso cref="IPluginService" />
     public class WindowsPluginService : IPluginService
     {
         private const string _pluginKeyName = "AllowExternalLibraries";
         private const string _pluginKeyValueAllowed = "1";
         private const string _pluginKeyValueProhibited = "0";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WindowsPluginService"/> class.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">This class can only be instantiated on Windows OS.</exception>
         public WindowsPluginService()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -23,6 +31,7 @@ namespace Infrastructure.Services
 
 #pragma warning disable CA1416 // Validate platform compatibility
 
+        /// <inheritdoc cref="IPluginService.Allow"/>
         public void Allow()
         {
             var registry = GetSubKeyRegistry(true);
@@ -30,6 +39,7 @@ namespace Infrastructure.Services
             registry.Key?.Close();
         }
 
+        /// <inheritdoc cref="IPluginService.Prohibit"/>
         public void Prohibit()
         {
             var registry = GetSubKeyRegistry(true);
@@ -37,6 +47,7 @@ namespace Infrastructure.Services
             registry.Key?.Close();
         }
 
+        /// <inheritdoc cref="IPluginService.IsAllowed"/>
         public bool IsAllowed()
         {
             var registry = GetSubKeyRegistry();
@@ -47,7 +58,7 @@ namespace Infrastructure.Services
             return allowed == _pluginKeyValueAllowed;
         }
 
-        private void EnsureRegistryKeyExsists()
+        private static void EnsureRegistryKeyExsists()
         {
             var registry = GetSubKeyRegistry();
 
@@ -60,7 +71,7 @@ namespace Infrastructure.Services
             registry.Key.Close();
         }
 
-        private (RegistryKey? Key, string Path) GetSubKeyRegistry(bool writable = false)
+        private static (RegistryKey? Key, string Path) GetSubKeyRegistry(bool writable = false)
         {
             var currentAssemblyName = Assembly.GetEntryAssembly()?.GetName().Name ?? "Appi";
             var subKeyPath = @$"SOFTWARE\{currentAssemblyName}";

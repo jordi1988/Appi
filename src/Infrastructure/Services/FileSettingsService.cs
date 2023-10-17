@@ -6,8 +6,16 @@ using System.Text.RegularExpressions;
 
 namespace Infrastructure.Services
 {
+    /// <summary>
+    /// Represents the <see cref="ISettingsService"/> using a file approach.
+    /// </summary>
+    /// <seealso cref="ISettingsService" />
     public partial class FileSettingsService : ISettingsService
     {
+        /// <summary>
+        /// Reads the sources from the setting's file.
+        /// </summary>
+        /// <returns>All sources found in the file.</returns>
         public IEnumerable<ISource> ReadSources()
         {
             ConfigurationHelper.EnsureSettingsExist();
@@ -20,6 +28,10 @@ namespace Infrastructure.Services
             return fileSources ?? Enumerable.Empty<ISource>();
         }
 
+        /// <summary>
+        /// Write the provided sources into the setting's file.
+        /// </summary>
+        /// <param name="sources">The sources.</param>
         public void SaveSources(IEnumerable<ISource> sources)
         {
             ConfigurationHelper.EnsureSettingsExist();

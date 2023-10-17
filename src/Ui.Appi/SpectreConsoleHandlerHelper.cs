@@ -7,9 +7,9 @@ namespace Ui.Appi
     public class SpectreConsoleHandlerHelper : IHandlerHelper
     {
         private readonly IHandler _handler;
-        private readonly IResultStateService _resultState;
+        private readonly IResultStateService<PromptGroup> _resultState;
 
-        public SpectreConsoleHandlerHelper(IHandler handler, IResultStateService resultState)
+        public SpectreConsoleHandlerHelper(IHandler handler, IResultStateService<PromptGroup> resultState)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _resultState = resultState ?? throw new ArgumentNullException(nameof(resultState));

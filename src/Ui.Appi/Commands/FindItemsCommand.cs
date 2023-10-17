@@ -12,10 +12,10 @@ namespace Ui.Appi.Commands
     public sealed partial class FindItemsCommand : AsyncCommand<FindItemsCommand.Settings> // Command<FindItemsCommand.Settings>
     {
         private readonly IHandler _handler;
-        private readonly IResultStateService _resultState;
+        private readonly IResultStateService<PromptGroup> _resultState;
         private readonly QueryStrategyCalculator _strategyCalculator;
 
-        public FindItemsCommand(IHandler handler, IResultStateService resultState, QueryStrategyCalculator strategyCalculator)
+        public FindItemsCommand(IHandler handler, IResultStateService<PromptGroup> resultState, QueryStrategyCalculator strategyCalculator)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _resultState = resultState ?? throw new ArgumentNullException(nameof(resultState));

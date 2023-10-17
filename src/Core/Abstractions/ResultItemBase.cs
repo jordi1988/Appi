@@ -49,6 +49,7 @@ namespace Core.Abstractions
         /// <summary>
         /// Overridden method that displays the result.
         /// </summary>
+        /// <returns>The rendered line.</returns>
         public override abstract string ToString();
     }
 }
