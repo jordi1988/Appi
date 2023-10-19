@@ -7,6 +7,10 @@ using Rule = Spectre.Console.Rule;
 
 namespace Ui.Appi
 {
+    /// <summary>
+    /// Represents the Spectre console handler.
+    /// </summary>
+    /// <seealso cref="Core.Abstractions.IHandler" />
     internal class SpectreConsoleHandler : IHandler
     {
         private const string _ruleStyle = "red dim";
@@ -29,6 +33,7 @@ namespace Ui.Appi
             Color.SandyBrown
         };
 
+        /// <inheritdoc cref="IHandler.PrintSources(IEnumerable{ISource})" />
         public void PrintSources(IEnumerable<ISource> sources)
         {
             var table = new Table();
@@ -50,13 +55,14 @@ namespace Ui.Appi
                     $"{styleBegin}{source.Description}{styleEnd}",
                     source.IsActive ? "X" : string.Empty,
                     $"{source.Alias}",
-                    $"{string.Join(", ", source?.Groups ?? Array.Empty<string>())}"
+                    $"{string.Join(", ", source.Groups ?? Array.Empty<string>())}"
                 );
             }
 
             AnsiConsole.Write(table);
         }
 
+        /// <inheritdoc cref="IHandler.PrintResults(IEnumerable{PromptGroup})" />
         public void PrintResults(IEnumerable<PromptGroup> results)
         {
             ClearScreen();
@@ -66,6 +72,7 @@ namespace Ui.Appi
             PromtForActionInvokation(selectedItem);
         }
 
+        /// <inheritdoc cref="IHandler.ClearScreen" />
         public void ClearScreen()
         {
             AnsiConsole.Clear();
@@ -88,6 +95,10 @@ namespace Ui.Appi
                 .PageSize(35)
                 .HighlightStyle(new Style(Color.White, Color.DarkRed))
                 .MoreChoicesText("[grey](Move up and down to reveal more items)[/]");
+            
+            prompt.DisabledStyle = new Style(
+                foreground: Color.White, 
+                decoration: Decoration.Bold | Decoration.Italic | Decoration.Underline);
 
             foreach (var group in itemsWithContent)
             {
@@ -148,7 +159,6 @@ namespace Ui.Appi
 
         private void DisplayBreakdownChart(IEnumerable<PromptGroup> allResults)
         {
-            // TODO: colors should be definable and chart should be customizable in some way
             var chartDisplayedResults = allResults.Where(x => x.Items.Any()).ToList();
             if (!chartDisplayedResults.Any())
             {

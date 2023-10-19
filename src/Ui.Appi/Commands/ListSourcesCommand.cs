@@ -4,17 +4,30 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Ui.Appi.Commands
 {
-    public sealed partial class ListSourcesCommand : Command
+    /// <summary>
+    /// Represents the command to list all registered sources.
+    /// </summary>
+    internal sealed partial class ListSourcesCommand : Command
     {
         private readonly IHandler _handler;
         private readonly ISettingsService _settingsService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListSourcesCommand"/> class.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        /// <param name="sourceService">The source service.</param>
+        /// <exception cref="ArgumentNullException"> </exception>
         public ListSourcesCommand(IHandler handler, ISettingsService sourceService)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _settingsService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
         }
 
+        /// <summary>
+        /// Executes the command.
+        /// </summary>
+        /// <param name="context">The context.</param>
         public override int Execute([NotNull] CommandContext context)
         {
             var sources = _settingsService.ReadSources();

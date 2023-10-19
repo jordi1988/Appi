@@ -8,17 +8,31 @@ using System.Reflection;
 
 namespace Ui.Appi.Commands
 {
+    /// <summary>
+    /// Represents the command to register new or updated custom plugins.
+    /// </summary>
     internal sealed class ConfigRegisterLibraryCommand : Command<ConfigRegisterLibraryCommand.Settings>
     {
         private readonly IPluginService _pluginService;
         private readonly ISettingsService _settingsService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigRegisterLibraryCommand"/> class.
+        /// </summary>
+        /// <param name="pluginService">The plugin service.</param>
+        /// <param name="sourceService">The source service.</param>
+        /// <exception cref="ArgumentNullException"> </exception>
         public ConfigRegisterLibraryCommand(IPluginService pluginService, ISettingsService sourceService)
         {
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
             _settingsService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
         }
 
+        /// <summary>
+        /// Executes the command.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="settings">The settings.</param>
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             ConfigurationHelper.EnsureSettingsExist();
@@ -85,12 +99,26 @@ namespace Ui.Appi.Commands
             }
         }
 
+        /// <summary>
+        /// Represents the settings class associated with the command.
+        /// </summary>
+        /// <seealso cref="CommandSettings" />
         public sealed class Settings : CommandSettings
         {
+            /// <summary>
+            /// The path to the plugin file.
+            /// </summary>
+            /// <value>The path.</value>
             [Description("Path to the DLL file.")]
             [CommandArgument(0, "<path>")]
             public string Path { get; init; } = string.Empty;
 
+            /// <summary>
+            /// Defines if the file should only be copied, but not registered in the config.
+            /// </summary>
+            /// <value>
+            ///   <c>true</c> if copy only; otherwise register in config file.
+            /// </value>
             [Description("Just copy the assembly into the application's directory (e. g. for plugin updates). This won't register the assembly in `sources.json`.")]
             [CommandOption("--copy-only")]
             [DefaultValue(false)]
