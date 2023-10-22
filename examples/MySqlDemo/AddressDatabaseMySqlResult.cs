@@ -2,10 +2,11 @@
 using Core.Attributes;
 using Core.Models;
 using Infrastructure.Services;
+using Infrastructure.Sources.Sql;
 
 namespace Infrastructure.MySql
 {
-    public class AddressDatabaseMySqlResult : MySqlResultBase<AddressDto>
+    public class AddressDatabaseMySqlResult : SqlResultBase<AddressDto>
     {
         private readonly IHandlerHelper _handlerHelper;
 

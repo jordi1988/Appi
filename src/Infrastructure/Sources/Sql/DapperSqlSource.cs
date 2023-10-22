@@ -1,22 +1,19 @@
 ﻿using Core.Abstractions;
 using Core.Models;
 using Dapper;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
+using System.Data.Common;
 
-namespace Infrastructure.MsSql
+namespace Infrastructure.Sources.Sql
 {
     /// <summary>
-    /// Represents a base class for SQL Server sources.
+    /// Represents a base class for SQL sources.
     /// </summary>
     /// <typeparam name="TResult">The result type to be mapped.</typeparam>
     /// <seealso cref="ISource" />
-    public abstract class MsSqlSource<TResult> : ISource
+    public abstract class DapperSqlSource<TResult> : ISource
         where TResult : class
     {
-        private readonly IStringLocalizer<InfrastructureLayerLocalization> _localizer;
-
         /// <inheritdoc cref="ISource.TypeName"/>
         public abstract string TypeName { get; set; }
 
@@ -54,27 +51,23 @@ namespace Infrastructure.MsSql
         public IHandlerHelper HandlerHelper { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MsSqlSource{TResult}"/> class.
+        /// Initializes a new instance of the <see cref="DapperSqlSource{TResult}"/> class.
         /// </summary>
         /// <param name="handlerHelper">The handler helper.</param>
-        /// <param name="localizer">The localizer.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        protected MsSqlSource(IHandlerHelper handlerHelper, IStringLocalizer<InfrastructureLayerLocalization> localizer)
+        protected DapperSqlSource(IHandlerHelper handlerHelper)
         {
             HandlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
-            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
         }
 
         /// <summary>
-        /// Fetches the data from the SQL Server.
+        /// Fetches the data from the SQL server.
         /// </summary>
         /// <param name="options">Options related to the query.</param>
         /// <returns>The mapped results of the query.</returns>
         public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
-            var connectionString = Arguments ?? throw new MsSqlConnectionStringMissingException(_localizer);
-
-            using var connection = new SqlConnection(connectionString);
+            using var connection = CreateConnection();
             await connection.OpenAsync();
 
             var sqlQuery = GetSqlQuery(options);
@@ -85,10 +78,16 @@ namespace Infrastructure.MsSql
         }
 
         /// <inheritdoc cref="ISource.AddCustomServices"/>
-        public IServiceCollection AddCustomServices(IServiceCollection services)
+        public virtual IServiceCollection AddCustomServices(IServiceCollection services)
         {
             return services;
         }
+
+        /// <summary>
+        /// Creates the database connection passing the connection string.
+        /// </summary>
+        /// <returns>Concrete type of DBConnection.</returns>
+        protected abstract DbConnection CreateConnection();
 
         /// <summary>
         /// Gets the SQL query which will be run.
@@ -109,7 +108,7 @@ namespace Infrastructure.MsSql
         /// </summary>
         /// <param name="value">The search query to be encoded for the use with <c>LIKE</c>.</param>
         /// <returns>The encoded search query.</returns>
-        protected string EncodeForLike(string value)
+        protected virtual string EncodeForLike(string value)
         {
             return value
                 .Replace("[", "[[]")

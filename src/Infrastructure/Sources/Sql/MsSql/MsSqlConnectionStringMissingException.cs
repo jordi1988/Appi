@@ -1,7 +1,7 @@
 ﻿using Core.Exceptions;
 using Microsoft.Extensions.Localization;
 
-namespace Infrastructure.MsSql
+namespace Infrastructure.Sources.Sql.MsSql
 {
     /// <summary>
     /// Represents the <see cref="MsSqlConnectionStringMissingException"/> class which will be used if the connection string was not provided.

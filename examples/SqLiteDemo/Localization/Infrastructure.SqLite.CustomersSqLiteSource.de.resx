@@ -117,25 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Microsoft SQL connection string must be provided through 'Arguments' property in configuration file." xml:space="preserve">
-    <value>Die Microsoft SQL Verbindungszeichenfolge muss über die 'Arguments' Eigenschaft in der Konfigurationsdatei angegeben werden.</value>
+  <data name="Copy address" xml:space="preserve">
+    <value>Adresse kopieren</value>
   </data>
-  <data name="More options" xml:space="preserve">
-    <value>Mehr Optionen</value>
+  <data name="Make phone call to {0}" xml:space="preserve">
+    <value>Rufnummer {0} wählen</value>
   </data>
-  <data name="MySQL connection string must be provided through `Arguments` property in configuration file." xml:space="preserve">
-    <value>Die MySQL Verbindungszeichenfolge muss über die 'Arguments' Eigenschaft in der Konfigurationsdatei angegeben werden.</value>
-  </data>
-  <data name="Sorry, '{0}' can only be used with Windows OS for now." xml:space="preserve">
-    <value>Entschuldigung, '{0}' kann nur mit einem Windows OS verwendet werden.</value>
-  </data>
-  <data name="SQLite connection string must be provided through 'Arguments' property in configuration file." xml:space="preserve">
-    <value>Die SQLite Verbindungszeichenfolge muss über die 'Arguments' Eigenschaft in der Konfigurationsdatei angegeben werden</value>
-  </data>
-  <data name="The given file was not found." xml:space="preserve">
-    <value>Die angegebene Datei wurde nicht gefunden.</value>
-  </data>
-  <data name="This class can only be instantiated on Windows OS." xml:space="preserve">
-    <value>Diese Klasse kann nur mit einem Windows OS verwendet werden.</value>
+  <data name="Open in Google Maps" xml:space="preserve">
+    <value>In Google Maps öffnen</value>
   </data>
 </root>

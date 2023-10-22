@@ -1,11 +1,11 @@
 ﻿using Core.Abstractions;
 using Core.Attributes;
 using Core.Models;
-using Infrastructure.Services;
+using Infrastructure.Sources.Sql;
 
 namespace Infrastructure.MsSql
 {
-    public class UserDatabaseMsSqlResult : MsSqlResultBase<UserDto>
+    public class UserDatabaseMsSqlResult : SqlResultBase<UserDto>
     {
         private readonly IHandlerHelper _handlerHelper;
 
@@ -28,16 +28,22 @@ namespace Infrastructure.MsSql
 
         public override IEnumerable<ActionItem> GetActions()
         {
-            var url = $"https://www.google.com/maps/search/?api=1&query={Name}, {Description}";
             var actions = new List<ActionItem>() {
-                new() {
-                    Name = "Google Maps",
-                    Action = () => ProcessService.Start(url.Replace("&", "^&"))
-                },
                 _handlerHelper.Back(),
+                new() {
+                    Name = "Edit user in ADSI Edit",
+                    Action = () => Console.WriteLine("Sorry, just a demo.")
+                },
+                new() {
+                    Name = "Delete user",
+                    Action = () => Console.WriteLine("Sorry, just a demo.")
+                },
+                new() {
+                    Name = "Lock user",
+                    Action = () => Console.WriteLine("Sorry, just a demo.")
+                },
                 _handlerHelper.Exit()
             };
-            
 
             return actions;
         }

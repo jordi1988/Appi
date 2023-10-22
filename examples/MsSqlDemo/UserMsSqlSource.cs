@@ -1,6 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Models;
 using Dapper;
+using Infrastructure.Sources.Sql.MsSql;
 using Microsoft.Extensions.Localization;
 
 namespace Infrastructure.MsSql

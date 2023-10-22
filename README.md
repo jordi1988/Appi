@@ -113,7 +113,7 @@ Just follow these simple steps:
 1. Create a .NET 7 class library
 2. Add the `Appi.Core` NuGet package as a dependency
     - `PM> Install-Package Appi.Core` for plugin development from scratch or
-    - `PM> Install-Package Appi.Infrastructure` for plugin development with pre-built infrastructure like File access, MySQL/MariaDB or Microsoft SQL Server
+    - `PM> Install-Package Appi.Infrastructure` for plugin development with pre-built infrastructure like File access, MySQL/MariaDB, SQLite or Microsoft SQL Server
 3. Create classes that implement `ISource` and `ResultItemBase` ([see GitHub examples](https://github.com/jordi1988/Appi/tree/master/examples/ExternalDemoSource))
 4. Register the new assembly by calling `appi config register-lib "pathToAssembly.dll"`
 5. If applicable: change connection string(s) in sources.json (`appi config open`)
@@ -123,6 +123,7 @@ Some infrastructure classes are already provided. Fetching data from your databa
 - **File** (see `sources.json` after running `appi config open` and change the path of your text file)
 - **[SQL Server (MSSQL)](https://github.com/jordi1988/Appi/tree/master/examples/MsSqlDemo)**
 - **[MySQL / MariaDB](https://github.com/jordi1988/Appi/tree/master/examples/MySqlDemo)**
+- **[SQLite](https://github.com/jordi1988/Appi/tree/master/examples/SqLiteDemo)**
 - **More to come** out of the box (want to collaborate?)
 
 ### Dependency Injection (DI)

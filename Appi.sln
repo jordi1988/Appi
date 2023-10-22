@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileDemo", "examples\FileDe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsSqlDemo", "examples\MsSqlDemo\MsSqlDemo.csproj", "{6D2FD811-A557-4812-A35F-B7EEB53227B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqLiteDemo", "examples\SqLiteDemo\SqLiteDemo.csproj", "{42BDDD49-C300-49EF-B6B8-0287195E8096}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{6D2FD811-A557-4812-A35F-B7EEB53227B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D2FD811-A557-4812-A35F-B7EEB53227B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D2FD811-A557-4812-A35F-B7EEB53227B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42BDDD49-C300-49EF-B6B8-0287195E8096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42BDDD49-C300-49EF-B6B8-0287195E8096}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42BDDD49-C300-49EF-B6B8-0287195E8096}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42BDDD49-C300-49EF-B6B8-0287195E8096}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,6 +92,7 @@ Global
 		{FAA4EADC-382B-45F8-85F7-4FCCD995B3CB} = {6189930F-2D64-45FA-9C7B-7B46E4106A6F}
 		{66E344C8-0385-4210-8215-27807F49A6F8} = {6189930F-2D64-45FA-9C7B-7B46E4106A6F}
 		{6D2FD811-A557-4812-A35F-B7EEB53227B4} = {6189930F-2D64-45FA-9C7B-7B46E4106A6F}
+		{42BDDD49-C300-49EF-B6B8-0287195E8096} = {6189930F-2D64-45FA-9C7B-7B46E4106A6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {582939FE-3D4B-4D3A-B69D-AC28A8E4AC27}

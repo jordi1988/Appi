@@ -14,11 +14,11 @@
 	<PackageProjectUrl>https://github.com/jordi1988/Appi/</PackageProjectUrl>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<RepositoryUrl>https://github.com/jordi1988/Appi/</RepositoryUrl>
-	<PackageTags>query; console; information; gathering; plugin; extensible; powertoys</PackageTags>
+	<PackageTags>query; search; find; console; information; gathering; plugin; module; extensible; powertoys</PackageTags>
 	<PackageReleaseNotes>see info on GitHub</PackageReleaseNotes>
 	<RepositoryType>git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -31,9 +31,13 @@
 
   <ItemGroup>
     <PackageReference Include="ArgumentString" Version="1.0.4" />
-    <PackageReference Include="Dapper" Version="2.1.4" />
+    <PackageReference Include="Dapper" Version="2.1.15" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="7.0.12" />
     <PackageReference Include="MySqlConnector" Version="2.2.7" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="2.1.6" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.6" />
+    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" Version="2.1.6" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
   </ItemGroup>
 

@@ -38,7 +38,6 @@ namespace Infrastructure.FileDemoExample
             _customLocalizer = customLocalizer ?? throw new ArgumentNullException(nameof(customLocalizer));
 
             Console.WriteLine(dummyService?.GetDummyServiceCreationTime());
-            Task.Delay(2000).Wait();
 
             logger.LogInformation($"{nameof(FileDemoSource)} was sucessfully created.");
         }

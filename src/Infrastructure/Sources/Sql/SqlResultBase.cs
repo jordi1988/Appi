@@ -1,13 +1,13 @@
 ﻿using Core.Abstractions;
 
-namespace Infrastructure.MySql
+namespace Infrastructure.Sources.Sql
 {
     /// <summary>
-    /// Represents the base class for MySQL item results.
+    /// Represents the base class for SQL item results.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <seealso cref="ResultItemBase" />
-    public abstract class MySqlResultBase<TResult> : ResultItemBase
+    public abstract class SqlResultBase<TResult> : ResultItemBase
         where TResult : class
     {
         /// <summary>
@@ -17,10 +17,10 @@ namespace Infrastructure.MySql
         public TResult Result { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MySqlResultBase{TResult}"/> class.
+        /// Initializes a new instance of the <see cref="SqlResultBase{TResult}"/> class.
         /// </summary>
         /// <param name="result">The result.</param>
-        protected MySqlResultBase(TResult result)
+        protected SqlResultBase(TResult result)
         {
             Result = result;
         }

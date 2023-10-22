@@ -14,13 +14,13 @@
 	<PackageProjectUrl>https://github.com/jordi1988/Appi/</PackageProjectUrl>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<RepositoryUrl>https://github.com/jordi1988/Appi/</RepositoryUrl>
-	<PackageTags>query; console; information; gathering; plugin; extensible; powertoys</PackageTags>
+	<PackageTags>query; search; find; console; information; gathering; plugin; module; extensible; powertoys</PackageTags>
 	<PackageReleaseNotes>see info on GitHub</PackageReleaseNotes>
 	<RepositoryType>git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<AssemblyVersion>1.2.0</AssemblyVersion>
-	<FileVersion>1.2.0</FileVersion>
-	<Version>1.2.0</Version>
+	<AssemblyVersion>1.2.1</AssemblyVersion>
+	<FileVersion>1.2.1</FileVersion>
+	<Version>1.2.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
