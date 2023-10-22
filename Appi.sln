@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		find-command-demo.gif = find-command-demo.gif
+		logo.png = logo.png
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -35,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileDemo", "examples\FileDe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsSqlDemo", "examples\MsSqlDemo\MsSqlDemo.csproj", "{6D2FD811-A557-4812-A35F-B7EEB53227B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqLiteDemo", "examples\SqLiteDemo\SqLiteDemo.csproj", "{42BDDD49-C300-49EF-B6B8-0287195E8096}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqLiteDemo", "examples\SqLiteDemo\SqLiteDemo.csproj", "{42BDDD49-C300-49EF-B6B8-0287195E8096}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
