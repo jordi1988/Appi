@@ -22,7 +22,7 @@ namespace Core.Helper
         /// The application directory.
         /// </value>
         /// <remarks>Can be viewed with `appi config open` command.</remarks>
-        public static string ApplicationDirectory => Path.Combine(_appDataDirectory, "Appi");
+        public static string ApplicationDirectory => Path.Combine(AppDataDirectory, "Appi");
 
         /// <summary>
         /// Gets the application setting's filename.
@@ -32,7 +32,7 @@ namespace Core.Helper
         /// </value>
         public static string ApplicationFilename => Path.Combine(ApplicationDirectory, "sources.json");
 
-        private static string _appDataDirectory => GetFolderPath(SpecialFolder.ApplicationData);
+        private static string AppDataDirectory => GetFolderPath(SpecialFolder.ApplicationData);
 
         static ConfigurationHelper()
         {

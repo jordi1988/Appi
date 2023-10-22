@@ -6,7 +6,7 @@ namespace Infrastructure.ExternalSourceDemo
 {
     public class ExternalDemoSource : ISource
     {
-        private readonly IHandlerHelper _handlerHelper;
+        private readonly IHandlerHelper? _handlerHelper;
 
         public string TypeName { get; set; } = typeof(ExternalDemoSource).Name;
         public string Name { get; set; } = "Demo Assembly";

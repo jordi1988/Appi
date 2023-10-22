@@ -6,21 +6,26 @@ namespace Infrastructure.ExternalSourceDemo
 {
     public class ExternalDemoResult : ResultItemBase
     {
-        private readonly IHandlerHelper _handlerHelper;
+        private readonly IHandlerHelper? _handlerHelper;
 
         [DetailViewColumn]
         public override string Name => base.Name;
 
         [DetailViewColumn]
-        public override string Description => _handlerHelper.EscapeMarkup(base.Description);
+        public override string Description => _handlerHelper?.EscapeMarkup(base.Description) ?? base.Description;
 
-        public ExternalDemoResult(IHandlerHelper handlerHelper)
+        public ExternalDemoResult(IHandlerHelper? handlerHelper)
         {
-            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+            _handlerHelper = handlerHelper;
         }
 
         public override IEnumerable<ActionItem> GetActions()
         {
+            if (_handlerHelper is null)
+            {
+                return Enumerable.Empty<ActionItem>();
+            }
+
             var actions = new List<ActionItem>
             {
                 _handlerHelper.Back(),

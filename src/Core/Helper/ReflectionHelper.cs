@@ -16,9 +16,8 @@ namespace Core.Helper
         /// Creates instances of the classes implementing the interface given in <typeparamref name="TInterface"/>.
         /// </summary>
         /// <typeparam name="TInterface">The interface type.</typeparam>
-        /// <param name="firstConstructorParameter">The first parameter of the constructor of any type.</param>
         /// <returns>Instances of all classes implementing <typeparamref name="TInterface"/>.</returns>
-        public static IEnumerable<TInterface> InitializeClassesImplementingInterface<TInterface>(object? firstConstructorParameter = null)
+        public static IEnumerable<TInterface> InitializeClassesImplementingInterface<TInterface>()
         {
             var output = new List<TInterface>();
 
@@ -29,7 +28,10 @@ namespace Core.Helper
                 foreach (var classType in classes)
                 {
                     var instance = CreateInstance<TInterface>(classType);
-                    output.Add(instance);
+                    if (instance is not null)
+                    {
+                        output.Add(instance);
+                    }
                 }
             }
 
@@ -76,7 +78,7 @@ namespace Core.Helper
                 }
             }
 
-            var localizer = serviceProvider.GetServiceDirectly<IStringLocalizer<CoreLayerLocalization>>(true);
+            var localizer = serviceProvider.GetServiceDirectly<IStringLocalizer<CoreLayerLocalization>>(true);   
             throw new SourceNotFoundException(className, localizer!);
         }
 
@@ -87,11 +89,11 @@ namespace Core.Helper
         /// <param name="classType">Type of the class.</param>
         /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
         /// <returns>The concrete type of <paramref name="classType"/> casted to <typeparamref name="TInterface"/>.</returns>
-        public static TInterface CreateInstance<TInterface>(Type classType, IServiceProvider? serviceProvider = null)
+        public static TInterface? CreateInstance<TInterface>(Type classType, IServiceProvider? serviceProvider = null)
         {
             if (serviceProvider is null)
             {
-                return (TInterface)Activator.CreateInstance(classType);
+                return (TInterface?)Activator.CreateInstance(classType);
             }
 
             var arguments = new List<object?>();
@@ -110,15 +112,15 @@ namespace Core.Helper
 
                 if (parameters.Length == 0)
                 {
-                    return (TInterface)Activator.CreateInstance(classType);
+                    return (TInterface?)Activator.CreateInstance(classType);
                 }
                 else if (arguments.Count == parameters.Length)
                 {
-                    return (TInterface)Activator.CreateInstance(classType, arguments.ToArray());
+                    return (TInterface?)Activator.CreateInstance(classType, arguments.ToArray());
                 }
             }
 
-            return (TInterface)Activator.CreateInstance(classType);
+            return (TInterface?)Activator.CreateInstance(classType);
         }
 
         /// <summary>
@@ -173,6 +175,8 @@ namespace Core.Helper
             UnsafeLoadAssemblies(ConfigurationHelper.ApplicationDirectory, "*.dll");
 
             var executablePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            ArgumentException.ThrowIfNullOrEmpty(executablePath);
+
             UnsafeLoadAssemblies(executablePath, "Appi.Plugin.*.dll");
         }
 

@@ -33,7 +33,7 @@ namespace Core.Extensions
         /// <param name="type"></param>
         /// <param name="throwIfNull">if set to <c>true</c> throw if null.</param>
         /// <returns>Implementation instance.</returns>
-        /// <exception cref="System.NotImplementedException">Thrown if <typeparamref name="T"/> has no implementation.</exception>
+        /// <exception cref="System.NotImplementedException">Thrown if <paramref name="type"/> has no implementation.</exception>
         public static object? GetServiceDirectly(this IServiceProvider serviceProvider, Type type, bool throwIfNull = false)
         {
             using IServiceScope serviceScope = serviceProvider.CreateScope();

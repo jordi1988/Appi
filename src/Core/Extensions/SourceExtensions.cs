@@ -30,12 +30,14 @@ namespace Core.Extensions
         /// <param name="source">The manually created source.</param>
         /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
         /// <returns>An instance that can make use of the <see cref="ISource.ReadAsync(Models.FindItemsOptions)"/> method.</returns>
-        public static ISource ToRealInstance(this ISource source, IServiceProvider serviceProvider)
+        public static ISource? ToRealInstance(this ISource source, IServiceProvider serviceProvider)
         {
             var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, serviceProvider);
             var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass, serviceProvider);
-
-            source.CopyTo(instance);
+            if (instance is not null)
+            {
+                source.CopyTo(instance);
+            }
 
             return instance;
         }
@@ -53,8 +55,10 @@ namespace Core.Extensions
             foreach (var source in sources)
             {
                 var instance = ToRealInstance(source, serviceProvider);
-
-                output.Add(instance);
+                if (instance is not null)
+                {
+                    output.Add(instance);
+                }
             }
 
             return output;

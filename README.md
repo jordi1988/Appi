@@ -33,7 +33,7 @@ Because your information sources will be different from mine, go start building 
 ## Usage
 ### Demo
 This demo shows the `find` command searching for `st` within all active sources (`Customers SQLite database`, `Address MySQL database`, `User SQL Server database`, `Demo Assembly`, and `More`), selecting and displaying one user result (UserId and Username - properties based on `DetailViewColumnAttribute`), goes back, selecting a customer result, and finally taking some action on it (`Copy address`).  
-Next actions searches for `joh` inside the single `cust` source (alias for customer - can be defined on settings), picks one, and calls its phone number.  
+Next actions searches for `joh` inside the single `cust` source (alias for customer - can be defined in settings), picks one, and calls its phone number.  
 ![Demo](find-command-demo.gif)
 
 ### Screenshot of multiple results

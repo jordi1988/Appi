@@ -95,7 +95,6 @@ namespace Ui.Appi.Commands
 
             var newAssembly = Assembly.UnsafeLoadFrom(newFilePath);
             var classTypes = ReflectionHelper.GetClassesImplementingInterface<ISource>(newAssembly);
-
             foreach (var classType in classTypes)
             {
                 var sourceInstance = ReflectionHelper.CreateInstance<ISource>(classType, _serviceProvider);
@@ -103,7 +102,10 @@ namespace Ui.Appi.Commands
                     .ReadSources()
                     .ToList();
 
-                currentSettings.Add(sourceInstance);
+                if (sourceInstance is not null)
+                {
+                    currentSettings.Add(sourceInstance);
+                }
 
                 _settingsService.SaveSources(currentSettings);
             }
