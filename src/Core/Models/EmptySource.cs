@@ -1,4 +1,5 @@
 ﻿using Core.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Models
 {
@@ -37,6 +38,12 @@ namespace Core.Models
 
         /// <inheritdoc cref="ISource.Groups"/>
         public string[]? Groups { get; set; }
+
+        /// <inheritdoc cref="ISource.AddCustomServices"/>
+        public IServiceCollection AddCustomServices(IServiceCollection services)
+        {
+            return services;
+        }
 
         /// <inheritdoc cref="ISource.ReadAsync(FindItemsOptions)"/>
         /// <returns>Empty collection.</returns>

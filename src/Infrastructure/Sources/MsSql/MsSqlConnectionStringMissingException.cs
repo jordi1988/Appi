@@ -1,4 +1,5 @@
 ﻿using Core.Exceptions;
+using Microsoft.Extensions.Localization;
 
 namespace Infrastructure.MsSql
 {
@@ -11,8 +12,8 @@ namespace Infrastructure.MsSql
         /// <summary>
         /// Initializes a new instance of the <see cref="MsSqlConnectionStringMissingException"/> class.
         /// </summary>
-        public MsSqlConnectionStringMissingException()
-            : base($"Microsoft SQL connection string must be provided through `Arguments` property in configuration file.")
+        public MsSqlConnectionStringMissingException(IStringLocalizer<InfrastructureLayerLocalization> localizer)
+            : base(localizer["Microsoft SQL connection string must be provided through 'Arguments' property in configuration file."])
         {
         }
     }

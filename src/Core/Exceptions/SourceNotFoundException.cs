@@ -1,4 +1,6 @@
-﻿namespace Core.Exceptions
+﻿using Microsoft.Extensions.Localization;
+
+namespace Core.Exceptions
 {
     /// <summary>
     /// Represents the <see cref="SourceNotFoundException"/> class which will be used if a given source name is not found.
@@ -10,8 +12,9 @@
         /// Initializes a new instance of the <see cref="SourceNotFoundException"/> class.
         /// </summary>
         /// <param name="sourceName">The missing source name.</param>
-        public SourceNotFoundException(string sourceName)
-            : base($"The source `{sourceName}` could not be found.")
+        /// <param name="localizer">The localizer.</param>
+        public SourceNotFoundException(string sourceName, IStringLocalizer<CoreLayerLocalization> localizer)
+            : base(localizer["The source '{0}' could not be found.", sourceName])
         {
         }
     }

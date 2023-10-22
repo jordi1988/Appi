@@ -1,9 +1,9 @@
 ﻿using Core.Abstractions;
 using Core.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.ExternalSourceDemo
 {
-    // TODO: should be named SimplePluginDemo
     public class ExternalDemoSource : ISource
     {
         private readonly IHandlerHelper _handlerHelper;
@@ -41,6 +41,12 @@ namespace Infrastructure.ExternalSourceDemo
             };
 
             return await Task.FromResult(output);
+        }
+
+        /// <inheritdoc cref="ISource.AddCustomServices"/>
+        public IServiceCollection AddCustomServices(IServiceCollection services)
+        {
+            return services;
         }
     }
 }

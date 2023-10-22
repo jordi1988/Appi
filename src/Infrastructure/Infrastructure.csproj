@@ -15,10 +15,10 @@
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<RepositoryUrl>https://github.com/jordi1988/Appi/</RepositoryUrl>
 	<PackageTags>query; console; information; gathering; plugin; extensible; powertoys</PackageTags>
-	<PackageReleaseNotes>inital release</PackageReleaseNotes>
+	<PackageReleaseNotes>see info on GitHub</PackageReleaseNotes>
 	<RepositoryType>git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

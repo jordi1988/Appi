@@ -12,4 +12,11 @@
     <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\Infrastructure.HttpRequestDemoExample.PoetryHttpRequestSource.de.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <CustomToolNamespace></CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

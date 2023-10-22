@@ -1,6 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Helper;
 using Core.Models;
+using Microsoft.Extensions.Localization;
 using Spectre.Console;
 using System.Data;
 using Rule = Spectre.Console.Rule;
@@ -15,6 +16,7 @@ namespace Ui.Appi
     {
         private const string _ruleStyle = "red dim";
 
+        private readonly IStringLocalizer<UILayerLocalization> _localizer;
         private readonly Color[] _chartColors = {
             Color.SkyBlue2,
             Color.Magenta2_1,
@@ -33,17 +35,22 @@ namespace Ui.Appi
             Color.SandyBrown
         };
 
+        public SpectreConsoleHandler(IStringLocalizer<UILayerLocalization> localizer)
+        {
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+        }
+
         /// <inheritdoc cref="IHandler.PrintSources(IEnumerable{ISource})" />
         public void PrintSources(IEnumerable<ISource> sources)
         {
             var table = new Table();
             table.Border(TableBorder.DoubleEdge);
 
-            table.AddColumn("Name");
-            table.AddColumn("Description");
-            table.AddColumn("Active", config => config.Centered());
-            table.AddColumn("Source alias [i](-s / --source)[/]");
-            table.AddColumn("Group aliases [i](-g / --group)[/]");
+            table.AddColumn(_localizer["Name"]);
+            table.AddColumn(_localizer["Description"]);
+            table.AddColumn(_localizer["Active"], config => config.Centered());
+            table.AddColumn(_localizer["Source alias"] + " [i](-s / --source)[/]");
+            table.AddColumn(_localizer["Group aliases"] + " [i](-g / --group)[/]");
 
             foreach (var source in sources)
             {
@@ -67,9 +74,9 @@ namespace Ui.Appi
         {
             ClearScreen();
             DisplayBreakdownChart(results);
-            var selectedItem = PromtForItemSelection(results);
+            var selectedItem = PromtForItemSelection(results, _localizer);
             DisplayItem(selectedItem);
-            PromtForActionInvokation(selectedItem);
+            PromtForActionInvokation(selectedItem, _localizer);
         }
 
         /// <inheritdoc cref="IHandler.ClearScreen" />
@@ -78,27 +85,28 @@ namespace Ui.Appi
             AnsiConsole.Clear();
         }
 
-        private static ResultItemBase? PromtForItemSelection(IEnumerable<PromptGroup> items)
+        private static ResultItemBase? PromtForItemSelection(IEnumerable<PromptGroup> items, IStringLocalizer<UILayerLocalization> localizer)
         {
             var itemsWithContent = items.Where(x => x.Items.Any());
             if (!itemsWithContent.Any())
             {
-                AnsiConsole.Write(new Markup("Sorry, [bold]no items[/] were found."));
+                AnsiConsole.Write(new Markup(localizer["Sorry, [bold]no items[/] were found."]));
                 return null;
             }
 
-            var rule = new Rule("[white]Please select item[/]");
+            var rule = new Rule(localizer["[white]Please select item[/]"]);
             rule.RuleStyle(_ruleStyle);
             AnsiConsole.Write(rule);
 
             var prompt = new SelectionPrompt<ResultItemBase>()
                 .PageSize(35)
                 .HighlightStyle(new Style(Color.White, Color.DarkRed))
-                .MoreChoicesText("[grey](Move up and down to reveal more items)[/]");
+                .MoreChoicesText(localizer["[grey](Move up and down to reveal more items)[/]"]);
             
             prompt.DisabledStyle = new Style(
-                foreground: Color.White, 
-                decoration: Decoration.Bold | Decoration.Italic | Decoration.Underline);
+                background: Color.Silver,
+                foreground: Color.Black, 
+                decoration: Decoration.Bold | Decoration.Italic);
 
             foreach (var group in itemsWithContent)
             {
@@ -109,7 +117,7 @@ namespace Ui.Appi
             return AnsiConsole.Prompt(prompt);
         }
 
-        private static void PromtForActionInvokation(ResultItemBase? item)
+        private static void PromtForActionInvokation(ResultItemBase? item, IStringLocalizer<UILayerLocalization> localizer)
         {
             if (item is null)
             {
@@ -119,16 +127,16 @@ namespace Ui.Appi
             var actions = item.GetActions();
             if (!actions.Any())
             {
-                AnsiConsole.Write(new Markup("Sorry, there is [bold]no action[/] you can choose from. [red]Goodbye.[/]"));
+                AnsiConsole.Write(new Markup(localizer["Sorry, there is [bold]no action[/] you can choose from. [red]Goodbye.[/]"]));
                 return;
             }
 
             var selectedAction = AnsiConsole.Prompt(
                 new SelectionPrompt<ActionItem>()
-                    .Title("[b]Which [red]action[/] should be invoked? [/]")
+                    .Title(localizer["[b]Which [red]action[/] should be invoked? [/]"])
                     .PageSize(30)
                     .HighlightStyle(new Style(Color.White, Color.DarkRed))
-                    .MoreChoicesText("[grey](Move up and down to reveal more items)[/]")
+                    .MoreChoicesText(localizer["[grey](Move up and down to reveal more items)[/]"])
                     .AddChoices(actions));
 
             selectedAction.Action?.Invoke();
@@ -159,7 +167,9 @@ namespace Ui.Appi
 
         private void DisplayBreakdownChart(IEnumerable<PromptGroup> allResults)
         {
-            var chartDisplayedResults = allResults.Where(x => x.Items.Any()).ToList();
+            var chartDisplayedResults = allResults
+                .Where(x => x.Items.Any())
+                .ToList();
             if (!chartDisplayedResults.Any())
             {
                 return;
@@ -172,7 +182,10 @@ namespace Ui.Appi
                 var group = chartDisplayedResults[i];
                 var currentColor = CalculateColor(totalCount, i);
 
-                chart.AddItem(group.Name, group.Items.Count(), currentColor);
+                chart.AddItem(
+                    group.Name, 
+                    group.Items.Count(), 
+                    currentColor);
             }
 
             var upperRule = new Rule();

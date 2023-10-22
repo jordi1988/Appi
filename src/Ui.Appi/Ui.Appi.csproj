@@ -17,12 +17,12 @@
     <RepositoryUrl>https://github.com/jordi1988/Appi/</RepositoryUrl>
     <PackageTags>query; console; information; gathering; plugin; extensible; powertoys</PackageTags>
     <PackAsTool>True</PackAsTool>
-    <PackageReleaseNotes>inital release</PackageReleaseNotes>
+    <PackageReleaseNotes>see info on GitHub</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
-    <FileVersion>1.1.0</FileVersion>
-    <Version>1.1.0</Version>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
+    <Version>1.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -36,6 +36,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.12" />
     <PackageReference Include="Spectre.Console" Version="0.47.0" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
   </ItemGroup>
@@ -53,6 +54,24 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Localization\UILayerLocalization.de.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>UILayerLocalization.de.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\UILayerLocalization.de.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>UILayerLocalization.de.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SpectreConsoleHander.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

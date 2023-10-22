@@ -1,5 +1,6 @@
 ﻿using Core.Abstractions;
 using Core.Models;
+using Microsoft.Extensions.Localization;
 
 namespace Infrastructure.Sources.MoreOptions
 {
@@ -15,12 +16,13 @@ namespace Infrastructure.Sources.MoreOptions
         /// Initializes a new instance of the <see cref="MoreOptionsItemResult"/> class.
         /// </summary>
         /// <param name="handlerHelper">The handler helper.</param>
+        /// <param name="localizer">The localizer.</param>
         /// <exception cref="ArgumentNullException">handlerHelper</exception>
-        public MoreOptionsItemResult(IHandlerHelper handlerHelper)
+        public MoreOptionsItemResult(IHandlerHelper handlerHelper, IStringLocalizer<InfrastructureLayerLocalization> localizer)
         {
             _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
 
-            Name = "More options";
+            Name = localizer["More options"];
             Description = string.Empty;
         }
 

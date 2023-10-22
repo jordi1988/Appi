@@ -1,6 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Models;
 using Dapper;
+using Microsoft.Extensions.Localization;
 
 namespace Infrastructure.MsSql
 {
@@ -16,8 +17,8 @@ namespace Infrastructure.MsSql
         public override string? Arguments { get; set; } = "INSERT_CONNECTIONSTRING_HERE";
         public override bool? IsQueryCommand { get; set; } = true;
 
-        public UserMsSqlSource(IHandlerHelper handlerHelper) 
-            : base(handlerHelper)
+        public UserMsSqlSource(IHandlerHelper handlerHelper, IStringLocalizer<InfrastructureLayerLocalization> localizer)
+            : base(handlerHelper, localizer)
         {
         }
 

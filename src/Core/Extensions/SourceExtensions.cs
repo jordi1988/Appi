@@ -28,13 +28,12 @@ namespace Core.Extensions
         /// Creates a new instance of a manually created one.
         /// </summary>
         /// <param name="source">The manually created source.</param>
-        /// <param name="pluginService">The plugin service.</param>
-        /// <param name="handlerHelper">The handler helper.</param>
+        /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
         /// <returns>An instance that can make use of the <see cref="ISource.ReadAsync(Models.FindItemsOptions)"/> method.</returns>
-        public static ISource ToRealInstance(this ISource source, IPluginService pluginService, IHandlerHelper handlerHelper)
+        public static ISource ToRealInstance(this ISource source, IServiceProvider serviceProvider)
         {
-            var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, pluginService);
-            var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass, handlerHelper);
+            var sourceClass = ReflectionHelper.GetClassByNameImplementingInterface<ISource>(source.TypeName, serviceProvider);
+            var instance = ReflectionHelper.CreateInstance<ISource>(sourceClass, serviceProvider);
 
             source.CopyTo(instance);
 
@@ -45,16 +44,15 @@ namespace Core.Extensions
         /// Creates a new instance of a manually created one.
         /// </summary>
         /// <param name="sources">The sources.</param>
-        /// <param name="pluginService">The plugin service.</param>
-        /// <param name="handlerHelper">The handler helper.</param>
+        /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
         /// <returns>A collection of instances that can make use of the <see cref="ISource.ReadAsync(Models.FindItemsOptions)"/> method.</returns>
-        public static IEnumerable<ISource> ToRealInstance(this IEnumerable<ISource> sources, IPluginService pluginService, IHandlerHelper handlerHelper)
+        public static IEnumerable<ISource> ToRealInstance(this IEnumerable<ISource> sources, IServiceProvider serviceProvider)
         {
             var output = new List<ISource>();
 
             foreach (var source in sources)
             {
-                var instance = ToRealInstance(source, pluginService, handlerHelper);
+                var instance = ToRealInstance(source, serviceProvider);
 
                 output.Add(instance);
             }

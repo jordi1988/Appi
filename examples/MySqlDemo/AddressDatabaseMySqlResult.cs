@@ -37,7 +37,7 @@ namespace Infrastructure.MySql
             var url = $"https://www.google.com/maps/search/?api=1&query={Name}, {Description}";
             var actions = new List<ActionItem>() {
                 new() {
-                    Name = "Open Google Maps",
+                    Name = "Google Maps",
                     Action = () => ProcessService.Start(url.Replace("&", "^&"))
                 },
                 _handlerHelper.Back(),

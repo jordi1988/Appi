@@ -61,7 +61,7 @@ namespace Core.Helper
         {
             if (!File.Exists(ApplicationFilename))
             {
-                var sources = ReflectionHelper.InitializeClassesImplementingInterface<ISource>(new())
+                var sources = ReflectionHelper.InitializeClassesImplementingInterface<ISource>()
                     .Where(x => !string.IsNullOrWhiteSpace(x.Name))
                     .OrderBy(x => x.SortOrder);
 

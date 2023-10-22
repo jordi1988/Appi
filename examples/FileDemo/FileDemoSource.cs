@@ -1,12 +1,20 @@
 ﻿using Core.Abstractions;
 using Core.Models;
+using FileDemo;
 using Infrastructure.Sources.File;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.FileDemo
+[assembly: RootNamespace("FileDemo")]
+
+namespace Infrastructure.FileDemoExample
 {
     public class FileDemoSource : FileSource
     {
         private readonly IHandlerHelper _handlerHelper;
+        private readonly IStringLocalizer<FileDemoSource> _customLocalizer;
 
         public override string TypeName { get; set; } = typeof(FileDemoSource).Name;
         public override string Name { get; set; } = "scraped.txt File";
@@ -18,15 +26,21 @@ namespace Infrastructure.FileDemo
         public override string? Arguments { get; set; }
         public override bool? IsQueryCommand { get; set; } = true;
 
-        // Either this constructor ...
-        public FileDemoSource()
-        {
-        }
-
-        // ... or this constructor
-        public FileDemoSource(IHandlerHelper handlerHelper)
+        public FileDemoSource(
+            IHandlerHelper handlerHelper,
+            IStringLocalizer<InfrastructureLayerLocalization> localizer,
+            IStringLocalizer<FileDemoSource> customLocalizer,
+            ILogger<FileDemoSource> logger,
+            DummyService? dummyService)
+            : base(localizer)
         {
             _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+            _customLocalizer = customLocalizer ?? throw new ArgumentNullException(nameof(customLocalizer));
+
+            Console.WriteLine(dummyService?.GetDummyServiceCreationTime());
+            Task.Delay(2000).Wait();
+
+            logger.LogInformation($"{nameof(FileDemoSource)} was sucessfully created.");
         }
 
         public override async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
@@ -47,12 +61,19 @@ namespace Infrastructure.FileDemo
             return queriedItems;
         }
 
+        public override IServiceCollection AddCustomServices(IServiceCollection services)
+        {
+            services.TryAddScoped<DummyService>();
+
+            return base.AddCustomServices(services);
+        }
+
         protected override FileResult Parse(string row, int rowNumber)
         {
-            return new FileDemoResult(Path!, rowNumber, _handlerHelper)
+            return new FileDemoResult(Path!, rowNumber, _handlerHelper, _customLocalizer)
             {
                 Id = rowNumber,
-                Name = $"Line {rowNumber}",
+                Name = $"{_customLocalizer["Line"]} {rowNumber}",
                 Description = row
             };
         }

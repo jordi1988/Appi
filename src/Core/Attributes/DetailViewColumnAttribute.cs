@@ -25,4 +25,18 @@
             TargetType = type ?? typeof(string);
         }
     }
+
+    /// <inheritdoc cref="DetailViewColumnAttribute" />
+    /// <typeparam name="TTarget">The type of the target.</typeparam>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public class DetailViewColumnAttribute<TTarget> : DetailViewColumnAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DetailViewColumnAttribute"/> class.
+        /// </summary>
+        public DetailViewColumnAttribute()
+            : base(typeof(TTarget))
+        {
+        }
+    }
 }

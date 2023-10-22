@@ -2,6 +2,8 @@
 using Core.Models;
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 
 namespace Infrastructure.MsSql
 {
@@ -13,6 +15,8 @@ namespace Infrastructure.MsSql
     public abstract class MsSqlSource<TResult> : ISource
         where TResult : class
     {
+        private readonly IStringLocalizer<InfrastructureLayerLocalization> _localizer;
+
         /// <inheritdoc cref="ISource.TypeName"/>
         public abstract string TypeName { get; set; }
 
@@ -53,10 +57,12 @@ namespace Infrastructure.MsSql
         /// Initializes a new instance of the <see cref="MsSqlSource{TResult}"/> class.
         /// </summary>
         /// <param name="handlerHelper">The handler helper.</param>
+        /// <param name="localizer">The localizer.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        protected MsSqlSource(IHandlerHelper handlerHelper)
+        protected MsSqlSource(IHandlerHelper handlerHelper, IStringLocalizer<InfrastructureLayerLocalization> localizer)
         {
             HandlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
         }
 
         /// <summary>
@@ -66,7 +72,7 @@ namespace Infrastructure.MsSql
         /// <returns>The mapped results of the query.</returns>
         public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
-            var connectionString = Arguments ?? throw new MsSqlConnectionStringMissingException();
+            var connectionString = Arguments ?? throw new MsSqlConnectionStringMissingException(_localizer);
 
             using var connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
@@ -76,6 +82,12 @@ namespace Infrastructure.MsSql
             var output = results.Select(Parse);
 
             return output;
+        }
+
+        /// <inheritdoc cref="ISource.AddCustomServices"/>
+        public IServiceCollection AddCustomServices(IServiceCollection services)
+        {
+            return services;
         }
 
         /// <summary>

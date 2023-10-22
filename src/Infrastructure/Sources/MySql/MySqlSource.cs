@@ -1,6 +1,8 @@
 ﻿using Core.Abstractions;
 using Core.Models;
 using Dapper;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using MySqlConnector;
 
 namespace Infrastructure.MySql
@@ -13,6 +15,8 @@ namespace Infrastructure.MySql
     public abstract class MySqlSource<TResult> : ISource
         where TResult : class
     {
+        private readonly IStringLocalizer<InfrastructureLayerLocalization> _localizer;
+
         /// <inheritdoc cref="ISource.TypeName"/>
         public abstract string TypeName { get; set; }
 
@@ -53,10 +57,12 @@ namespace Infrastructure.MySql
         /// Initializes a new instance of the <see cref="MySqlSource{TResult}"/> class.
         /// </summary>
         /// <param name="handlerHelper">The handler helper.</param>
+        /// <param name="localizer">The localizer.</param>
         /// <exception cref="System.ArgumentNullException">handlerHelper</exception>
-        protected MySqlSource(IHandlerHelper handlerHelper)
+        protected MySqlSource(IHandlerHelper handlerHelper, IStringLocalizer<InfrastructureLayerLocalization> localizer)
         {
             HandlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
         }
 
         /// <summary>
@@ -66,7 +72,7 @@ namespace Infrastructure.MySql
         /// <returns>The mapped results of the query.</returns>
         public virtual async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
-            var connectionString = Arguments ?? throw new MySqlConnectionStringMissingException();
+            var connectionString = Arguments ?? throw new MySqlConnectionStringMissingException(_localizer);
 
             using var connection = new MySqlConnection(connectionString);
             await connection.OpenAsync();
@@ -76,6 +82,12 @@ namespace Infrastructure.MySql
             var output = results.Select(Parse);
 
             return output;
+        }
+
+        /// <inheritdoc cref="ISource.AddCustomServices"/>
+        public IServiceCollection AddCustomServices(IServiceCollection services)
+        {
+            return services;
         }
 
         /// <summary>

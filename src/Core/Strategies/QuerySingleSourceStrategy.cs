@@ -1,6 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Exceptions;
 using Core.Extensions;
+using Microsoft.Extensions.Localization;
 
 namespace Core.Strategies
 {
@@ -11,19 +12,19 @@ namespace Core.Strategies
     public sealed class QuerySingleSourceStrategy : ISourcesSelector
     {
         private readonly ISettingsService _settingsService;
-        private readonly IPluginService _pluginService;
-        private readonly IHandlerHelper _handlerHelper;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IStringLocalizer<CoreLayerLocalization> _localizer;
         private readonly string _sourceAlias;
 
         /// <inheritdoc cref="ISourcesSelector.QueryWithinDescription"/>
-        public string QueryWithinDescription => $"source `{_sourceAlias}`";
+        public string QueryWithinDescription => $"{_localizer["source"]} '{_sourceAlias}'";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QuerySingleSourceStrategy"/> class.
         /// </summary>
         /// <param name="settingsService">The settings service.</param>
-        /// <param name="pluginService">The plugin service.</param>
-        /// <param name="handlerHelper">The handler helper.</param>
+        /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
+        /// <param name="localizer">The localizer.</param>
         /// <param name="sourceAlias">The source alias.</param>
         /// <exception cref="System.ArgumentNullException">
         /// settingsService
@@ -32,11 +33,15 @@ namespace Core.Strategies
         /// or
         /// handlerHelper
         /// </exception>
-        public QuerySingleSourceStrategy(ISettingsService settingsService, IPluginService pluginService, IHandlerHelper handlerHelper, string sourceAlias)
+        public QuerySingleSourceStrategy(
+            ISettingsService settingsService, 
+            IServiceProvider serviceProvider,
+            IStringLocalizer<CoreLayerLocalization> localizer, 
+            string sourceAlias)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-            _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
-            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             _sourceAlias = sourceAlias;
         }
 
@@ -46,11 +51,11 @@ namespace Core.Strategies
             var source = _settingsService
                 .ReadSources()
                 .FirstOrDefault(x => _sourceAlias!.Equals(x.Alias))
-                    ?? throw new SourceNotFoundException($"{_sourceAlias} (Alias)");
+                    ?? throw new SourceNotFoundException($"{_sourceAlias} ({_localizer["alias"]})", _localizer);
 
             var output = new[] { source };
 
-            return output.ToRealInstance(_pluginService, _handlerHelper);
+            return output.ToRealInstance(_serviceProvider);
         }
     }
 }

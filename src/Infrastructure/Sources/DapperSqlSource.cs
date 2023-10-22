@@ -2,6 +2,7 @@
 using Core.Models;
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Sources
 {
@@ -76,6 +77,12 @@ namespace Infrastructure.Sources
             var output = results.Select(Parse);
 
             return output;
+        }
+
+        /// <inheritdoc cref="ISource.AddCustomServices"/>
+        public IServiceCollection AddCustomServices(IServiceCollection services)
+        {
+            return services;
         }
 
         /// <summary>

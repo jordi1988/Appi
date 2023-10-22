@@ -1,4 +1,5 @@
 ﻿using Core.Exceptions;
+using Microsoft.Extensions.Localization;
 
 namespace Infrastructure.MySql
 {
@@ -11,8 +12,8 @@ namespace Infrastructure.MySql
         /// <summary>
         /// Initializes a new instance of the <see cref="MySqlConnectionStringMissingException"/> class.
         /// </summary>
-        public MySqlConnectionStringMissingException()
-            : base($"MySQL connection string must be provided through `Arguments` property in configuration file.")
+        public MySqlConnectionStringMissingException(IStringLocalizer<InfrastructureLayerLocalization> localizer)
+            : base(localizer["MySQL connection string must be provided through `Arguments` property in configuration file."])
         {
         }
     }

@@ -1,4 +1,6 @@
-﻿using Core.Abstractions;
+﻿using Core;
+using Core.Abstractions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Win32;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -19,11 +21,13 @@ namespace Infrastructure.Services
         /// Initializes a new instance of the <see cref="WindowsPluginService"/> class.
         /// </summary>
         /// <exception cref="InvalidOperationException">This class can only be instantiated on Windows OS.</exception>
-        public WindowsPluginService()
+        public WindowsPluginService(IStringLocalizer<InfrastructureLayerLocalization> localization)
         {
+            ArgumentNullException.ThrowIfNull(localization);
+            
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                throw new InvalidOperationException("This class can only be instantiated on Windows OS.");
+                throw new InvalidOperationException(localization["This class can only be instantiated on Windows OS."]);
             }
 
             EnsureRegistryKeyExsists();

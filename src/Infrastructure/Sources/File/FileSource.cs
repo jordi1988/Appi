@@ -1,5 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using IoFile = System.IO.File;
 
 namespace Infrastructure.Sources.File
@@ -10,6 +12,8 @@ namespace Infrastructure.Sources.File
     /// <seealso cref="ISource" />
     public abstract class FileSource : ISource
     {
+        private readonly IStringLocalizer<InfrastructureLayerLocalization>? _localizer;
+
         /// <inheritdoc cref="ISource.TypeName"/>
         public abstract string TypeName { get; set; }
 
@@ -48,6 +52,14 @@ namespace Infrastructure.Sources.File
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="FileSource"/> class.
+        /// </summary>
+        protected FileSource(IStringLocalizer<InfrastructureLayerLocalization>? localizer)
+        {
+            _localizer = localizer;
+        }
+
+        /// <summary>
         /// Fetches the data from the the text file.
         /// </summary>
         /// <param name="options">Options related to the query.</param>
@@ -63,6 +75,12 @@ namespace Infrastructure.Sources.File
             return output;
         }
 
+        /// <inheritdoc cref="ISource.AddCustomServices"/>
+        public virtual IServiceCollection AddCustomServices(IServiceCollection services)
+        {
+            return services;
+        }
+
         /// <summary>
         /// Parses the selected rows into result output objects.
         /// </summary>
@@ -75,7 +93,8 @@ namespace Infrastructure.Sources.File
         {
             if (!IoFile.Exists(Path))
             {
-                throw new FileNotFoundException("The given file was not found.", Path);
+                var errorMessage = "The given file was not found.";
+                throw new FileNotFoundException(_localizer?[errorMessage] ?? errorMessage, Path);
             }
         }
     }

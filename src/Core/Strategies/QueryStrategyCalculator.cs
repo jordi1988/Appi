@@ -1,5 +1,6 @@
 ﻿using Core.Abstractions;
 using Core.Models;
+using Microsoft.Extensions.Localization;
 
 namespace Core.Strategies
 {
@@ -9,15 +10,15 @@ namespace Core.Strategies
     public class QueryStrategyCalculator
     {
         private readonly ISettingsService _settingsService;
-        private readonly IPluginService _pluginService;
-        private readonly IHandlerHelper _handlerHelper;
+        private readonly IStringLocalizer<CoreLayerLocalization> _localizer;
+        private readonly IServiceProvider _serviceProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QueryStrategyCalculator"/> class.
         /// </summary>
         /// <param name="settingsService">The settings service.</param>
-        /// <param name="pluginService">The plugin service.</param>
-        /// <param name="handlerHelper">The handler helper.</param>
+        /// <param name="localizer">The localizer.</param>
+        /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
         /// <exception cref="System.ArgumentNullException">
         /// settingsService
         /// or
@@ -25,11 +26,14 @@ namespace Core.Strategies
         /// or
         /// handlerHelper
         /// </exception>
-        public QueryStrategyCalculator(ISettingsService settingsService, IPluginService pluginService, IHandlerHelper handlerHelper)
+        public QueryStrategyCalculator(
+            ISettingsService settingsService,
+            IServiceProvider serviceProvider,
+            IStringLocalizer<CoreLayerLocalization> localizer)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-            _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
-            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
         }
 
         /// <summary>
@@ -45,14 +49,14 @@ namespace Core.Strategies
 
             if (isSourceProvided)
             {
-                return new QuerySingleSourceStrategy(_settingsService, _pluginService, _handlerHelper, options.SourceAlias!);
+                return new QuerySingleSourceStrategy(_settingsService, _serviceProvider, _localizer, options.SourceAlias!);
             }
             else if (isGroupProvided)
             {
-                return new QueryGroupStrategy(_settingsService, _pluginService, _handlerHelper, options.GroupAlias!);
+                return new QueryGroupStrategy(_settingsService, _serviceProvider, _localizer, options.GroupAlias!);
             }
 
-            return new QueryAllActiveSourcesStrategy(_settingsService, _pluginService, _handlerHelper);
+            return new QueryAllActiveSourcesStrategy(_settingsService, _serviceProvider, _localizer);
         }
     }
 }

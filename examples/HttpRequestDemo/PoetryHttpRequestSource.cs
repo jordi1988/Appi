@@ -2,13 +2,18 @@
 using Core.Abstractions;
 using Core.Helper;
 using Core.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace Infrastructure.HttpRequestDemo
+[assembly: RootNamespace("HttpRequestDemo")]
+
+namespace Infrastructure.HttpRequestDemoExample
 {
     internal partial class PoetryHttpRequestSource : ISource
     {
+        private readonly IStringLocalizer<PoetryHttpRequestSource> _customLocalizer;
         private readonly IHandlerHelper _handlerHelper;
 
         public string TypeName { get; set; } = typeof(PoetryHttpRequestSource).Name;
@@ -22,8 +27,9 @@ namespace Infrastructure.HttpRequestDemo
         public bool? IsQueryCommand { get; set; } = true;
         public string[]? Groups { get; set; } = new[] { "demo" };
 
-        public PoetryHttpRequestSource(IHandlerHelper handlerHelper)
+        public PoetryHttpRequestSource(IStringLocalizer<PoetryHttpRequestSource> customLocalizer, IHandlerHelper handlerHelper)
         {
+            _customLocalizer = customLocalizer ?? throw new ArgumentNullException(nameof(customLocalizer));
             _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
         }
 
@@ -61,16 +67,23 @@ namespace Infrastructure.HttpRequestDemo
             int maxTitleLength = ReadMaxTitleLength();
             foreach (var title in titles)
             {
-                output.Add(new PoetryHttpRequestResult(_handlerHelper)
+                output.Add(new PoetryHttpRequestResult(_customLocalizer, _handlerHelper)
                 {
                     Author = title.Author,
                     Title = title.Title.Length <= maxTitleLength ? title.Title : title.Title[..maxTitleLength] + "...",
                     Lines = string.Join(" ", title.Lines),
+                    LineCount = title.Lines.Length,
                     Sort = title.Title.Length,
                 });
             }
 
             return output;
+        }
+
+        /// <inheritdoc cref="ISource.AddCustomServices"/>
+        public IServiceCollection AddCustomServices(IServiceCollection services)
+        {
+            return services;
         }
 
         private void ValidateConfig()

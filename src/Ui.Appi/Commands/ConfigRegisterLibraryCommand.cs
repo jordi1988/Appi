@@ -1,5 +1,6 @@
 ﻿using Core.Abstractions;
 using Core.Helper;
+using Microsoft.Extensions.Localization;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -15,17 +16,27 @@ namespace Ui.Appi.Commands
     {
         private readonly IPluginService _pluginService;
         private readonly ISettingsService _settingsService;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IStringLocalizer<UILayerLocalization> _localizer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigRegisterLibraryCommand"/> class.
         /// </summary>
         /// <param name="pluginService">The plugin service.</param>
         /// <param name="sourceService">The source service.</param>
+        /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
+        /// <param name="localizer">The string localizer.</param>
         /// <exception cref="ArgumentNullException"> </exception>
-        public ConfigRegisterLibraryCommand(IPluginService pluginService, ISettingsService sourceService)
+        public ConfigRegisterLibraryCommand(
+            IPluginService pluginService, 
+            ISettingsService sourceService,
+            IServiceProvider serviceProvider,
+            IStringLocalizer<UILayerLocalization> localizer)
         {
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
             _settingsService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -42,14 +53,14 @@ namespace Ui.Appi.Commands
             if (!File.Exists(settings.Path))
             {
                 AnsiConsole.Write(
-                    new Markup($"[yellow]The file [gray]{filename}[/] could not be found.[/]"));
+                    new Markup(_localizer["[yellow]The file [gray]{0}[/] could not be found.[/]", filename]));
                 return 1;
             }
 
             if (!Path.GetExtension(settings.Path).Equals(".dll", StringComparison.CurrentCultureIgnoreCase))
             {
                 AnsiConsole.Write(
-                    new Markup($"[yellow]The file [gray]{filename}[/] must be of format DLL.[/]"));
+                    new Markup(_localizer["[yellow]The file [gray]{0}[/] must be of format DLL.[/]", filename]));
                 return 1;
             }
 
@@ -58,13 +69,13 @@ namespace Ui.Appi.Commands
             AppendToConfigFile(settings, newFilePath);
 
             AnsiConsole.Write(
-                new Markup($"The file [gray]{filename}[/] was installed."));
+                new Markup(_localizer["The file [gray]{0}[/] was installed.", filename]));
 
             if (!_pluginService.IsAllowed())
             {
                 AnsiConsole.WriteLine();
                 AnsiConsole.Write(
-                    new Markup("[yellow]Remember to allow external plugins to be loaded using the `config` command.[/]"));
+                    new Markup(_localizer["[yellow]Remember to allow external plugins to be loaded using the 'config' command.[/]"]));
             }
 
             return 0;
@@ -84,11 +95,10 @@ namespace Ui.Appi.Commands
 
             var newAssembly = Assembly.UnsafeLoadFrom(newFilePath);
             var classTypes = ReflectionHelper.GetClassesImplementingInterface<ISource>(newAssembly);
-            var commandSettings = new FindItemsCommand.Settings();
 
             foreach (var classType in classTypes)
             {
-                var sourceInstance = ReflectionHelper.CreateInstance<ISource>(classType, commandSettings);
+                var sourceInstance = ReflectionHelper.CreateInstance<ISource>(classType, _serviceProvider);
                 var currentSettings = _settingsService
                     .ReadSources()
                     .ToList();

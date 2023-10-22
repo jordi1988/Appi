@@ -1,5 +1,6 @@
 ﻿using Core.Abstractions;
 using Core.Models;
+using Microsoft.Extensions.Localization;
 using Spectre.Console;
 
 namespace Ui.Appi
@@ -8,21 +9,24 @@ namespace Ui.Appi
     /// Represents the Spectre console handler helper.
     /// </summary>
     /// <seealso cref="IHandlerHelper" />
-    public class SpectreConsoleHandlerHelper : IHandlerHelper
+    internal class SpectreConsoleHandlerHelper : IHandlerHelper
     {
         private readonly IHandler _handler;
         private readonly IResultStateService<PromptGroup> _resultState;
+        private readonly IStringLocalizer<UILayerLocalization> _localizer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpectreConsoleHandlerHelper"/> class.
         /// </summary>
         /// <param name="handler">The handler.</param>
         /// <param name="resultState">State of the result.</param>
+        /// <param name="localizer"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public SpectreConsoleHandlerHelper(IHandler handler, IResultStateService<PromptGroup> resultState)
+        public SpectreConsoleHandlerHelper(IHandler handler, IResultStateService<PromptGroup> resultState, IStringLocalizer<UILayerLocalization> localizer)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _resultState = resultState ?? throw new ArgumentNullException(nameof(resultState));
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
         }
 
         /// <summary>
@@ -52,7 +56,7 @@ namespace Ui.Appi
         {
             return new()
             {
-                Name = "Back",
+                Name = _localizer["Back"],
                 Action = () =>
                 {
                     var results = _resultState.Load();
@@ -68,10 +72,10 @@ namespace Ui.Appi
         {
             return new()
             {
-                Name = "Exit",
+                Name = _localizer["Exit"],
                 Action = () =>
                 {
-                    AnsiConsole.Write(new Markup("[red]Goodbye.[/]"));
+                    AnsiConsole.Write(new Markup(_localizer["[red]Goodbye.[/]"]));
                     Environment.Exit(0);
                 }
             };

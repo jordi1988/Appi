@@ -2,6 +2,7 @@
 using Core.Extensions;
 using Core.Models;
 using Core.Strategies;
+using Microsoft.Extensions.Localization;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -12,10 +13,11 @@ namespace Ui.Appi.Commands
     /// <summary>
     /// Represents the main command handling the search query and the outcome.
     /// </summary>
-    internal sealed partial class FindItemsCommand : AsyncCommand<FindItemsCommand.Settings>
+    internal sealed class FindItemsCommand : AsyncCommand<FindItemsCommand.Settings>
     {
         private readonly IHandler _handler;
         private readonly IResultStateService<PromptGroup> _resultState;
+        private readonly IStringLocalizer<UILayerLocalization> _localizer;
         private readonly QueryStrategyCalculator _strategyCalculator;
 
         /// <summary>
@@ -23,12 +25,18 @@ namespace Ui.Appi.Commands
         /// </summary>
         /// <param name="handler">The handler.</param>
         /// <param name="resultState">State of the result.</param>
+        /// <param name="localizer">The strategy calculator.</param>
         /// <param name="strategyCalculator">The strategy calculator.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public FindItemsCommand(IHandler handler, IResultStateService<PromptGroup> resultState, QueryStrategyCalculator strategyCalculator)
+        public FindItemsCommand(
+            IHandler handler,
+            IResultStateService<PromptGroup> resultState,
+            IStringLocalizer<UILayerLocalization> localizer,
+            QueryStrategyCalculator strategyCalculator)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _resultState = resultState ?? throw new ArgumentNullException(nameof(resultState));
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             _strategyCalculator = strategyCalculator ?? throw new ArgumentNullException(nameof(strategyCalculator));
         }
 
@@ -58,7 +66,7 @@ namespace Ui.Appi.Commands
                         .OrderBy(x => x.SortOrder);
 
                     var collectingDataTask = ctx.AddTask(
-                        $"Collecting data with query `{settings.Query}` within {strategy.QueryWithinDescription}",
+                        _localizer["Collecting data with query '{0}' within {1}", settings.Query, strategy.QueryWithinDescription],
                         true,
                         sources.Count());
 
@@ -99,6 +107,8 @@ namespace Ui.Appi.Commands
             /// The default value for the query-all search term.
             /// </summary>
             public const string QueryAllDefaultValue = "all";
+
+            private readonly IStringLocalizer<UILayerLocalization> _localizer;
 
             /// <summary>
             /// The search term.
@@ -141,6 +151,11 @@ namespace Ui.Appi.Commands
             [DefaultValue(false)]
             public bool CaseSensitive { get; init; }
 
+            public Settings(IStringLocalizer<UILayerLocalization> localizer)
+            {
+                _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+            }
+
             /// <summary>
             /// Validates the provided settings.
             /// </summary>
@@ -157,7 +172,7 @@ namespace Ui.Appi.Commands
 
                 if (sourceAndGroupBothProvided)
                 {
-                    return ValidationResult.Error("You can only pass one option, either `source` or `group`.");
+                    return ValidationResult.Error(_localizer["You can only pass one option, either 'source' or 'group'."]);
                 }
 
                 return base.Validate();

@@ -1,6 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Exceptions;
 using Core.Extensions;
+using Microsoft.Extensions.Localization;
 
 namespace Core.Strategies
 {
@@ -11,20 +12,20 @@ namespace Core.Strategies
     public sealed class QueryGroupStrategy : ISourcesSelector
     {
         private readonly ISettingsService _settingsService;
-        private readonly IPluginService _pluginService;
-        private readonly IHandlerHelper _handlerHelper;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IStringLocalizer<CoreLayerLocalization> _localizer;
         private readonly string _groupAlias;
 
         /// <inheritdoc cref="ISourcesSelector.QueryWithinDescription"/>
-        public string QueryWithinDescription => $"group `{_groupAlias}`";
+        public string QueryWithinDescription => $"{_localizer["group"]} '{_groupAlias}'";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QueryGroupStrategy"/> class.
         /// </summary>
         /// <param name="settingsService">The settings service.</param>
-        /// <param name="pluginService">The plugin service.</param>
-        /// <param name="handlerHelper">The handler helper.</param>
+        /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
         /// <param name="groupAlias">The group alias.</param>
+        /// <param name="localizer">The localizer.</param>
         /// <exception cref="System.ArgumentNullException">
         /// settingsService
         /// or
@@ -32,11 +33,15 @@ namespace Core.Strategies
         /// or
         /// handlerHelper
         /// </exception>
-        public QueryGroupStrategy(ISettingsService settingsService, IPluginService pluginService, IHandlerHelper handlerHelper, string groupAlias)
+        public QueryGroupStrategy(
+            ISettingsService settingsService,
+            IServiceProvider serviceProvider,
+            IStringLocalizer<CoreLayerLocalization> localizer,
+            string groupAlias)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-            _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
-            _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             _groupAlias = groupAlias;
         }
 
@@ -51,10 +56,10 @@ namespace Core.Strategies
 
             if (!output.Any())
             {
-                throw new GroupNotFoundException(_groupAlias);
+                throw new GroupNotFoundException(_groupAlias, _localizer);
             }
 
-            return output.ToRealInstance(_pluginService, _handlerHelper);
+            return output.ToRealInstance(_serviceProvider);
         }
     }
 }

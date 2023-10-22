@@ -3,6 +3,7 @@ using Core.Strategies;
 using Infrastructure.Extensions;
 using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Spectre.Console.Cli;
 using Ui.Appi.Commands;
 using Ui.Appi.Injection;
@@ -27,6 +28,11 @@ namespace Ui.Appi
         {
             var services = new ServiceCollection();
 
+            // .NET components
+            services.AddOptions();
+            services.AddLogging(options => options.AddConsole());
+            services.AddLocalization(options => options.ResourcesPath = "Localization");
+
             // Core components
             services.AddSingleton<IHandler, SpectreConsoleHandler>();
             services.AddSingleton<IHandlerHelper, SpectreConsoleHandlerHelper>();
@@ -36,6 +42,7 @@ namespace Ui.Appi
 
             // Infrastructure components
             services.AddPluginService();
+            services.AddCustomServices(services.BuildServiceProvider());
 
             // Ui components
             services.AddScoped<EmptyCommandSettings>();
@@ -50,7 +57,11 @@ namespace Ui.Appi
         {
             config.CaseSensitivity(CaseSensitivity.None);
             config.SetApplicationName("Appi");
+
+#if DEBUG
+            config.PropagateExceptions();
             config.ValidateExamples();
+#endif
 
             config.AddCommand<FindItemsCommand>("find")
                 .WithDescription("Query all [i](default)[/] or only the specified sources.")

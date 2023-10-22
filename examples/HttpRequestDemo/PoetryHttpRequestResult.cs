@@ -1,12 +1,14 @@
 ﻿using Core.Abstractions;
 using Core.Attributes;
 using Core.Models;
+using Microsoft.Extensions.Localization;
 using TextCopy;
 
-namespace Infrastructure.HttpRequestDemo
+namespace Infrastructure.HttpRequestDemoExample
 {
     internal class PoetryHttpRequestResult : ResultItemBase
     {
+        private readonly IStringLocalizer<PoetryHttpRequestSource> _customLocalizer;
         private readonly IHandlerHelper _handlerHelper;
 
         public override string Name { get => Author; set => Author = value; }
@@ -19,13 +21,15 @@ namespace Infrastructure.HttpRequestDemo
         [DetailViewColumn]
         public string Title { get; set; } = string.Empty;
 
-        [DetailViewColumn]
+        [DetailViewColumn<string>]
         public string Lines { get; set; } = string.Empty;
 
-        public string LineCount { get; set; } = string.Empty;
+        [DetailViewColumn<int>]
+        public int LineCount { get; set; }
 
-        public PoetryHttpRequestResult(IHandlerHelper handlerHelper)
+        public PoetryHttpRequestResult(IStringLocalizer<PoetryHttpRequestSource> customLocalizer, IHandlerHelper handlerHelper)
         {
+            _customLocalizer = customLocalizer ?? throw new ArgumentNullException(nameof(customLocalizer));
             _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
         }
 
@@ -33,7 +37,7 @@ namespace Infrastructure.HttpRequestDemo
         {
             var actions = new List<ActionItem>
             {
-                new() { Name = $"Copy lines to clipboard", Action = () => { ClipboardService.SetText(string.Join(Environment.NewLine, Lines)); } },
+                new() { Name = _customLocalizer["Copy lines to clipboard"], Action = () => { ClipboardService.SetText(string.Join(Environment.NewLine, Lines)); } },
                 _handlerHelper.Back(),
                 _handlerHelper.Exit()
             };

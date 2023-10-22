@@ -1,6 +1,8 @@
 ﻿using Core.Abstractions;
 using Core.Attributes;
 using Core.Exceptions;
+using Core.Extensions;
+using Microsoft.Extensions.Localization;
 using System.Reflection;
 
 namespace Core.Helper
@@ -26,7 +28,7 @@ namespace Core.Helper
                 var classes = GetClassesImplementingInterface<TInterface>(assembly);
                 foreach (var classType in classes)
                 {
-                    TInterface instance = CreateInstance<TInterface>(classType, firstConstructorParameter);
+                    var instance = CreateInstance<TInterface>(classType);
                     output.Add(instance);
                 }
             }
@@ -55,12 +57,13 @@ namespace Core.Helper
         /// </summary>
         /// <typeparam name="TInterface"></typeparam>
         /// <param name="className">Name of the class.</param>
-        /// <param name="pluginService">The plugin service.</param>
+        /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
         /// <returns>The type of the class.</returns>
         /// <exception cref="SourceNotFoundException"></exception>
-        public static Type GetClassByNameImplementingInterface<TInterface>(string className, IPluginService pluginService)
+        public static Type GetClassByNameImplementingInterface<TInterface>(string className, IServiceProvider serviceProvider)
         {
-            LoadExternalAssemblies(pluginService);
+            var pluginService = serviceProvider.GetServiceDirectly<IPluginService>(true);
+            LoadExternalAssemblies(pluginService!);
 
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -73,27 +76,46 @@ namespace Core.Helper
                 }
             }
 
-            throw new SourceNotFoundException(className);
+            var localizer = serviceProvider.GetServiceDirectly<IStringLocalizer<CoreLayerLocalization>>(true);
+            throw new SourceNotFoundException(className, localizer!);
         }
 
         /// <summary>
-        /// Creates an instance of type <paramref name="classType"/> constructed with <paramref name="firstParameter"/> and casted to <typeparamref name="TInterface"/>.
+        /// Creates an instance of type <paramref name="classType"/> casted to <typeparamref name="TInterface"/>.
         /// </summary>
         /// <typeparam name="TInterface">The resulting interface type.</typeparam>
         /// <param name="classType">Type of the class.</param>
-        /// <param name="firstParameter">The first constructor parameter.</param>
+        /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
         /// <returns>The concrete type of <paramref name="classType"/> casted to <typeparamref name="TInterface"/>.</returns>
-        public static TInterface CreateInstance<TInterface>(Type classType, object? firstParameter = null)
+        public static TInterface CreateInstance<TInterface>(Type classType, IServiceProvider? serviceProvider = null)
         {
-            if (firstParameter is null)
+            if (serviceProvider is null)
             {
                 return (TInterface)Activator.CreateInstance(classType);
             }
 
-            var constructorWithOneParameterOfGivenType = classType.GetConstructor(new[] { firstParameter.GetType() });
-            if (constructorWithOneParameterOfGivenType is not null)
+            var arguments = new List<object?>();
+            var constructorsWithDescendingParamsCount = classType
+                .GetConstructors()
+                .OrderByDescending(x => x.GetParameters().Length);
+
+            foreach (var ctor in constructorsWithDescendingParamsCount)
             {
-                return (TInterface)Activator.CreateInstance(classType, firstParameter);
+                var parameters = ctor.GetParameters();
+                var parameterInstances = parameters.Select(
+                    x => serviceProvider.GetServiceDirectly(x.ParameterType));
+
+                arguments.Clear();
+                arguments.AddRange(parameterInstances);
+
+                if (parameters.Length == 0)
+                {
+                    return (TInterface)Activator.CreateInstance(classType);
+                }
+                else if (arguments.Count == parameters.Length)
+                {
+                    return (TInterface)Activator.CreateInstance(classType, arguments.ToArray());
+                }
             }
 
             return (TInterface)Activator.CreateInstance(classType);
@@ -136,7 +158,11 @@ namespace Core.Helper
             return output!;
         }
 
-        private static void LoadExternalAssemblies(IPluginService pluginService)
+        /// <summary>
+        /// Loads all external assemblies if it is allowed.
+        /// </summary>
+        /// <param name="pluginService">The plugin service.</param>
+        public static void LoadExternalAssemblies(IPluginService pluginService)
         {
             ConfigurationHelper.EnsureSettingsExist();
             if (!pluginService.IsAllowed())
