@@ -22,6 +22,7 @@
 	<FileVersion>1.2.1</FileVersion>
 	<Version>1.2.1</Version>
 	<PackageIcon>logo.png</PackageIcon>
+	<Configurations>Debug;Release;Release-with-examples</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -30,6 +31,11 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-with-examples|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <Optimize>True</Optimize>
   </PropertyGroup>
 
   <ItemGroup>

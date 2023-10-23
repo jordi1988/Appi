@@ -1,13 +1,17 @@
 ﻿# Appi
+<img src="https://github.com/jordi1988/Appi/blob/master/logo.png" alt="Logo" width="150">
+
+[![.NET 7 Build](https://github.com/jordi1988/Appi/actions/workflows/dotnet7-build.yml/badge.svg)](https://github.com/jordi1988/Appi/actions/workflows/dotnet7-build.yml)
+  
 What is `Appi`? Appi is short for **App i**nformation.  
   
 The goal is to query your sources for information through one tool; all at once, in groups or individually, highly extensible. Accessible from your favorite shell with easy-to-remeber commands from your keyboard without even touching your mouse.  
 Because your information sources will be different from mine, go start building your first plugin.
 
-## TOC
+## Table of Contents
 - [Features](#Features)
 - [Installation](#Installation)
-- [Usage](#Usage)
+- [Examples](#Examples)
   - [Demo](#Demo)
   - [Screenshot of multiple results](#Screenshot-of-multiple-results)
   - [Supported commands](#Supported-commands)
@@ -17,7 +21,7 @@ Because your information sources will be different from mine, go start building 
   - [Localization](#Localization)
   - [Example for implementing `ISource`](#Example-for-implementing-ISource)
   - [Example for implementing `ResultItemBase`](#Example-for-implementing-ResultItemBase)
-- [Up next](#Up-next)
+- [Up next](#Up-next)s
 
 ## Features
 - Easily provide your [custom plugin](#Plugins) based on pre-built infrastructure classes
@@ -27,10 +31,17 @@ Because your information sources will be different from mine, go start building 
 - Localized messages und UI
 
 ## Installation
+Choose your desired way:
 - Install via [NuGet](https://www.nuget.org/packages/Appi): `dotnet tool install --global Appi`
-- Build from your own
+- Download binaries from [GitHub Releases](https://github.com/jordi1988/Appi/releases)
+- Build on your own
+  - Clone repository
+  - Restore dependencies
+  - Build solution (example plugins will get copied into )
 
-## Usage
+Take a look at the [GitHub Releases](https://github.com/jordi1988/Appi/releases) page for updates and release notes.
+
+## Examples
 ### Demo
 This demo shows the `find` command searching for `st` within all active sources (`Customers SQLite database`, `Address MySQL database`, `User SQL Server database`, `Demo Assembly`, and `More`), selecting and displaying one user result (UserId and Username - properties based on `DetailViewColumnAttribute`), goes back, selecting a customer result, and finally taking some action on it (`Copy address`).  
 Next actions searches for `joh` inside the single `cust` source (alias for customer - can be defined in settings), picks one, and calls its phone number.  

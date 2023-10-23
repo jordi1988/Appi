@@ -1,13 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<AssemblyName>Appi.Plugin.$(MSBuildProjectName)</AssemblyName>
-	<BaseOutputPath>..\..\src\Ui.Appi\bin</BaseOutputPath>
+	<Configurations>Debug;Release;Release-with-examples</Configurations>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <BaseOutputPath>..\..\src\Ui.Appi\bin</BaseOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-with-examples|AnyCPU'">
+    <BaseOutputPath>..\..\src\Ui.Appi\bin</BaseOutputPath>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+	
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	<BaseOutputPath>bin</BaseOutputPath>
+  </PropertyGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
