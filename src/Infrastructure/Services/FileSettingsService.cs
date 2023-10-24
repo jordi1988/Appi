@@ -21,7 +21,7 @@ namespace Infrastructure.Services
             ConfigurationHelper.EnsureSettingsExist();
 
             var fileContents = File.ReadAllText(ConfigurationHelper.ApplicationFilename);
-            var fileSources = JsonSerializer.Deserialize<IEnumerable<EmptySource>>(fileContents);
+            var fileSources = JsonSerializer.Deserialize<IEnumerable<JsonFileSource>>(fileContents);
 
             RepairFileSourcesAndSave(fileSources);
 
@@ -48,7 +48,7 @@ namespace Infrastructure.Services
         [GeneratedRegex("[^a-zA-Z0-9]")]
         private static partial Regex AsciiCharactersOnlyRegex();
 
-        private void RepairFileSourcesAndSave(IEnumerable<EmptySource>? fileSources)
+        private void RepairFileSourcesAndSave(IEnumerable<JsonFileSource>? fileSources)
         {
             if (fileSources is null || !fileSources.Any())
             {

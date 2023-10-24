@@ -1,6 +1,5 @@
 ﻿using Core.Abstractions;
 using Core.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 
 namespace Infrastructure.Sources.MoreOptions
@@ -79,12 +78,6 @@ namespace Infrastructure.Sources.MoreOptions
             };
 
             return await Task.FromResult(output);
-        }
-
-        /// <inheritdoc cref="ISource.AddCustomServices"/>
-        public IServiceCollection AddCustomServices(IServiceCollection services)
-        {
-            return services;
         }
     }
 }

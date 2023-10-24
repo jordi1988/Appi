@@ -32,6 +32,7 @@ namespace Ui.Appi
             services.AddOptions();
             services.AddLogging(options => options.AddConsole());
             services.AddLocalization(options => options.ResourcesPath = "Localization");
+            services.AddSingleton<IServiceProvider>(services.BuildServiceProvider());
 
             // Core components
             services.AddSingleton<IHandler, SpectreConsoleHandler>();
@@ -42,7 +43,6 @@ namespace Ui.Appi
 
             // Infrastructure components
             services.AddPluginService();
-            services.AddCustomServices(services.BuildServiceProvider());
 
             // Ui components
             services.AddScoped<EmptyCommandSettings>();

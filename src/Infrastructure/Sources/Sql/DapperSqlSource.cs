@@ -1,7 +1,6 @@
 ﻿using Core.Abstractions;
 using Core.Models;
 using Dapper;
-using Microsoft.Extensions.DependencyInjection;
 using System.Data.Common;
 
 namespace Infrastructure.Sources.Sql
@@ -75,12 +74,6 @@ namespace Infrastructure.Sources.Sql
             var output = results.Select(Parse);
 
             return output;
-        }
-
-        /// <inheritdoc cref="ISource.AddCustomServices"/>
-        public virtual IServiceCollection AddCustomServices(IServiceCollection services)
-        {
-            return services;
         }
 
         /// <summary>

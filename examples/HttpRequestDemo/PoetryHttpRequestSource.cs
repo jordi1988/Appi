@@ -2,7 +2,6 @@
 using Core.Abstractions;
 using Core.Helper;
 using Core.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -80,12 +79,6 @@ namespace Infrastructure.HttpRequestDemoExample
             return output;
         }
 
-        /// <inheritdoc cref="ISource.AddCustomServices"/>
-        public IServiceCollection AddCustomServices(IServiceCollection services)
-        {
-            return services;
-        }
-
         private void ValidateConfig()
         {
             if (string.IsNullOrWhiteSpace(Path))
@@ -98,7 +91,7 @@ namespace Infrastructure.HttpRequestDemoExample
         {
             var arguments = new ArgumentString(Arguments ?? string.Empty);
             _ = int.TryParse(arguments["max_title_length"], out int maxTitleLength);
-            
+
             if (maxTitleLength == 0)
             {
                 return 100;

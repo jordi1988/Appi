@@ -1,16 +1,17 @@
 ﻿using Core.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace Core.Models
 {
     /// <summary>
-    /// Dummy implementation of <see cref="ISource"/>.
+    /// Dummy implementation of <see cref="ISource"/> for reading and writing the settings file.
     /// </summary>
     /// <seealso cref="ISource" />
-    public sealed class EmptySource : ISource
+    [DebuggerDisplay("{TypeName}")]
+    public sealed class JsonFileSource : ISource
     {
         /// <inheritdoc cref="ISource.TypeName"/>
-        public string TypeName { get; set; } = typeof(EmptySource).Name;
+        public string TypeName { get; set; } = typeof(JsonFileSource).Name;
 
         /// <inheritdoc cref="ISource.Name"/>
         public string Name { get; set; } = string.Empty;
@@ -38,12 +39,6 @@ namespace Core.Models
 
         /// <inheritdoc cref="ISource.Groups"/>
         public string[]? Groups { get; set; }
-
-        /// <inheritdoc cref="ISource.AddCustomServices"/>
-        public IServiceCollection AddCustomServices(IServiceCollection services)
-        {
-            return services;
-        }
 
         /// <inheritdoc cref="ISource.ReadAsync(FindItemsOptions)"/>
         /// <returns>Empty collection.</returns>

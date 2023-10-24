@@ -1,6 +1,5 @@
 ﻿using Core.Abstractions;
 using Core.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using IoFile = System.IO.File;
 
@@ -73,12 +72,6 @@ namespace Infrastructure.Sources.File
                 .Select(Parse);
 
             return output;
-        }
-
-        /// <inheritdoc cref="ISource.AddCustomServices"/>
-        public virtual IServiceCollection AddCustomServices(IServiceCollection services)
-        {
-            return services;
         }
 
         /// <summary>

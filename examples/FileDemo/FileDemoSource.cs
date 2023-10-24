@@ -1,9 +1,6 @@
 ﻿using Core.Abstractions;
 using Core.Models;
-using FileDemo;
 using Infrastructure.Sources.File;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
@@ -30,14 +27,11 @@ namespace Infrastructure.FileDemoExample
             IHandlerHelper handlerHelper,
             IStringLocalizer<InfrastructureLayerLocalization> localizer,
             IStringLocalizer<FileDemoSource> customLocalizer,
-            ILogger<FileDemoSource> logger,
-            DummyService? dummyService)
+            ILogger<FileDemoSource> logger)
             : base(localizer)
         {
             _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));
             _customLocalizer = customLocalizer ?? throw new ArgumentNullException(nameof(customLocalizer));
-
-            Console.WriteLine(dummyService?.GetDummyServiceCreationTime());
 
             logger.LogInformation($"{nameof(FileDemoSource)} was sucessfully created.");
         }
@@ -58,13 +52,6 @@ namespace Infrastructure.FileDemoExample
                 .Where(x => x.Description.Contains(options.Query, stringComparison));
 
             return queriedItems;
-        }
-
-        public override IServiceCollection AddCustomServices(IServiceCollection services)
-        {
-            services.TryAddScoped<DummyService>();
-
-            return base.AddCustomServices(services);
         }
 
         protected override FileResult Parse(string row, int rowNumber)

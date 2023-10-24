@@ -34,9 +34,9 @@ namespace Core.Strategies
         /// handlerHelper
         /// </exception>
         public QuerySingleSourceStrategy(
-            ISettingsService settingsService, 
+            ISettingsService settingsService,
             IServiceProvider serviceProvider,
-            IStringLocalizer<CoreLayerLocalization> localizer, 
+            IStringLocalizer<CoreLayerLocalization> localizer,
             string sourceAlias)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));

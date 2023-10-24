@@ -1,5 +1,4 @@
 ﻿using Core.Abstractions;
-using Core.Extensions;
 using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
@@ -24,26 +23,6 @@ namespace Infrastructure.Extensions
             }
 
             services.AddSingleton<IPluginService, WindowsPluginService>();
-
-            return services;
-        }
-
-        /// <summary>
-        /// Adds services from custom plugins.
-        /// </summary>
-        /// <param name="services">The services.</param>
-        /// <param name="provider">The provider</param>
-        /// <remarks>This method is the reason for custom services to be nullable when creating the instances before the custom service gets registered.</remarks>
-        public static IServiceCollection AddCustomServices(this IServiceCollection services, IServiceProvider provider)
-        {
-            var settingsService = provider.GetServiceDirectly<ISettingsService>(true);
-            var sources = settingsService!.ReadSources();
-
-            var instances = sources.ToRealInstance(provider);
-            foreach (var instance in instances)
-            {
-                instance.AddCustomServices(services);
-            }
 
             return services;
         }

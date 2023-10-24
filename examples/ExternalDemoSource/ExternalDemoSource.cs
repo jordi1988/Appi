@@ -1,6 +1,5 @@
 ﻿using Core.Abstractions;
 using Core.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.ExternalSourceDemo
 {
@@ -34,19 +33,13 @@ namespace Infrastructure.ExternalSourceDemo
         {
             var output = new List<ExternalDemoResult>()
             {
-                new ExternalDemoResult(_handlerHelper) { 
-                    Name = "Hello", 
-                    Description = options?.Query ?? "World" 
+                new ExternalDemoResult(_handlerHelper) {
+                    Name = "Hello",
+                    Description = options?.Query ?? "World"
                 }
             };
 
             return await Task.FromResult(output);
-        }
-
-        /// <inheritdoc cref="ISource.AddCustomServices"/>
-        public IServiceCollection AddCustomServices(IServiceCollection services)
-        {
-            return services;
         }
     }
 }

@@ -100,11 +100,5 @@ namespace Core.Abstractions
         /// <param name="options">Options related to the query.</param>
         /// <returns>The results of the query.</returns>
         Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options);
-
-        /// <summary>
-        /// Adds custom services.
-        /// </summary>
-        /// <param name="services">The registered services.</param>
-        IServiceCollection AddCustomServices(IServiceCollection services);
     }
 }
