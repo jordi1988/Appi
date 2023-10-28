@@ -147,8 +147,14 @@
   <data name="Source alias" xml:space="preserve">
     <value>Alias der Quelle</value>
   </data>
-  <data name="The file [gray]{0}[/] was installed." xml:space="preserve">
-    <value>Die Datei [gray]{0}[/] wurde installiert.</value>
+  <data name="The file [yellow]{0}[/] was installed." xml:space="preserve">
+    <value>Die Datei [yellow]{0}[/] wurde installiert.</value>
+  </data>
+  <data name="The plugin was registered in 'sources.json'." xml:space="preserve">
+    <value>Das Plugin wurde in der 'sources.json' registriert.</value>
+  </data>
+  <data name="The resource file [yellow]{0}[/] was installed." xml:space="preserve">
+    <value>Die Ressourcendatei [yellow]{0}[/] wurde installiert.</value>
   </data>
   <data name="You can only pass one option, either 'source' or 'group'." xml:space="preserve">
     <value>Sie können nur eine Option angebeben; entweder 'source' oder 'group'.</value>

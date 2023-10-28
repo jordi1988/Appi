@@ -57,7 +57,7 @@ namespace Ui.Appi.Commands
                 return 1;
             }
 
-            if (!Path.GetExtension(settings.Path).Equals(".dll", StringComparison.CurrentCultureIgnoreCase))
+            if (!PathHelper.IsDllFile(settings.Path))
             {
                 AnsiConsole.Write(
                     new Markup(_localizer["[yellow]The file [gray]{0}[/] must be of format DLL.[/]", filename]));
@@ -67,9 +67,6 @@ namespace Ui.Appi.Commands
             var newFilePath = Path.Combine(ConfigurationHelper.ApplicationDirectory, filename);
             CopyToConfigDirectory(settings, newFilePath);
             AppendToConfigFile(settings, newFilePath);
-
-            AnsiConsole.Write(
-                new Markup(_localizer["The file [gray]{0}[/] was installed.", filename]));
 
             if (!_pluginService.IsAllowed())
             {
@@ -81,9 +78,63 @@ namespace Ui.Appi.Commands
             return 0;
         }
 
-        private static void CopyToConfigDirectory(Settings settings, string newFilePath)
+        private void CopyToConfigDirectory(Settings settings, string newFilePath)
+        {
+            if (settings.RegisterOnly)
+            {
+                return;
+            }
+
+            InstallPluginFile(settings, newFilePath);
+            InstallLanguageResourceFiles(settings, newFilePath);
+        }
+
+        private void InstallPluginFile(Settings settings, string newFilePath)
         {
             File.Copy(settings.Path, newFilePath, true);
+
+            AnsiConsole.WriteLine();
+            AnsiConsole.Write(
+                new Markup(_localizer["The file [yellow]{0}[/] was installed.", Path.GetFileName(settings.Path)]));
+        }
+
+        private void InstallLanguageResourceFiles(Settings settings, string newFilePath)
+        {
+            var containingPath = Path.GetDirectoryName(settings.Path);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(settings.Path);
+            var destinationRootPath = Path.GetDirectoryName(newFilePath)!;
+
+            var resourceFiles = Directory.GetFiles(
+                containingPath!,
+                $"{fileNameWithoutExtension}.resources.dll",
+                SearchOption.AllDirectories);
+            foreach (var sourceFilename in resourceFiles)
+            {
+                InstallSingleLanguageResourceFile(settings, destinationRootPath, sourceFilename);
+            }
+        }
+
+        private void InstallSingleLanguageResourceFile(Settings settings, string destinationRootPath, string sourceFilename)
+        {
+            var sourceRootDirectory = Path.GetDirectoryName(settings.Path)!;
+            var sourceFileDirectory = Path.GetDirectoryName(sourceFilename)!;
+
+            var relativePath = PathHelper.GetRelativePath(sourceRootDirectory, sourceFileDirectory);
+
+            var destinationDirectory = Path.Join(destinationRootPath, relativePath);
+
+            if (!Path.Exists(destinationDirectory))
+            {
+                Directory.CreateDirectory(destinationDirectory);
+            }
+
+            var destinationFile = Path.Join(destinationDirectory, Path.GetFileName(sourceFilename));
+            File.Copy(sourceFilename, destinationFile, true);
+
+            var resourceFilename = Path.Join(relativePath, Path.GetFileName(sourceFilename));
+            AnsiConsole.WriteLine();
+            AnsiConsole.Write(
+                new Markup(_localizer["The resource file [yellow]{0}[/] was installed.", resourceFilename]));
         }
 
         private void AppendToConfigFile(Settings settings, string newFilePath)
@@ -109,6 +160,10 @@ namespace Ui.Appi.Commands
 
                 _settingsService.SaveSources(currentSettings);
             }
+
+            AnsiConsole.WriteLine();
+            AnsiConsole.Write(
+                new Markup(_localizer["The plugin was registered in 'sources.json'."]));
         }
 
         /// <summary>
@@ -135,6 +190,17 @@ namespace Ui.Appi.Commands
             [CommandOption("--copy-only")]
             [DefaultValue(false)]
             public bool CopyOnly { get; init; }
+
+            /// <summary>
+            /// Defines if the file should only be registred in sources.json, but not copied into the application's directory.
+            /// </summary>
+            /// <value>
+            ///   <c>true</c> if [register only]; otherwise, <c>false</c>.
+            /// </value>
+            [Description("Just registers the assembly into the settings file (e. g. for debugging purposes). This won't copy the assembly into the application's directory.")]
+            [CommandOption("--register-only")]
+            [DefaultValue(false)]
+            public bool RegisterOnly { get; init; }
         }
     }
 }

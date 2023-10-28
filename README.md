@@ -18,10 +18,10 @@ Because your information sources will be different from mine, go start building 
 - [Plugins](#Plugins)
   - [Infrastructure](#Infrastructure)
   - [Dependency Injection (DI)](#Dependency-Injection-DI)
-  - [Localization](#Localization)
   - [Example for implementing `ISource`](#Example-for-implementing-ISource)
   - [Example for implementing `ResultItemBase`](#Example-for-implementing-ResultItemBase)
-- [Up next](#Up-next)s
+  - [Localization](#Localization)
+- [Up next](#Up-next)
 
 ## Features
 - Easily provide your [custom plugin](#Plugins) based on pre-built infrastructure classes
@@ -121,7 +121,7 @@ See an example of the configuration file [here](https://github.com/jordi1988/App
 ## Plugins
 This app is highly extensible by adding own plugins. You can fetch data from any source you can imagine, e. g. from your SharePoint Server, Active Directory or any database.
 
-Just follow these simple steps:
+**Just follow these simple steps:**
 1. Create a .NET 7 class library
 2. Add the `Appi.Core` NuGet package as a dependency
     - `PM> Install-Package Appi.Core` for plugin development from scratch or
@@ -129,7 +129,21 @@ Just follow these simple steps:
 3. Create classes that implement `ISource` and `ResultItemBase` ([see GitHub examples](https://github.com/jordi1988/Appi/tree/master/examples/ExternalDemoSource))
 4. Register the new assembly by calling `appi config register-lib "pathToAssembly.dll"`
 5. If applicable: change connection string(s) in sources.json (`appi config open`)
- 
+
+**Having trouble developing a plugin?**  
+It should help to clone and open this repository, create your plugin project as described above, and edit your `*.csproj` as follows:
+```xml
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <BaseOutputPath>..\..\src\Ui.Appi\bin</BaseOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	<BaseOutputPath>bin</BaseOutputPath>
+  </PropertyGroup>
+``` 
+That way, your plugin gets copied into the app's directory on `debug` builds and can therefore be debugged.  
+Note that your plugin must be registered in the `sources.json` file, but should only be included once in `..\..\src\Ui.Appi\bin` then (not in `%AppData%\Appi`, too).
+
 ### Infrastructure
 Some infrastructure classes are already provided. Fetching data from your database is as easy as writing the SQL query for it. You can build up from given classes like:
 - **File** (see `sources.json` after running `appi config open` and change the path of your text file)
@@ -144,72 +158,8 @@ Examples of **custom services** are `IHandler`, `IHandlerHelper`, `IResultStateS
 Of course you can also use the **built-in services** like `IStringLocalizerFactory`, `IStringLocalizer<>`, `ILoggerFactory`, `ILogger<>`, `IOtions<>`, ...
 So just define its type in your constructor. In case of multiple constructors, the first one with the most parameters will be chosen.
   
-This is not enough? You can also **inject custom services** using the `AddCustomServices()` method. But please note that this service **must be `nullable`** in this case! Validate its value inside the `ReadAsync()` method if you need to.  
-
-You do not want to inject any additional services? Here is how:
-``` csharp
-/// <inheritdoc cref="ISource.AddCustomServices"/>
-public IServiceCollection AddCustomServices(IServiceCollection services)
-{
-    return services;
-}
-```
-
-### Localization
-`Appi` is localized (english and german language as of now). If you like, you can contribute additional languages.  
-Each layer or custom plugin has its own `Localization` folder and files using the [default way](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization/make-content-localizable?view=aspnetcore-7.0#istringlocalizer) of implementing string translations by using `IStringLocalizer<T>` class.
-This class is registered in DI container, so you can gain access to it by using DI in your constructor.
-  
-Here is an example of **implementing localization in your own plugin**:
- - Inject the service `IStringLocalizer<TWHATEVER>` into your constructor
- - Place the `[assembly: RootNamespace("PROJECTNAME")]` attribute at the top of your `TWHATEVER` member
- - Create a folder named `Localization` in your plugin's root
- - Create a `resx` file named as follows: `FullNamespaceOfYourTWhateverFile.TWhateverFilename.Locale.resx` e.g. `Infrastructure.FileDemoExample.FileDemoSource.de.resx`
- - Use it [like this](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization/make-content-localizable?view=aspnetcore-7.0#istringlocalizer): _customLocalizer["Line"] where `Line` is the key
-
-``` csharp
-[assembly: RootNamespace("FileDemo")]
-
-namespace Infrastructure.FileDemoExample
-{
-    public class FileDemoSource : ISource
-    {
-        // ...
-
-        private readonly IStringLocalizer<FileDemoSource> _customLocalizer;
-        
-        public FileDemoSource(IStringLocalizer<FileDemoSource> customLocalizer)
-        {
-            _customLocalizer = customLocalizer ?? throw new ArgumentNullException(nameof(customLocalizer));
-        }
-
-        public override async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options) 
-        { 
-            // ...
-        }
-
-        public IServiceCollection AddCustomServices(IServiceCollection services)
-        {
-            return base.AddCustomServices(services);
-        }
-
-        private FileResult Parse(string row, int rowNumber)
-        {
-            return new FileDemoResult(_customLocalizer)
-            {
-                Id = rowNumber,
-                Name = $"{_customLocalizer["Line"]} {rowNumber}",
-                Description = row
-            };
-        }
-    }
-}
-```
-
-Take a further look at the example plugin [File Demo Plugin](https://github.com/jordi1988/Appi/tree/master/examples/FileDemo). In this demo there are two `localizer`s injected, one from the apps Infrastructure layer and a custom one.
-
 ### Example for implementing `ISource`
-The class implementing `ISource` must either have a parameterless constructor or one that expects `IHandlerHelper`.  
+The class implementing `ISource` can have any constructor. The services will be constructed using the DI container. A service will be `null` if it is not registered.  
 The `ReadAsync()` method must pass the `FindItemsOptions` object which contains the query and returns the found data.  
 The initial values of the properties are used to create the entry in the `sources.json` config file when installing your plugin.
 
@@ -219,11 +169,9 @@ using Core.Models;
 
 namespace Infrastructure.ExternalSourceDemo
 {
-    // TODO: should be named SimplePluginDemo
     public class ExternalDemoSource : ISource
     {
         private readonly IHandlerHelper _handlerHelper;
-        private readonly CustomDummyService? _dummyService;
 
         public string TypeName { get; set; } = typeof(ExternalDemoSource).Name;
         public string Name { get; set; } = "Demo Assembly";
@@ -236,16 +184,13 @@ namespace Infrastructure.ExternalSourceDemo
         public bool? IsQueryCommand { get; set; } = true;
         public string[]? Groups { get; set; } = new[] { "demo" };
 
-        public ExternalDemoSource(IHandlerHelper handlerHelper, CustomDummyService? dummyService)
+        public ExternalDemoSource(IHandlerHelper handlerHelper)
         {
             _handlerHelper = handlerHelper ?? throw new ArgumentNullException(nameof(handlerHelper));;
-            _dummyService = dummyService; // own services must be `nullable`
         }
 
         public async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options)
         {
-            _dummyService?.Whatever();
-
             var output = new List<ExternalDemoResult>()
             {
                 new ExternalDemoResult(_handlerHelper) { 
@@ -338,6 +283,59 @@ namespace ExternalSourceDemo
     }
 }
 ```
+
+### Localization
+`Appi` is localized (english and german language as of now). If you like, you can contribute additional languages.  
+Each layer or custom plugin has its own `Localization` folder and files using the [default way](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization/make-content-localizable?view=aspnetcore-7.0#istringlocalizer) of implementing string translations by using `IStringLocalizer<T>` class.
+This class is registered in DI container, so you can gain access to it by using DI in your constructor.
+  
+Here is an example of **implementing localization in your own plugin**:
+ - Inject the service `IStringLocalizer<TWHATEVER>` into your constructor
+ - Place the `[assembly: RootNamespace("PROJECTNAME")]` attribute at the top of your `TWHATEVER` member
+ - Create a folder named `Localization` in your plugin's root
+ - Create a `resx` file named as follows: `FullNamespaceOfYourTWhateverFile.TWhateverFilename.Locale.resx` e.g. `Infrastructure.FileDemoExample.FileDemoSource.de.resx`
+ - Use it [like this](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization/make-content-localizable?view=aspnetcore-7.0#istringlocalizer): _customLocalizer["Line"] where `Line` is the key
+
+``` csharp
+[assembly: RootNamespace("FileDemo")]
+
+namespace Infrastructure.FileDemoExample
+{
+    public class FileDemoSource : ISource
+    {
+        // ...
+
+        private readonly IStringLocalizer<FileDemoSource> _customLocalizer;
+        
+        public FileDemoSource(IStringLocalizer<FileDemoSource> customLocalizer)
+        {
+            _customLocalizer = customLocalizer ?? throw new ArgumentNullException(nameof(customLocalizer));
+        }
+
+        public override async Task<IEnumerable<ResultItemBase>> ReadAsync(FindItemsOptions options) 
+        { 
+            // ...
+        }
+
+        public IServiceCollection AddCustomServices(IServiceCollection services)
+        {
+            return base.AddCustomServices(services);
+        }
+
+        private FileResult Parse(string row, int rowNumber)
+        {
+            return new FileDemoResult(_customLocalizer)
+            {
+                Id = rowNumber,
+                Name = $"{_customLocalizer["Line"]} {rowNumber}",
+                Description = row
+            };
+        }
+    }
+}
+```
+
+Take a further look at the example plugin [File Demo Plugin](https://github.com/jordi1988/Appi/tree/master/examples/FileDemo). In this demo there are two `localizer`s injected, one from the apps Infrastructure layer and a custom one.
 
 ## Up next
 - Localized app examples
