@@ -128,6 +128,8 @@ This app is highly extensible by adding own plugins. You can fetch data from any
     - `PM> Install-Package Appi.Infrastructure` for plugin development with pre-built infrastructure like File access, MySQL/MariaDB, SQLite or Microsoft SQL Server
 3. Create classes that implement `ISource` and `ResultItemBase` ([see GitHub examples](https://github.com/jordi1988/Appi/tree/master/examples/ExternalDemoSource))
 4. Register the new assembly by calling `appi config register-lib "pathToAssembly.dll"`
+   - Use the `--copy-only` parameter if you are updating your plugin, so that it is not registered again.
+   - Use the `--register-only` parameter if you want to debug your plugin. See details right below.
 5. If applicable: change connection string(s) in sources.json (`appi config open`)
 
 **Having trouble developing a plugin?**  
