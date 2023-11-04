@@ -22,22 +22,6 @@ namespace Core.Models
         /// The source colors.
         /// </value>
         /// <remarks>Choose any color from <see cref="Color"/>.</remarks>
-        public List<string> SourceColors { get; set; } = new List<string>() {
-              "DarkRed",
-              "SkyBlue",
-              "Magenta",
-              "Olive",
-              "IndianRed",
-            "NavajoWhite",
-              "LightGoldenrodYellow",
-              "LightGreen",
-              "Blue",
-              "LightPink",
-              "LightSeaGreen",
-              "GreenYellow",
-              "Orange",
-              "PaleGreen",
-              "SandyBrown"
-        };
+        public string[]? SourceColors { get; set; }
     }
 }

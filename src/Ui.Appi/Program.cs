@@ -53,8 +53,6 @@ namespace Ui.Appi
                 .AddOptions<Preferences>()
                 .Bind(configuration);
 
-            // services.Configure<LegendPreferences>(configuration.GetSection("Legend")); // BUG: binding of Colors to IOtions does not work
-
             serviceProvider = services.BuildServiceProvider();
             services.AddLogging(options => options.AddConsole());
             services.AddLocalization(options => options.ResourcesPath = "Localization");

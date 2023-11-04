@@ -1,5 +1,6 @@
 ﻿using Core.Abstractions;
 using Core.Models;
+using System.Drawing;
 using System.Text.Json;
 using static System.Environment;
 
@@ -47,7 +48,7 @@ namespace Core.Helper
         {
             EnsureSettingsExist();
         }
-
+        
         /// <summary>
         /// Ensures all settings used in the application exists.
         /// </summary>
@@ -56,14 +57,20 @@ namespace Core.Helper
         {
             EnsureDirectoryExists();
             EnsureFileExists(
-                SourcesFilename, 
+                SourcesFilename,
                 () => ReflectionHelper.InitializeClassesImplementingInterface<ISource>()
                         .Where(x => !string.IsNullOrWhiteSpace(x.Name))
                         .OrderBy(x => x.SortOrder));
 
             EnsureFileExists(
-                    PreferencesFilename, 
-                    () => new Preferences());
+                    PreferencesFilename,
+                    () => new Preferences()
+                    {
+                        Legend = new LegendPreferences()
+                        {
+                            SourceColors = GetLegendSourceDefaultColors()
+                        }
+                    });
         }
 
         private static void EnsureDirectoryExists()
@@ -75,7 +82,7 @@ namespace Core.Helper
 
             Directory.CreateDirectory(ApplicationDirectory);
         }
-                
+
         private static void EnsureFileExists(string filename, Func<object> defaultValue)
         {
             if (File.Exists(filename))
@@ -88,5 +95,24 @@ namespace Core.Helper
 
             File.WriteAllText(filename, stringifiedObject);
         }
+
+        private static string[] GetLegendSourceDefaultColors() => new List<Color>() {
+            Color.SkyBlue,
+            Color.Magenta,
+            Color.DarkRed,
+            Color.IndianRed,
+            Color.LightGoldenrodYellow,
+            Color.LightGreen,
+            Color.Blue,
+            Color.LightPink,
+            Color.LightSeaGreen,
+            Color.NavajoWhite,
+            Color.Olive,
+            Color.GreenYellow,
+            Color.Orange,
+            Color.PaleGreen,
+            Color.SandyBrown
+        }.Select(color => color.ToKnownColor().ToString())
+         .ToArray();
     }
 }
