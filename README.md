@@ -24,8 +24,8 @@ Because your information sources will be different from mine, go start building 
 - [Up next](#Up-next)
 
 ## Features
-- Easily provide your [custom plugin](#Plugins) based on pre-built infrastructure classes
 - Asynchronously fetch all your sources matching your query
+- Easily provide your [custom plugin](#Plugins) based on pre-built infrastructure classes
 - Make use of the given toolset (e.g. for backward navigation)
 - Make use of the DI container
 - Localized messages und UI

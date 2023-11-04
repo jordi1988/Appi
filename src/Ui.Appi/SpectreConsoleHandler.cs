@@ -1,9 +1,12 @@
 ﻿using Core.Abstractions;
 using Core.Helper;
 using Core.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using Spectre.Console;
 using System.Data;
+using Color = Spectre.Console.Color;
 using Rule = Spectre.Console.Rule;
 
 namespace Ui.Appi
@@ -17,27 +20,24 @@ namespace Ui.Appi
         private const string _ruleStyle = "red dim";
 
         private readonly IStringLocalizer<UILayerLocalization> _localizer;
-        private readonly Color[] _chartColors = {
-            Color.SkyBlue2,
-            Color.Magenta2_1,
-            Color.DarkRed_1,
-            Color.IndianRed,
-            Color.LightGoldenrod2,
-            Color.LightGreen,
-            Color.Blue3,
-            Color.LightPink1,
-            Color.LightSeaGreen,
-            Color.NavajoWhite3,
-            Color.Olive,
-            Color.GreenYellow,
-            Color.Orange4_1,
-            Color.PaleGreen3,
-            Color.SandyBrown
-        };
+        private readonly IConfiguration _configuration;
+        private readonly Preferences _options;
 
-        public SpectreConsoleHandler(IStringLocalizer<UILayerLocalization> localizer)
+        public SpectreConsoleHandler(
+            IStringLocalizer<UILayerLocalization> localizer,
+            IOptions<Preferences> options,
+            IConfiguration configuration)
         {
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        }
+
+        public static Color ToSpectreConsoleColor(string colorName)
+        {
+            var color = System.Drawing.Color.FromName(colorName);
+
+            return new Color(color.R, color.G, color.B);
         }
 
         /// <inheritdoc cref="IHandler.PrintSources(IEnumerable{ISource})" />
@@ -102,10 +102,10 @@ namespace Ui.Appi
                 .PageSize(35)
                 .HighlightStyle(new Style(Color.White, Color.DarkRed))
                 .MoreChoicesText(localizer["[grey](Move up and down to reveal more items)[/]"]);
-            
+
             prompt.DisabledStyle = new Style(
                 background: Color.Silver,
-                foreground: Color.Black, 
+                foreground: Color.Black,
                 decoration: Decoration.Bold | Decoration.Italic);
 
             foreach (var group in itemsWithContent)
@@ -167,6 +167,11 @@ namespace Ui.Appi
 
         private void DisplayBreakdownChart(IEnumerable<PromptGroup> allResults)
         {
+            if (!_options.Legend.Visible)
+            {
+                return;
+            }
+
             var chartDisplayedResults = allResults
                 .Where(x => x.Items.Any())
                 .ToList();
@@ -183,8 +188,8 @@ namespace Ui.Appi
                 var currentColor = CalculateColor(totalCount, i);
 
                 chart.AddItem(
-                    group.Name, 
-                    group.Items.Count(), 
+                    group.Name,
+                    group.Items.Count(),
                     currentColor);
             }
 
@@ -198,17 +203,19 @@ namespace Ui.Appi
 
         private Color CalculateColor(int totalCount, int i)
         {
-            Color output;
+            var chartColorNames = _options.Legend.SourceColors;
+
+            string outputColorName;
             if (i < totalCount)
             {
-                output = _chartColors[i];
+                outputColorName = chartColorNames[i];
             }
             else
             {
-                output = _chartColors[i - totalCount];
+                outputColorName = chartColorNames[i - totalCount];
             }
 
-            return output;
+            return ToSpectreConsoleColor(outputColorName);
         }
     }
 }

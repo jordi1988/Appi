@@ -20,7 +20,7 @@ namespace Infrastructure.Services
         {
             ConfigurationHelper.EnsureSettingsExist();
 
-            var fileContents = File.ReadAllText(ConfigurationHelper.ApplicationFilename);
+            var fileContents = File.ReadAllText(ConfigurationHelper.SourcesFilename);
             var fileSources = JsonSerializer.Deserialize<IEnumerable<JsonFileSource>>(fileContents);
 
             RepairFileSourcesAndSave(fileSources);
@@ -42,7 +42,7 @@ namespace Infrastructure.Services
                     WriteIndented = true
                 });
 
-            File.WriteAllText(ConfigurationHelper.ApplicationFilename, content);
+            File.WriteAllText(ConfigurationHelper.SourcesFilename, content);
         }
 
         [GeneratedRegex("[^a-zA-Z0-9]")]

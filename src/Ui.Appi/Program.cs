@@ -1,10 +1,16 @@
 ﻿using Core.Abstractions;
+using Core.Extensions;
+using Core.Helper;
+using Core.Models;
 using Core.Strategies;
 using Infrastructure.Extensions;
 using Infrastructure.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Spectre.Console.Cli;
+using System.Globalization;
 using Ui.Appi.Commands;
 using Ui.Appi.Injection;
 
@@ -17,23 +23,44 @@ namespace Ui.Appi
     {
         private static async Task Main(string[] args)
         {
-            var app = new CommandApp(RegisterServices());
+            var registrar = RegisterServices(out var serviceProvider);
+            SetUiCulture(serviceProvider);
+
+            var app = new CommandApp(registrar);
             app.Configure(ConfigureCommands);
             app.SetDefaultCommand<FindItemsCommand>();
 
             await app.RunAsync(args);
         }
 
-        private static ITypeRegistrar RegisterServices()
+        private static void SetUiCulture(ServiceProvider serviceProvider)
+        {
+            var options = serviceProvider.GetServiceDirectly<IOptions<Preferences>>()?.Value;
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(options?.UiCulture ?? "en");
+        }
+
+        private static ITypeRegistrar RegisterServices(out ServiceProvider serviceProvider)
         {
             var services = new ServiceCollection();
 
             // .NET components
-            services.AddOptions();
+            ConfigurationHelper.EnsureSettingsExist();
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddJsonFile(ConfigurationHelper.PreferencesFilename)
+                .Build();
+
+            services
+                .AddOptions<Preferences>()
+                .Bind(configuration);
+
+            // services.Configure<LegendPreferences>(configuration.GetSection("Legend")); // BUG: binding of Colors to IOtions does not work
+
+            serviceProvider = services.BuildServiceProvider();
             services.AddLogging(options => options.AddConsole());
             services.AddLocalization(options => options.ResourcesPath = "Localization");
-            services.AddSingleton<IServiceProvider>(services.BuildServiceProvider());
-
+            services.AddSingleton<IServiceProvider>(serviceProvider);
+            services.AddSingleton<IConfiguration>(configuration);
+            
             // Core components
             services.AddSingleton<IHandler, SpectreConsoleHandler>();
             services.AddSingleton<IHandlerHelper, SpectreConsoleHandlerHelper>();

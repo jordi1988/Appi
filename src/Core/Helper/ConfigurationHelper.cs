@@ -1,4 +1,5 @@
 ﻿using Core.Abstractions;
+using Core.Models;
 using System.Text.Json;
 using static System.Environment;
 
@@ -30,7 +31,15 @@ namespace Core.Helper
         /// <value>
         /// The filename.
         /// </value>
-        public static string ApplicationFilename => Path.Combine(ApplicationDirectory, "sources.json");
+        public static string SourcesFilename => Path.Combine(ApplicationDirectory, "sources.json");
+
+        /// <summary>
+        /// Gets the application preferences' filename.
+        /// </summary>
+        /// <value>
+        /// The filename.
+        /// </value>
+        public static string PreferencesFilename => Path.Combine(ApplicationDirectory, "preferences.json");
 
         private static string AppDataDirectory => GetFolderPath(SpecialFolder.ApplicationData);
 
@@ -40,36 +49,44 @@ namespace Core.Helper
         }
 
         /// <summary>
-        /// Ensures the settings file exists.
+        /// Ensures all settings used in the application exists.
         /// </summary>
         /// <remarks>Will recreate the file with defaults if not found.</remarks>
         public static void EnsureSettingsExist()
         {
             EnsureDirectoryExists();
-            EnsureFileExists();
+            EnsureFileExists(
+                SourcesFilename, 
+                () => ReflectionHelper.InitializeClassesImplementingInterface<ISource>()
+                        .Where(x => !string.IsNullOrWhiteSpace(x.Name))
+                        .OrderBy(x => x.SortOrder));
+
+            EnsureFileExists(
+                    PreferencesFilename, 
+                    () => new Preferences());
         }
 
         private static void EnsureDirectoryExists()
         {
-            if (!Directory.Exists(ApplicationDirectory))
+            if (Directory.Exists(ApplicationDirectory))
             {
-                Directory.CreateDirectory(ApplicationDirectory);
+                return;
             }
+
+            Directory.CreateDirectory(ApplicationDirectory);
         }
-
-        private static void EnsureFileExists()
+                
+        private static void EnsureFileExists(string filename, Func<object> defaultValue)
         {
-            if (!File.Exists(ApplicationFilename))
+            if (File.Exists(filename))
             {
-                var sources = ReflectionHelper.InitializeClassesImplementingInterface<ISource>()
-                    .Where(x => !string.IsNullOrWhiteSpace(x.Name))
-                    .OrderBy(x => x.SortOrder);
-
-                var stringifiedSources = JsonSerializer.Serialize(sources,
-                    new JsonSerializerOptions() { WriteIndented = true });
-
-                File.WriteAllText(ApplicationFilename, stringifiedSources);
+                return;
             }
+
+            var stringifiedObject = JsonSerializer.Serialize(defaultValue(),
+                new JsonSerializerOptions() { WriteIndented = true });
+
+            File.WriteAllText(filename, stringifiedObject);
         }
     }
 }
