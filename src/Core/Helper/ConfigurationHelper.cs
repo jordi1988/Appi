@@ -43,12 +43,7 @@ namespace Core.Helper
         public static string PreferencesFilename => Path.Combine(ApplicationDirectory, "preferences.json");
 
         private static string AppDataDirectory => GetFolderPath(SpecialFolder.ApplicationData);
-
-        static ConfigurationHelper()
-        {
-            EnsureSettingsExist();
-        }
-        
+                
         /// <summary>
         /// Ensures all settings used in the application exists.
         /// </summary>
@@ -99,7 +94,6 @@ namespace Core.Helper
         private static string[] GetLegendSourceDefaultColors() => new List<Color>() {
             Color.SkyBlue,
             Color.Magenta,
-            Color.DarkRed,
             Color.IndianRed,
             Color.LightGoldenrodYellow,
             Color.LightGreen,
@@ -108,10 +102,16 @@ namespace Core.Helper
             Color.LightSeaGreen,
             Color.NavajoWhite,
             Color.Olive,
+            Color.DarkRed,
             Color.GreenYellow,
-            Color.Orange,
             Color.PaleGreen,
-            Color.SandyBrown
+            Color.SandyBrown,
+            Color.SlateGray,
+            Color.Turquoise,
+            Color.Wheat,
+            Color.Coral,
+            Color.ForestGreen,
+            Color.Orange
         }.Select(color => color.ToKnownColor().ToString())
          .ToArray();
     }

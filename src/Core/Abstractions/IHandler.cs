@@ -11,7 +11,7 @@ namespace Core.Abstractions
         /// Prints all registered sources that can be used with <c>find</c> command.
         /// </summary>
         /// <param name="sources">The sources.</param>
-        void PrintSources(IEnumerable<ISource> sources);
+        void ListSources(IEnumerable<ISource> sources);
 
         /// <summary>
         /// Prints the results that were found by the <c>find</c> command.

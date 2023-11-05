@@ -46,8 +46,6 @@ namespace Ui.Appi.Commands
         /// <param name="settings">The settings.</param>
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
         {
-            ConfigurationHelper.EnsureSettingsExist();
-
             var filename = Path.GetFileName(settings.Path);
 
             if (!File.Exists(settings.Path))

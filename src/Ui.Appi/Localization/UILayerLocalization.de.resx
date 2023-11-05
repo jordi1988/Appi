@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="action" xml:space="preserve">
+    <value>Aktion</value>
+  </data>
   <data name="Active" xml:space="preserve">
     <value>Aktiv</value>
   </data>
@@ -132,14 +135,17 @@
   <data name="Exit" xml:space="preserve">
     <value>Beenden</value>
   </data>
+  <data name="Goodbye." xml:space="preserve">
+    <value>Auf Wiedersehen.</value>
+  </data>
   <data name="Group aliases" xml:space="preserve">
     <value>Aliasse der Gruppen</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="Sorry, there is [bold]no action[/] you can choose from. [red]Goodbye.[/]" xml:space="preserve">
-    <value>Entschuldigung, es steht [bold]keine Aktion[/] zur Auswahl. [red]Auf Wiedersehen.[/]</value>
+  <data name="Sorry, there is [bold]no action[/] you can choose from." xml:space="preserve">
+    <value>Entschuldigung, es steht [bold]keine Aktion[/] zur Auswahl.</value>
   </data>
   <data name="Sorry, [bold]no items[/] were found." xml:space="preserve">
     <value>Entschuldigung, es wurden [bold]keine Ergebnisse[/] gefunden.</value>
@@ -159,14 +165,11 @@
   <data name="You can only pass one option, either 'source' or 'group'." xml:space="preserve">
     <value>Sie können nur eine Option angebeben; entweder 'source' oder 'group'.</value>
   </data>
-  <data name="[b]Which [red]action[/] should be invoked? [/]" xml:space="preserve">
-    <value>[b]Welche [red]Aktion[/] soll ausgeführt werden? [/]</value>
+  <data name="[b]Which {0} should be invoked? [/]" xml:space="preserve">
+    <value>[b]Welche {0} soll ausgeführt werden? [/]</value>
   </data>
   <data name="[grey](Move up and down to reveal more items)[/]" xml:space="preserve">
     <value>[grey](Auswahl nach oben und unten bewegen, um weitere Treffer anzuzeigen)[/]</value>
-  </data>
-  <data name="[red]Goodbye.[/]" xml:space="preserve">
-    <value>[red]Auf Wiedersehen.[/]</value>
   </data>
   <data name="[white]Please select item[/]" xml:space="preserve">
     <value>[white]Bitte Auswahl treffen[/]</value>

@@ -1,6 +1,7 @@
 ﻿using Core.Abstractions;
 using Core.Models;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using Spectre.Console;
 
 namespace Ui.Appi
@@ -14,19 +15,26 @@ namespace Ui.Appi
         private readonly IHandler _handler;
         private readonly IResultStateService<PromptGroup> _resultState;
         private readonly IStringLocalizer<UILayerLocalization> _localizer;
+        private readonly Preferences _options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpectreConsoleHandlerHelper"/> class.
         /// </summary>
         /// <param name="handler">The handler.</param>
         /// <param name="resultState">State of the result.</param>
-        /// <param name="localizer"></param>
+        /// <param name="localizer">The localizer</param>
+        /// <param name="options">The preferences</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public SpectreConsoleHandlerHelper(IHandler handler, IResultStateService<PromptGroup> resultState, IStringLocalizer<UILayerLocalization> localizer)
+        public SpectreConsoleHandlerHelper(
+            IHandler handler,
+            IResultStateService<PromptGroup> resultState, 
+            IStringLocalizer<UILayerLocalization> localizer, 
+            IOptions<Preferences> options)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _resultState = resultState ?? throw new ArgumentNullException(nameof(resultState));
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <summary>
@@ -75,7 +83,7 @@ namespace Ui.Appi
                 Name = _localizer["Exit"],
                 Action = () =>
                 {
-                    AnsiConsole.Write(new Markup(_localizer["[red]Goodbye.[/]"]));
+                    AnsiConsole.Write(new Markup($"[{_options.AccentColor}]{_localizer["Goodbye."]}[/]"));
                     Environment.Exit(0);
                 }
             };

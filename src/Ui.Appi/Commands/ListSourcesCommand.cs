@@ -32,7 +32,7 @@ namespace Ui.Appi.Commands
         {
             var sources = _settingsService.ReadSources();
 
-            _handler.PrintSources(sources);
+            _handler.ListSources(sources);
 
             return 0;
         }

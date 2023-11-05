@@ -1,7 +1,6 @@
 ﻿using Core.Abstractions;
 using Core.Helper;
 using Core.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Spectre.Console;
@@ -17,31 +16,20 @@ namespace Ui.Appi
     /// <seealso cref="Core.Abstractions.IHandler" />
     internal class SpectreConsoleHandler : IHandler
     {
-        private const string _ruleStyle = "red dim";
-
         private readonly IStringLocalizer<UILayerLocalization> _localizer;
-        private readonly IConfiguration _configuration;
         private readonly Preferences _options;
+        private Style HeighlightStyle => new(Color.White, GetSpectreConsoleColor(_options.AccentColor));
 
         public SpectreConsoleHandler(
             IStringLocalizer<UILayerLocalization> localizer,
-            IOptions<Preferences> options,
-            IConfiguration configuration)
+            IOptions<Preferences> options)
         {
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
-        public static Color ToSpectreConsoleColor(string colorName)
-        {
-            var color = System.Drawing.Color.FromName(colorName);
-
-            return new Color(color.R, color.G, color.B);
-        }
-
-        /// <inheritdoc cref="IHandler.PrintSources(IEnumerable{ISource})" />
-        public void PrintSources(IEnumerable<ISource> sources)
+        /// <inheritdoc cref="IHandler.ListSources(IEnumerable{ISource})" />
+        public void ListSources(IEnumerable<ISource> sources)
         {
             var table = new Table();
             table.Border(TableBorder.DoubleEdge);
@@ -85,7 +73,7 @@ namespace Ui.Appi
             AnsiConsole.Clear();
         }
 
-        private static ResultItemBase? PromtForItemSelection(IEnumerable<PromptGroup> items, IStringLocalizer<UILayerLocalization> localizer)
+        private ResultItemBase? PromtForItemSelection(IEnumerable<PromptGroup> items, IStringLocalizer<UILayerLocalization> localizer)
         {
             var itemsWithContent = items.Where(x => x.Items.Any());
             if (!itemsWithContent.Any())
@@ -95,12 +83,12 @@ namespace Ui.Appi
             }
 
             var rule = new Rule(localizer["[white]Please select item[/]"]);
-            rule.RuleStyle(_ruleStyle);
+            rule.RuleStyle(_options.AccentColor);
             AnsiConsole.Write(rule);
 
             var prompt = new SelectionPrompt<ResultItemBase>()
-                .PageSize(35)
-                .HighlightStyle(new Style(Color.White, Color.DarkRed))
+                .PageSize(_options.PageSize)
+                .HighlightStyle(HeighlightStyle)
                 .MoreChoicesText(localizer["[grey](Move up and down to reveal more items)[/]"]);
 
             prompt.DisabledStyle = new Style(
@@ -117,7 +105,7 @@ namespace Ui.Appi
             return AnsiConsole.Prompt(prompt);
         }
 
-        private static void PromtForActionInvokation(ResultItemBase? item, IStringLocalizer<UILayerLocalization> localizer)
+        private void PromtForActionInvokation(ResultItemBase? item, IStringLocalizer<UILayerLocalization> localizer)
         {
             if (item is null)
             {
@@ -127,15 +115,15 @@ namespace Ui.Appi
             var actions = item.GetActions();
             if (!actions.Any())
             {
-                AnsiConsole.Write(new Markup(localizer["Sorry, there is [bold]no action[/] you can choose from. [red]Goodbye.[/]"]));
+                AnsiConsole.Write(new Markup($"{localizer["Sorry, there is [bold]no action[/] you can choose from."]} [{_options.AccentColor}]{_localizer["Goodbye."]}[/]"));
                 return;
             }
 
             var selectedAction = AnsiConsole.Prompt(
                 new SelectionPrompt<ActionItem>()
-                    .Title(localizer["[b]Which [red]action[/] should be invoked? [/]"])
-                    .PageSize(30)
-                    .HighlightStyle(new Style(Color.White, Color.DarkRed))
+                    .Title(localizer["[b]Which {0} should be invoked? [/]", $"[{_options.AccentColor}]{localizer["action"]}[/]"])
+                    .PageSize(10)
+                    .HighlightStyle(HeighlightStyle)
                     .MoreChoicesText(localizer["[grey](Move up and down to reveal more items)[/]"])
                     .AddChoices(actions));
 
@@ -194,7 +182,7 @@ namespace Ui.Appi
             }
 
             var upperRule = new Rule();
-            upperRule.RuleStyle(_ruleStyle);
+            upperRule.RuleStyle(_options.AccentColor);
             AnsiConsole.Write(upperRule);
 
             AnsiConsole.Write(chart);
@@ -203,7 +191,7 @@ namespace Ui.Appi
 
         private Color CalculateColor(int totalCount, int i)
         {
-            var chartColorNames = _options.Legend.SourceColors;
+            var chartColorNames = _options.Legend.SourceColors!;
 
             string outputColorName;
             if (i < totalCount)
@@ -215,7 +203,14 @@ namespace Ui.Appi
                 outputColorName = chartColorNames[i - totalCount];
             }
 
-            return ToSpectreConsoleColor(outputColorName);
+            return GetSpectreConsoleColor(outputColorName);
+        }
+
+        private static Color GetSpectreConsoleColor(string colorName)
+        {
+            var color = System.Drawing.Color.FromName(colorName);
+
+            return new Color(color.R, color.G, color.B);
         }
     }
 }

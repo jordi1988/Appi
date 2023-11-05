@@ -166,7 +166,6 @@ namespace Core.Helper
         /// <param name="pluginService">The plugin service.</param>
         public static void LoadExternalAssemblies(IPluginService pluginService)
         {
-            ConfigurationHelper.EnsureSettingsExist();
             if (!pluginService.IsAllowed())
             {
                 return;

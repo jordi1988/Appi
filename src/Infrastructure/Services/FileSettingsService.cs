@@ -18,8 +18,6 @@ namespace Infrastructure.Services
         /// <returns>All sources found in the file.</returns>
         public IEnumerable<ISource> ReadSources()
         {
-            ConfigurationHelper.EnsureSettingsExist();
-
             var fileContents = File.ReadAllText(ConfigurationHelper.SourcesFilename);
             var fileSources = JsonSerializer.Deserialize<IEnumerable<JsonFileSource>>(fileContents);
 
@@ -34,8 +32,6 @@ namespace Infrastructure.Services
         /// <param name="sources">The sources.</param>
         public void SaveSources(IEnumerable<ISource> sources)
         {
-            ConfigurationHelper.EnsureSettingsExist();
-
             var content = JsonSerializer.Serialize(sources,
                 new JsonSerializerOptions
                 {
