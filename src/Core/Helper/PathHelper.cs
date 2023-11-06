@@ -35,7 +35,9 @@ namespace Core.Helper
             fullPath = NormalizeFilepath(fullPath);
 
             if (!fullPath.StartsWith(rootPath))
-                throw new CoreException("Could not find rootPath in fullPath when calculating relative path.");
+            {
+                throw new CoreException($"Could not find {nameof(rootPath)} in {nameof(fullPath)} when calculating relative path.");
+            }
 
             return fullPath[rootPath.Length..];
         }
