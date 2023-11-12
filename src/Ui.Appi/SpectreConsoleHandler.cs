@@ -83,7 +83,7 @@ namespace Ui.Appi
             }
 
             var rule = new Rule(localizer["[white]Please select item[/]"]);
-            rule.RuleStyle(_options.AccentColor);
+            rule.RuleStyle($"{_options.AccentColor} dim");
             AnsiConsole.Write(rule);
 
             var prompt = new SelectionPrompt<ResultItemBase>()
@@ -182,7 +182,7 @@ namespace Ui.Appi
             }
 
             var upperRule = new Rule();
-            upperRule.RuleStyle(_options.AccentColor);
+            upperRule.RuleStyle($"{_options.AccentColor} dim");
             AnsiConsole.Write(upperRule);
 
             AnsiConsole.Write(chart);

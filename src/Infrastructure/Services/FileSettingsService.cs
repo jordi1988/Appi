@@ -1,24 +1,37 @@
 ﻿using Core.Abstractions;
 using Core.Helper;
 using Core.Models;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Infrastructure.Services
 {
     /// <summary>
-    /// Represents the <see cref="ISettingsService"/> using a file approach.
+    /// Represents the <see cref="ISourceService"/> using a file approach.
     /// </summary>
-    /// <seealso cref="ISettingsService" />
-    public partial class FileSettingsService : ISettingsService
+    /// <seealso cref="ISourceService" />
+    public partial class FileSourceService : ISourceService
     {
+        private readonly Preferences _options;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileSourceService"/> class.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <exception cref="System.ArgumentNullException">options</exception>
+        public FileSourceService(IOptions<Preferences> options)
+        {
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        }
+
         /// <summary>
         /// Reads the sources from the setting's file.
         /// </summary>
         /// <returns>All sources found in the file.</returns>
         public IEnumerable<ISource> ReadSources()
         {
-            var fileContents = File.ReadAllText(ConfigurationHelper.SourcesFilename);
+            var fileContents = File.ReadAllText(_options.SourcesFilename);
             var fileSources = JsonSerializer.Deserialize<IEnumerable<JsonFileSource>>(fileContents);
 
             RepairFileSourcesAndSave(fileSources);
@@ -38,7 +51,7 @@ namespace Infrastructure.Services
                     WriteIndented = true
                 });
 
-            File.WriteAllText(ConfigurationHelper.SourcesFilename, content);
+            File.WriteAllText(_options.SourcesFilename, content);
         }
 
         [GeneratedRegex("[^a-zA-Z0-9]")]

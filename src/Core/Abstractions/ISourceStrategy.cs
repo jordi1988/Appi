@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents an interface for determing the query strategy.
     /// </summary>
-    public interface ISourcesSelector
+    public interface ISourceStrategy
     {
         /// <summary>
         /// Gets the query description strategy.

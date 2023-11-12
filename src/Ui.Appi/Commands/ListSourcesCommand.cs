@@ -10,7 +10,7 @@ namespace Ui.Appi.Commands
     internal sealed partial class ListSourcesCommand : Command
     {
         private readonly IHandler _handler;
-        private readonly ISettingsService _settingsService;
+        private readonly ISourceService _settingsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListSourcesCommand"/> class.
@@ -18,7 +18,7 @@ namespace Ui.Appi.Commands
         /// <param name="handler">The handler.</param>
         /// <param name="sourceService">The source service.</param>
         /// <exception cref="ArgumentNullException"> </exception>
-        public ListSourcesCommand(IHandler handler, ISettingsService sourceService)
+        public ListSourcesCommand(IHandler handler, ISourceService sourceService)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _settingsService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));

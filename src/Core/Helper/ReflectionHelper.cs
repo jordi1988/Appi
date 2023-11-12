@@ -64,11 +64,9 @@ namespace Core.Helper
         /// <exception cref="SourceNotFoundException"></exception>
         public static Type GetClassByNameImplementingInterface<TInterface>(string className, IServiceProvider serviceProvider)
         {
-            var pluginService = serviceProvider.GetServiceDirectly<IPluginService>(true);
-            LoadExternalAssemblies(pluginService!);
+            LoadExternalAssemblies(serviceProvider);
 
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
             foreach (var assembly in allAssemblies)
             {
                 var foundClass = GetClassesImplementingInterface<TInterface>(assembly).FirstOrDefault(x => x.Name == className);
@@ -78,7 +76,7 @@ namespace Core.Helper
                 }
             }
 
-            var localizer = serviceProvider.GetServiceDirectly<IStringLocalizer<CoreLayerLocalization>>(true);   
+            var localizer = serviceProvider.GetServiceDirectly<IStringLocalizer<CoreLayerLocalization>>(true);
             throw new SourceNotFoundException(className, localizer!);
         }
 
@@ -160,32 +158,16 @@ namespace Core.Helper
             return output!;
         }
 
-        /// <summary>
-        /// Loads all external assemblies if it is allowed.
-        /// </summary>
-        /// <param name="pluginService">The plugin service.</param>
-        public static void LoadExternalAssemblies(IPluginService pluginService)
+        private static void LoadExternalAssemblies(IServiceProvider serviceProvider)
         {
+            var pluginService = serviceProvider.GetServiceDirectly<IPluginService>(true)!;
+
             if (!pluginService.IsAllowed())
             {
                 return;
             }
 
-            UnsafeLoadAssemblies(ConfigurationHelper.ApplicationDirectory, "*.dll");
-
-            var executablePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            ArgumentException.ThrowIfNullOrEmpty(executablePath);
-
-            UnsafeLoadAssemblies(executablePath, "Appi.Plugin.*.dll");
-        }
-
-        private static void UnsafeLoadAssemblies(string path, string searchPattern)
-        {
-            var externalAssemblyFiles = Directory.GetFiles(path, searchPattern);
-            foreach (var filename in externalAssemblyFiles)
-            {
-                Assembly.UnsafeLoadFrom(filename);
-            }
+            pluginService.ActivateExternalPluginsIfAllowed();
         }
     }
 }

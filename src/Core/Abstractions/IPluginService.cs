@@ -1,7 +1,7 @@
 ﻿namespace Core.Abstractions
 {
     /// <summary>
-    /// Represents an interface for interacting with plugins.
+    /// Represents an interface for interacting with custom plugins.
     /// </summary>
     public interface IPluginService
     {
@@ -22,5 +22,10 @@
         /// Prohibit external plugins to be used.
         /// </summary>
         void Prohibit();
+
+        /// <summary>
+        /// Loads all assemblies in the known directories if <see cref="IsAllowed"/> returns <c>true</c>.
+        /// </summary>
+        void ActivateExternalPluginsIfAllowed();
     }
 }

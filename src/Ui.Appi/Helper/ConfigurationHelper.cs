@@ -1,38 +1,20 @@
 ﻿using Core.Abstractions;
+using Core.Helper;
 using Core.Models;
 using System.Drawing;
 using System.Text.Json;
 using static System.Environment;
 
-namespace Core.Helper
+namespace Ui.Appi.Helper
 {
     /// <summary>
     /// Represents a helper class when dealing with configuration.
     /// </summary>
     public static class ConfigurationHelper
     {
-        /// <summary>
-        /// The query parameter if needed as variable.
-        /// </summary>
-        /// <remarks>See <see href="https://github.com/jordi1988/Appi/blob/master/examples/HttpRequestDemo/PoetryHttpRequestSource.cs">example usage</see>.</remarks>
-        public const string QueryParam = "##QUERY##";
-
-        /// <summary>
-        /// Gets the application directory of <c>Appi</c>.
-        /// </summary>
-        /// <value>
-        /// The application directory.
-        /// </value>
-        /// <remarks>Can be viewed with `appi config open` command.</remarks>
-        public static string ApplicationDirectory => Path.Combine(AppDataDirectory, "Appi");
-
-        /// <summary>
-        /// Gets the application setting's filename.
-        /// </summary>
-        /// <value>
-        /// The filename.
-        /// </value>
-        public static string SourcesFilename => Path.Combine(ApplicationDirectory, "sources.json");
+        private static string OSAppDataDirectory => GetFolderPath(SpecialFolder.ApplicationData);
+        private static string AppDataDirectory => Path.Combine(OSAppDataDirectory, "Appi");
+        private static string SourcesFilename => Path.Combine(AppDataDirectory, "sources.json");
 
         /// <summary>
         /// Gets the application preferences' filename.
@@ -40,10 +22,8 @@ namespace Core.Helper
         /// <value>
         /// The filename.
         /// </value>
-        public static string PreferencesFilename => Path.Combine(ApplicationDirectory, "preferences.json");
-
-        private static string AppDataDirectory => GetFolderPath(SpecialFolder.ApplicationData);
-                
+        public static string PreferencesFilename => Path.Combine(AppDataDirectory, "preferences.json");
+        
         /// <summary>
         /// Ensures all settings used in the application exists.
         /// </summary>
@@ -61,6 +41,8 @@ namespace Core.Helper
                     PreferencesFilename,
                     () => new Preferences()
                     {
+                        AppDataDirectory = AppDataDirectory,
+                        SourcesFilename = SourcesFilename,
                         Legend = new LegendPreferences()
                         {
                             SourceColors = GetLegendSourceDefaultColors()
@@ -70,12 +52,12 @@ namespace Core.Helper
 
         private static void EnsureDirectoryExists()
         {
-            if (Directory.Exists(ApplicationDirectory))
+            if (Directory.Exists(AppDataDirectory))
             {
                 return;
             }
 
-            Directory.CreateDirectory(ApplicationDirectory);
+            Directory.CreateDirectory(AppDataDirectory);
         }
 
         private static void EnsureFileExists(string filename, Func<object> defaultValue)

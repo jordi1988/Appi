@@ -1,6 +1,8 @@
 ﻿using Core.Abstractions;
 using Core.Helper;
+using Core.Models;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -14,25 +16,29 @@ namespace Ui.Appi.Commands
     /// </summary>
     internal sealed class ConfigRegisterLibraryCommand : Command<ConfigRegisterLibraryCommand.Settings>
     {
+        private readonly Preferences _options;
         private readonly IPluginService _pluginService;
-        private readonly ISettingsService _settingsService;
+        private readonly ISourceService _settingsService;
         private readonly IServiceProvider _serviceProvider;
         private readonly IStringLocalizer<UILayerLocalization> _localizer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigRegisterLibraryCommand"/> class.
         /// </summary>
+        /// <param name="options">The options.</param>
         /// <param name="pluginService">The plugin service.</param>
         /// <param name="sourceService">The source service.</param>
         /// <param name="serviceProvider">The service provider for accessing the registered services.</param>
         /// <param name="localizer">The string localizer.</param>
         /// <exception cref="ArgumentNullException"> </exception>
         public ConfigRegisterLibraryCommand(
+            IOptions<Preferences> options,
             IPluginService pluginService, 
-            ISettingsService sourceService,
+            ISourceService sourceService,
             IServiceProvider serviceProvider,
             IStringLocalizer<UILayerLocalization> localizer)
         {
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _pluginService = pluginService ?? throw new ArgumentNullException(nameof(pluginService));
             _settingsService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -62,7 +68,7 @@ namespace Ui.Appi.Commands
                 return 1;
             }
 
-            var newFilePath = Path.Combine(ConfigurationHelper.ApplicationDirectory, filename);
+            var newFilePath = Path.Combine(_options.AppDataDirectory, filename);
             CopyToConfigDirectory(settings, newFilePath);
             AppendToConfigFile(settings, newFilePath);
 

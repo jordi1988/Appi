@@ -8,15 +8,15 @@ namespace Core.Strategies
     /// <summary>
     /// Represents the strategy for querying one single source.
     /// </summary>
-    /// <seealso cref="Core.Abstractions.ISourcesSelector" />
-    public sealed class QuerySingleSourceStrategy : ISourcesSelector
+    /// <seealso cref="Core.Abstractions.ISourceStrategy" />
+    public sealed class QuerySingleSourceStrategy : ISourceStrategy
     {
-        private readonly ISettingsService _settingsService;
+        private readonly ISourceService _settingsService;
         private readonly IServiceProvider _serviceProvider;
         private readonly IStringLocalizer<CoreLayerLocalization> _localizer;
         private readonly string _sourceAlias;
 
-        /// <inheritdoc cref="ISourcesSelector.QueryWithinDescription"/>
+        /// <inheritdoc cref="ISourceStrategy.QueryWithinDescription"/>
         public string QueryWithinDescription => $"{_localizer["source"]} '{_sourceAlias}'";
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Core.Strategies
         /// handlerHelper
         /// </exception>
         public QuerySingleSourceStrategy(
-            ISettingsService settingsService,
+            ISourceService settingsService,
             IServiceProvider serviceProvider,
             IStringLocalizer<CoreLayerLocalization> localizer,
             string sourceAlias)
@@ -45,7 +45,7 @@ namespace Core.Strategies
             _sourceAlias = sourceAlias;
         }
 
-        /// <inheritdoc cref="ISourcesSelector.GetSources"/>
+        /// <inheritdoc cref="ISourceStrategy.GetSources"/>
         public IEnumerable<ISource> GetSources()
         {
             var source = _settingsService

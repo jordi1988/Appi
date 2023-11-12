@@ -5,7 +5,7 @@ namespace Core.Abstractions
     /// <summary>
     /// Represents an interface for interacting with the app's settings.
     /// </summary>
-    public interface ISettingsService
+    public interface ISourceService
     {
         /// <summary>
         /// Reads the sources.

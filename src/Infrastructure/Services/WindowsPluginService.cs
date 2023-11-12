@@ -1,6 +1,8 @@
-﻿using Core;
-using Core.Abstractions;
+﻿using Core.Abstractions;
+using Core.Helper;
+using Core.Models;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using Microsoft.Win32;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -16,15 +18,19 @@ namespace Infrastructure.Services
         private const string _pluginKeyName = "AllowExternalLibraries";
         private const string _pluginKeyValueAllowed = "1";
         private const string _pluginKeyValueProhibited = "0";
+        private readonly Preferences _options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowsPluginService"/> class.
         /// </summary>
         /// <exception cref="InvalidOperationException">This class can only be instantiated on Windows OS.</exception>
-        public WindowsPluginService(IStringLocalizer<InfrastructureLayerLocalization> localization)
+        public WindowsPluginService(
+            IStringLocalizer<InfrastructureLayerLocalization> localization,
+            IOptions<Preferences> options)
         {
             ArgumentNullException.ThrowIfNull(localization);
-            
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 throw new InvalidOperationException(localization["This class can only be instantiated on Windows OS."]);
@@ -82,6 +88,26 @@ namespace Infrastructure.Services
             var key = Registry.CurrentUser.OpenSubKey(subKeyPath, writable);
 
             return (key, subKeyPath);
+        }
+
+        /// <inheritdoc cref="IPluginService.ActivateExternalPluginsIfAllowed"/>
+        public void ActivateExternalPluginsIfAllowed()
+        {
+            ActivateExternalPlugins(_options.AppDataDirectory, "*.dll");
+
+            var executablePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            ArgumentException.ThrowIfNullOrEmpty(executablePath);
+
+            ActivateExternalPlugins(executablePath, "Appi.Plugin.*.dll");
+        }
+
+        private void ActivateExternalPlugins(string path, string searchPattern)
+        {
+            var externalAssemblyFiles = Directory.GetFiles(path, searchPattern);
+            foreach (var filename in externalAssemblyFiles)
+            {
+                Assembly.UnsafeLoadFrom(filename);
+            }
         }
 
 #pragma warning restore CA1416 // Validate platform compatibility

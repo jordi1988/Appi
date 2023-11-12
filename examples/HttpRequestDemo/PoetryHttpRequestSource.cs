@@ -14,6 +14,7 @@ namespace Infrastructure.HttpRequestDemoExample
     {
         private readonly IStringLocalizer<PoetryHttpRequestSource> _customLocalizer;
         private readonly IHandlerHelper _handlerHelper;
+        private const string _queryParam = "##QUERY##";
 
         public string TypeName { get; set; } = typeof(PoetryHttpRequestSource).Name;
         public string Name { get; set; } = "Poetry";
@@ -21,7 +22,7 @@ namespace Infrastructure.HttpRequestDemoExample
         public string Description { get; set; } = "by poetrydb.org";
         public bool IsActive { get; set; } = true;
         public int SortOrder { get; set; } = 20;
-        public string? Path { get; set; } = $"https://poetrydb.org/title/{ConfigurationHelper.QueryParam}";
+        public string? Path { get; set; } = $"https://poetrydb.org/title/{_queryParam}";
         public string? Arguments { get; set; } = "max_title_length=50";
         public bool? IsQueryCommand { get; set; } = true;
         public string[]? Groups { get; set; } = new[] { "demo" };
@@ -42,7 +43,7 @@ namespace Infrastructure.HttpRequestDemoExample
         {
             ValidateConfig();
 
-            Path = Path!.Replace(ConfigurationHelper.QueryParam, options?.Query);
+            Path = Path!.Replace(_queryParam, options?.Query);
 
             using var client = new HttpClient();
             var output = new List<PoetryHttpRequestResult>();

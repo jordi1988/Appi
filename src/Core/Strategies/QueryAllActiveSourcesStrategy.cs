@@ -7,14 +7,14 @@ namespace Core.Strategies
     /// <summary>
     /// Represents the strategy for querying all active sources.
     /// </summary>
-    /// <seealso cref="ISourcesSelector" />
-    public sealed class QueryAllActiveSourcesStrategy : ISourcesSelector
+    /// <seealso cref="ISourceStrategy" />
+    public sealed class QueryAllActiveSourcesStrategy : ISourceStrategy
     {
-        private readonly ISettingsService _settingsService;
+        private readonly ISourceService _settingsService;
         private readonly IServiceProvider _serviceProvider;
         private readonly IStringLocalizer<CoreLayerLocalization> _localizer;
 
-        /// <inheritdoc cref="ISourcesSelector.QueryWithinDescription"/>
+        /// <inheritdoc cref="ISourceStrategy.QueryWithinDescription"/>
         public string QueryWithinDescription => _localizer["all active sources"];
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Core.Strategies
         /// handlerHelper
         /// </exception>
         public QueryAllActiveSourcesStrategy(
-            ISettingsService settingsService,
+            ISourceService settingsService,
             IServiceProvider serviceProvider,
             IStringLocalizer<CoreLayerLocalization> localizer)
         {
@@ -40,7 +40,7 @@ namespace Core.Strategies
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
         }
 
-        /// <inheritdoc cref="ISourcesSelector.GetSources"/>
+        /// <inheritdoc cref="ISourceStrategy.GetSources"/>
         public IEnumerable<ISource> GetSources()
         {
             var sources = _settingsService

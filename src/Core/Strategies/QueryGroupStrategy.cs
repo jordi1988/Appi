@@ -8,15 +8,15 @@ namespace Core.Strategies
     /// <summary>
     /// Represents the strategy for querying all sources of a given group.
     /// </summary>
-    /// <seealso cref="ISourcesSelector" />
-    public sealed class QueryGroupStrategy : ISourcesSelector
+    /// <seealso cref="ISourceStrategy" />
+    public sealed class QueryGroupStrategy : ISourceStrategy
     {
-        private readonly ISettingsService _settingsService;
+        private readonly ISourceService _settingsService;
         private readonly IServiceProvider _serviceProvider;
         private readonly IStringLocalizer<CoreLayerLocalization> _localizer;
         private readonly string _groupAlias;
 
-        /// <inheritdoc cref="ISourcesSelector.QueryWithinDescription"/>
+        /// <inheritdoc cref="ISourceStrategy.QueryWithinDescription"/>
         public string QueryWithinDescription => $"{_localizer["group"]} '{_groupAlias}'";
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Core.Strategies
         /// handlerHelper
         /// </exception>
         public QueryGroupStrategy(
-            ISettingsService settingsService,
+            ISourceService settingsService,
             IServiceProvider serviceProvider,
             IStringLocalizer<CoreLayerLocalization> localizer,
             string groupAlias)
@@ -45,7 +45,7 @@ namespace Core.Strategies
             _groupAlias = groupAlias;
         }
 
-        /// <inheritdoc cref="ISourcesSelector.GetSources"/>
+        /// <inheritdoc cref="ISourceStrategy.GetSources"/>
         public IEnumerable<ISource> GetSources()
         {
             ArgumentException.ThrowIfNullOrEmpty(_groupAlias);

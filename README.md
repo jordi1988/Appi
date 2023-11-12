@@ -26,6 +26,7 @@ Because your information sources will be different from mine, go start building 
 ## Features
 - Asynchronously fetch all your sources matching your query
 - Easily provide your [custom plugin](#Plugins) based on pre-built infrastructure classes
+- Set up your preferences (e.g. culture, colors, and paths)
 - Make use of the given toolset (e.g. for backward navigation)
 - Make use of the DI container
 - Localized messages und UI
@@ -40,6 +41,17 @@ Choose your desired way:
   - Build solution (example plugins will get copied into )
 
 Take a look at the [GitHub Releases](https://github.com/jordi1988/Appi/releases) page for updates and release notes.
+
+Set up your preferences in `%AppData%\Appi\preferences.json`. This file is expected at the specified location. Any settings inside can be changed:  
+| **Setting**             | **Description**                                                                                                                               | **Default value**           |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|
+| **AppDataDirectory**    | The application directory of Appi. Can be viewed with `appi config open` command..                                                            | %AppData%\Appi\             |
+| **SourcesFilename**     | The full filename for the file containing the sources configuration.                                                                          | %AppData%\Appi\sources.json |
+| **UiCulture**           | The culture Appi is displayed in.                                                                                                             | Current UI culture          |
+| **PageSize**            | The size of the page.                                                                                                                         | 35                          |
+| **AccentColor**         | The color of the accent. See [all available colors](https://spectreconsole.net/appendix/color).                                               | Red                         |
+| **Legend.Visible**      | Value indicating whether the legend is printed or not.                                                                                        | true                        |
+| **Legend.SourceColors** | The source colors for the legend. See [all available colors](https://learn.microsoft.com/en-us/dotnet/api/system.drawing.color?view=net-7.0). | ["SkyBlue", "Magenta", ...] |
 
 ## Examples
 ### Demo

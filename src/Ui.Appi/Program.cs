@@ -1,6 +1,5 @@
 ﻿using Core.Abstractions;
 using Core.Extensions;
-using Core.Helper;
 using Core.Models;
 using Core.Strategies;
 using Infrastructure.Extensions;
@@ -12,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Spectre.Console.Cli;
 using System.Globalization;
 using Ui.Appi.Commands;
+using Ui.Appi.Helper;
 using Ui.Appi.Injection;
 
 namespace Ui.Appi
@@ -42,7 +42,7 @@ namespace Ui.Appi
         private static ITypeRegistrar RegisterServices(out ServiceProvider serviceProvider)
         {
             var services = new ServiceCollection();
-
+            
             // .NET components
             ConfigurationHelper.EnsureSettingsExist();
             IConfiguration configuration = new ConfigurationBuilder()
@@ -63,7 +63,7 @@ namespace Ui.Appi
             services.AddSingleton<IHandler, SpectreConsoleHandler>();
             services.AddSingleton<IHandlerHelper, SpectreConsoleHandlerHelper>();
             services.AddSingleton(typeof(IResultStateService<>), typeof(MemoryResultStateService<>));
-            services.AddScoped<ISettingsService, FileSettingsService>();
+            services.AddScoped<ISourceService, FileSourceService>();
             services.AddScoped<QueryStrategyCalculator>();
 
             // Infrastructure components

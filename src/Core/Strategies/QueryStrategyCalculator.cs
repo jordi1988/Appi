@@ -9,7 +9,7 @@ namespace Core.Strategies
     /// </summary>
     public class QueryStrategyCalculator
     {
-        private readonly ISettingsService _settingsService;
+        private readonly ISourceService _settingsService;
         private readonly IStringLocalizer<CoreLayerLocalization> _localizer;
         private readonly IServiceProvider _serviceProvider;
 
@@ -27,7 +27,7 @@ namespace Core.Strategies
         /// handlerHelper
         /// </exception>
         public QueryStrategyCalculator(
-            ISettingsService settingsService,
+            ISourceService settingsService,
             IServiceProvider serviceProvider,
             IStringLocalizer<CoreLayerLocalization> localizer)
         {
@@ -42,7 +42,7 @@ namespace Core.Strategies
         /// <param name="options">The options.</param>
         /// <param name="queryAllDefaultValue">The default value of the query all group.</param>
         /// <returns>The concrete strategy's instance.</returns>
-        public ISourcesSelector Create(FindItemsOptions options, string queryAllDefaultValue)
+        public ISourceStrategy Create(FindItemsOptions options, string queryAllDefaultValue)
         {
             bool isSourceProvided = !string.IsNullOrWhiteSpace(options.SourceAlias);
             bool isGroupProvided = !queryAllDefaultValue.Equals(options.GroupAlias);
