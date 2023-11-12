@@ -101,7 +101,7 @@ namespace Infrastructure.Services
             ActivateExternalPlugins(executablePath, "Appi.Plugin.*.dll");
         }
 
-        private void ActivateExternalPlugins(string path, string searchPattern)
+        private static void ActivateExternalPlugins(string path, string searchPattern)
         {
             var externalAssemblyFiles = Directory.GetFiles(path, searchPattern);
             foreach (var filename in externalAssemblyFiles)
