@@ -49,7 +49,7 @@ Set up your preferences in `%AppData%\Appi\preferences.json`. This file is expec
 | **SourcesFilename**     | The full filename for the file containing the sources configuration.                                                                          | %AppData%\Appi\sources.json |
 | **UiCulture**           | The culture Appi is displayed in.                                                                                                             | Current UI culture          |
 | **PageSize**            | The size of the page.                                                                                                                         | 35                          |
-| **AccentColor**         | The color of the accent. See [all available colors](https://spectreconsole.net/appendix/color).                                               | Red                         |
+| **AccentColor**         | The color of the accent. See [all available colors](https://spectreconsole.net/appendix/colors).                                              | Red                         |
 | **Legend.Visible**      | Value indicating whether the legend is printed or not.                                                                                        | true                        |
 | **Legend.SourceColors** | The source colors for the legend. See [all available colors](https://learn.microsoft.com/en-us/dotnet/api/system.drawing.color?view=net-7.0). | ["SkyBlue", "Magenta", ...] |
 
